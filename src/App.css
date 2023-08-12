@@ -1,38 +1,54 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.app-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  min-height: 100vh;
+  background-color: black;
   color: white;
+  font-family: 'Arial', sans-serif;
 }
 
-.App-link {
-  color: #61dafb;
+.app-header {
+  margin-bottom: 20px;
+  font-size: 24px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.app-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.tombstone-container {
+  position: relative;
+  width: 300px;
+}
+
+.tombstone-image {
+  max-width: 100%;
+  display: block;
+}
+
+.tombstone-name-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 18px;
+  text-align: center;
+}
+
+.input-section {
+  margin-top: 20px; /* 묘비 이미지와 입력 필드 사이의 간격을 조절하는 데 사용됩니다. 원하는 대로 조절하실 수 있습니다. */
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.input-section input {
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
 }
