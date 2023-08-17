@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import supabase from './supabaseClient';
 import './App.css';
 
 import LoginForm from './LoginForm';
@@ -29,10 +30,26 @@ const saveTombstoneNameToBackend = async (name) => {
 };
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [localUser, setLocalUser] = useState(null);
+
+  // 앱 로딩 시 현재 사용자 상태 확인
+  useEffect(() => {
+    const currentUser = supabase.auth.user();
+    setLocalUser(currentUser);
+
+    // 인증 상태 변화 감지
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      setLocalUser(session ? session.user : null);
+    });
+
+    // 컴포넌트 언마운트 시 이벤트 리스너 해제
+    return () => {
+      authListener.unsubscribe();
+    };
+  }, []);
 
   const handleUserLogin = (user) => {
-    setUser(user);
+    setLocalUser(user);
   };
 
   const [tombstoneName, setTombstoneName] = useState('Your Name');
@@ -55,7 +72,7 @@ function App() {
 
   return (
     <div className="app-container">
-      {user ? (
+      {localUser ? (
         <>
           <header className="app-header">Tombstone Reminder</header>
           <main className="app-main">
