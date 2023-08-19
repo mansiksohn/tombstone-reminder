@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import supabase from './supabaseClient';
+
 import './App.css';
 
-import LoginForm from './LoginForm';
+import Login from './Login';
+import LogoutButton from './LogoutButton';
+
 
 const saveTombstoneNameToBackend = async (name) => {
   try {
@@ -31,29 +34,22 @@ const saveTombstoneNameToBackend = async (name) => {
 
 function App() {
   const [localUser, setLocalUser] = useState(null);
+  const [tombstoneName, setTombstoneName] = useState('Your Name');
+  const [inputName, setInputName] = useState('');
 
-  // 앱 로딩 시 현재 사용자 상태 확인
+  // 인증 상태 변화 감지
   useEffect(() => {
-    const currentUser = supabase.auth.user();
-    setLocalUser(currentUser);
-
-    // 인증 상태 변화 감지
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+    const subscription = supabase.auth.onAuthStateChange((event, session) => {
       setLocalUser(session ? session.user : null);
     });
 
     // 컴포넌트 언마운트 시 이벤트 리스너 해제
-    return () => {
-      authListener.unsubscribe();
-    };
-  }, []);
-
-  const handleUserLogin = (user) => {
-    setLocalUser(user);
+  return () => {
+    if (subscription && typeof subscription.unsubscribe === 'function') {
+      subscription.unsubscribe();
+    }
   };
-
-  const [tombstoneName, setTombstoneName] = useState('Your Name');
-  const [inputName, setInputName] = useState('');
+}, []);
 
   const handleSave = async () => {
     const result = await saveTombstoneNameToBackend(inputName);
@@ -70,34 +66,33 @@ function App() {
     }
   };
 
+  if (!localUser) {
+    return <Login />;
+  }
+
   return (
     <div className="app-container">
-      {localUser ? (
-        <>
-          <header className="app-header">Tombstone Reminder</header>
-          <main className="app-main">
-            <div className="tombstone-container">
-              <img src={process.env.PUBLIC_URL + '/headstone.png'} alt="Tombstone" className="tombstone-image" />
-              <div className="tombstone-name-overlay">
-                <h2>{tombstoneName}</h2>
-              </div>
-            </div>
-            <div className="input-section">
-              <input 
-                type="text" 
-                placeholder="Enter your tombstone name"
-                value={inputName}
-                onChange={(e) => setInputName(e.target.value)}
-              />
-              <button onClick={handleSave}>Save</button>
-            </div>
-          </main>
-        </>
-      ) : (
-        <div>
-          <LoginForm onLogin={handleUserLogin} />
+      <header className="app-header">
+        Tombstone Reminder
+        <LogoutButton />
+        </header>
+      <main className="app-main">
+        <div className="tombstone-container">
+          <img src={process.env.PUBLIC_URL + '/headstone.png'} alt="Tombstone" className="tombstone-image" />
+          <div className="tombstone-name-overlay">
+            <h2>{tombstoneName}</h2>
+          </div>
         </div>
-      )}
+        <div className="input-section">
+          <input 
+            type="text" 
+            placeholder="Enter your tombstone name"
+            value={inputName}
+            onChange={(e) => setInputName(e.target.value)}
+          />
+          <button onClick={handleSave}>Save</button>
+        </div>
+      </main>
     </div>
   );
 }
