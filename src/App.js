@@ -7,14 +7,14 @@ import Login from './Login';
 import LogoutButton from './LogoutButton';
 
 
-const saveTombstoneNameToBackend = async (name) => {
+const saveTombstoneNameToBackend = async (name, userId) => {
   try {
     const response = await fetch('http://localhost:5000/save-tombstone-name', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ name })
+      body: JSON.stringify({ name, userId })
     });
 
     const data = await response.json();
@@ -32,6 +32,11 @@ const saveTombstoneNameToBackend = async (name) => {
   }
 };
 
+async function getCurrentUserId() {
+  const { data: { user } } = await supabase.auth.getUser();
+  return user ? user.id : null;
+}
+
 function App() {
   const [localUser, setLocalUser] = useState(null);
   const [tombstoneName, setTombstoneName] = useState('Your Name');
@@ -44,15 +49,16 @@ function App() {
     });
 
     // 컴포넌트 언마운트 시 이벤트 리스너 해제
-  return () => {
-    if (subscription && typeof subscription.unsubscribe === 'function') {
-      subscription.unsubscribe();
-    }
-  };
+    return () => {
+        if (subscription && typeof subscription.unsubscribe === 'function') {
+            subscription.unsubscribe();
+        }
+    };
 }, []);
 
   const handleSave = async () => {
-    const result = await saveTombstoneNameToBackend(inputName);
+    const userId = await getCurrentUserId();
+    const result = await saveTombstoneNameToBackend(inputName, userId);
     
     if (result) {
       if (result.error) {

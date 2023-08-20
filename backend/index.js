@@ -25,15 +25,15 @@ app.listen(PORT, () => {
 });
 
 app.post('/save-tombstone-name', async (req, res) => {
-    const { name } = req.body;
+    const { name, userId } = req.body;
 
-    if (!name) {
-        return res.status(400).send({ error: 'Name is required.' });
+    if (!name || !userId) {
+        return res.status(400).send({ error: 'Name and User ID are required.' });
     }
 
     const { data, error } = await supabase
         .from('Tombs')
-        .insert([{ tomb_name: name }]);
+        .insert([{ tomb_name: name, user_id: userId }]);
     console.log("Inserted data:", data);
     console.log("Insertion error:", error);
     console.log("Supabase returned data:", data);
