@@ -1,13 +1,14 @@
-.login-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh; /* 화면 전체 높이를 차지하도록 설정 */
-  background-color: black;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 공통 스타일 */
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
 }
 
-.app-container {
+.container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -15,29 +16,73 @@
   min-height: 100vh;
   background-color: black;
   color: white;
-  font-family: 'Arial', sans-serif;
 }
 
-.app-header {
+.header {
   margin-bottom: 20px;
   font-size: 24px;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
 }
 
-.app-main {
+.menu-button, .menu-close-button {
+  font-size: 24px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 250px;
+  height: 100%;
+  background-color: black;
+  box-shadow: -2px 0 5px rgba(0,0,0,0.5);
+  padding: 20px;
+  box-sizing: border-box;
+  z-index: 1000;
+}
+
+.menu-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-content button {
+  margin: 10px 0;
+}
+
+.main {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+  max-width: 800px;
+  overflow-y: auto;
+  padding-bottom: 80px; /* 공유 버튼 공간 확보 */
+}
+
+.text-center {
+  width: 100%;
 }
 
 .tombstone-container {
   position: relative;
   width: 100%;
+  text-align: center;
 }
 
 .tombstone-image {
   max-width: 100%;
   height: auto;
   display: block;
+  margin: 0 auto;
 }
 
 .tombstone-name-overlay {
@@ -49,16 +94,87 @@
   text-align: center;
 }
 
-.input-section {
-  margin-top: 20px; /* 묘비 이미지와 입력 필드 사이의 간격을 조절하는 데 사용됩니다. 원하는 대로 조절하실 수 있습니다. */
-  width: 100%;
-  display: flex;
-  justify-content: center;
+.date-container {
+  margin-top: 20px;
+  text-align: center;
 }
 
-.input-section input {
+.date-input {
+  margin-top: 10px;
+}
+
+input[type="text"], input[type="date"], textarea {
+  width: 100%;
   padding: 10px;
-  font-size: 16px;
-  border-radius: 5px;
   border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  color: #000;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button.bg-blue-500 {
+  background-color: #3490dc;
+}
+
+button.bg-green-500 {
+  background-color: #38c172;
+}
+
+button.bg-yellow-500 {
+  background-color: #fbbf24;
+}
+
+button.bg-red-500 {
+  background-color: #e3342f;
+}
+
+button.bg-blue-500:hover, button.bg-green-500:hover, button.bg-yellow-500:hover, button.bg-red-500:hover {
+  opacity: 0.8;
+}
+
+/* 로그인 페이지 */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-content {
+  text-align: center;
+}
+
+.login-button img {
+  width: 200px;
+  margin-top: 20px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.login-button img:hover {
+  opacity: 0.8;
+}
+
+/* 온보딩 채팅 */
+.onboarding-chat-container {
+  background-color: black;
+}
+
+.onboarding-chat-container .chat-bubble {
+  background-color: #444;
+  border-radius: 8px;
+  padding: 10px;
+  margin-bottom: 8px;
+}
+
+.onboarding-chat-container .input-box button {
+  background-color: #27A385;
+  color: white;
 }
