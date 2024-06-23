@@ -29,6 +29,8 @@ export const fetchUserName = async (userId) => fetchSingleValue(userId, 'user_na
 export const fetchTombstoneName = async (userId) => fetchSingleValue(userId, 'tomb_name');
 export const fetchObituary = async (userId) => fetchSingleValue(userId, 'obituary');
 export const fetchGoat = async (userId) => fetchSingleValue(userId, 'goat');
+export const fetchBirthDate = async (userId) => fetchSingleValue(userId, 'birth_date');
+export const fetchDeathDate = async (userId) => fetchSingleValue(userId, 'death_date');
 
 const upsertSingleValue = async (userId, values) => {
   const { data, error } = await supabase
@@ -47,6 +49,8 @@ export const upsertTombstoneNameToBackend = async (tombName, userId) => upsertSi
 export const upsertUserNameToBackend = async (userName, userId) => upsertSingleValue(userId, { user_name: userName });
 export const upsertObituary = async (obituary, userId) => upsertSingleValue(userId, { obituary });
 export const upsertGoat = async (goat, userId) => upsertSingleValue(userId, { goat });
+export const upsertBirthDate = async (birthDate, userId) => upsertSingleValue(userId, { birth_date: birthDate });
+export const upsertDeathDate = async (deathDate, userId) => upsertSingleValue(userId, { death_date: deathDate });
 
 export const createShareLink = async (userId) => {
   const { data, error } = await supabase

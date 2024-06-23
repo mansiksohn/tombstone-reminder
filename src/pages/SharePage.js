@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import supabase from './supabaseClient';
-import './App.css';
+import supabase from '../utils/supabaseClient';
+import '../styles/index.scss'; // 모든 스타일을 한 곳에서 import
 
 const SharePage = () => {
   const { userId } = useParams();
@@ -68,7 +68,7 @@ const SharePage = () => {
       <header className="app-header text-xl font-bold">Tombstone Reminder</header>
       <main className="app-main mt-6 text-center">
         <div className="tombstone-container mt-6">
-          <img src={process.env.PUBLIC_URL + '/headstone.png'} alt="Tombstone" className="tombstone-image w-full" />
+          <img src={process.env.PUBLIC_URL + '../assets/images/headstone.png'} alt="Tombstone" className="tombstone-image w-full" />
           <div className="tombstone-name-overlay text-center mt-4">
             <h2 className="text-2xl font-semibold">{tombstoneName}</h2>
           </div>

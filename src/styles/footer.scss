@@ -1,0 +1,13 @@
+.footer {
+    @apply flex items-center justify-center h-20;
+  }
+  
+  .wsis-logo {
+    @apply w-6 mr-2;
+  }
+  
+  .footer p {
+    margin: 0;
+    font-size: 14px;
+  }
+  

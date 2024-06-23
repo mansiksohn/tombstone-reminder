@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { getCurrentUserId, upsertUserNameToBackend, upsertTombstoneNameToBackend } from './supabaseService';
-import './App.css'; // CSS 파일을 import합니다.
+import { getCurrentUserId, upsertUserNameToBackend, upsertTombstoneNameToBackend } from '../utils/supabaseService';
+import '../styles/index.scss'; // 모든 스타일을 한 곳에서 import
 
 const OnboardingChat = ({ onOnboardingComplete }) => {
   const [step, setStep] = useState(0);

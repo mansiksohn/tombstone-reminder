@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
+import './styles/index.scss'; // 모든 스타일을 한 곳에서 import
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 

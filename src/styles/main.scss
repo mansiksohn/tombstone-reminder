@@ -1,0 +1,24 @@
+.main-content {
+    @apply p-8 bg-black;
+  }
+  
+  .tombstone {
+    @apply text-center my-8;
+  }
+  
+  .tombstone img {
+    @apply w-full max-w-xs mx-auto;
+  }
+  
+  .tombstone h2 {
+    @apply text-2xl font-bold text-green-500;
+  }
+  
+  .tombstone p {
+    @apply text-xl font-bold;
+  }
+  
+  .tombstone .dates {
+    @apply text-lg text-green-500;
+  }
+  

@@ -1,6 +1,6 @@
 // src/Onboarding.js
 import React, { useState } from 'react';
-import { getCurrentUserId, upsertUserNameToBackend, upsertTombstoneNameToBackend } from './supabaseService';
+import { getCurrentUserId, upsertUserNameToBackend, upsertTombstoneNameToBackend } from '../supabaseService';
 
 const Onboarding = ({ onOnboardingComplete }) => {
   const [userName, setUserName] = useState('');

@@ -1,5 +1,5 @@
 import React from 'react';
-import supabase from './supabaseClient';
+import supabase from '../utils/supabaseClient';
 
 function LogoutButton() {
   const handleLogout = async () => {
