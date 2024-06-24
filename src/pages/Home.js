@@ -5,6 +5,8 @@ import OnboardingChat from '../pages/OnboardingChat';
 import Header from '../components/Header';
 import UserNameSection from '../components/UserNameSection';
 import TombstoneSection from '../components/TombstoneSection';
+import GroundSection from '../components/GroundSection';
+import DeathMaskSection from '../components/DeathMaskSection'; // DeathMaskSection import 추가
 import DatesSection from '../components/DatesSection';
 import ObituarySection from '../components/ObituarySection';
 import GoatSection from '../components/GoatSection';
@@ -182,6 +184,8 @@ function Home() {
         <UserNameSection userName={userName} setUserName={setUserName} handleSave={handleSave} />
         <DatesSection birthDate={birthDate} deathDate={deathDate} setBirthDate={setBirthDate} setDeathDate={setDeathDate} handleSave={handleSave} />
         <TombstoneSection tombstoneName={tombstoneName} setTombstoneName={setTombstoneName} handleSave={handleSave} />
+        <GroundSection /> {/* GroundSection을 Home에서 렌더링 */}
+        <DeathMaskSection /> {/* DeathMaskSection 추가 */}
         <ObituarySection obituary={obituary} setObituary={setObituary} handleSave={handleSave} />
         <GoatSection goat={goat} setGoat={setGoat} newGoat={newGoat} setNewGoat={setNewGoat} handleSave={handleSave} handleEditGoat={setEditingGoatIndex} handleDeleteGoat={handleDeleteGoat} />
         <ShareSection handleCopyLink={handleCopyLink} buttonText={buttonText} buttonColor={buttonColor} />

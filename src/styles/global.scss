@@ -12,3 +12,8 @@ body {
 h1, p {
   margin: 4px 0;
 }
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}

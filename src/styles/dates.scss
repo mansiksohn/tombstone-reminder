@@ -1,0 +1,12 @@
+.date-container {
+    @apply flex flex-col items-center p-4;
+  }
+  
+  .date-input {
+    @apply mx-1 underline text-soul-green-500; // 좌우 여백과 밑줄, 색상 적용
+  }
+  
+  .date-separator {
+    @apply mx-2 text-soul-green-500; // 좌우 여백과 색상 적용
+  }
+  

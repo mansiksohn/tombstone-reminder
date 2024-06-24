@@ -13,7 +13,7 @@ function Login() {
         <p>그래도 앞으로 필요해지실겁니다.</p>
         <p>암요 미리미리 준비해야죠.</p>
         <p>이쪽으로 오십쇼.</p>
-        <img src={process.env.PUBLIC_URL + '/assets/images/login-Headstone.svg'} alt="Tombstone" className="tombstone-image" />
+        <img src={process.env.PUBLIC_URL + '/assets/images/login-Headstone.svg'} alt="Tombstone" className="login-tombstone-image" />
         <Auth
           supabaseClient={supabase}
           appearance={{ theme: ThemeSupa }}

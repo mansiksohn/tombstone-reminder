@@ -24,8 +24,8 @@ function TombstoneSection({ tombstoneName, setTombstoneName, handleSave }) {
   };
 
   return (
-    <div className="tombstone-container mt-6">
-      <img src={process.env.PUBLIC_URL + '../assets/images/headstone.png'} alt="Tombstone" className="tombstone-image" />
+    <div className="tombstone-container mt-6 relative">
+      <img src={process.env.PUBLIC_URL + '../assets/images/headstone.svg'} alt="Tombstone" className="tombstone-image" />
       <div className="tombstone-name-overlay">
         {isEditing ? (
           <div className="flex items-center justify-center">

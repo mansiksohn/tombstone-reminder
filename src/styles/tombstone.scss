@@ -1,0 +1,12 @@
+.tombstone-container {
+    position: relative;
+    text-align: center;
+  }
+  
+  .tombstone-image {
+    @apply w-full max-w-xs mx-auto; // 이미지 크기를 조정하고 가운데 정렬
+  }
+  
+  .tombstone-name-overlay {
+    @apply absolute inset-0 flex flex-col items-center justify-center;
+  }
