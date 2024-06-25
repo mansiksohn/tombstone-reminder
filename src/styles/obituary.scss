@@ -1,12 +1,15 @@
 .obituary-section {
-    @apply bg-gray-800 p-4 rounded-lg mb-8 text-white;
-  }
-  
-  .obituary-section h3 {
-    @apply text-xl font-bold;
-  }
-  
-  .obituary-section p, .obituary-section textarea {
-    @apply text-base font-normal leading-relaxed text-white bg-gray-800 border-none;
-  }
-  
+  @apply px-4;
+}
+.obituary-container {
+  @apply bg-soul-green-950 p-4 rounded-lg min-h-60;
+}
+
+.obituary-text {
+  @apply text-white;
+  cursor: pointer;
+}
+
+.min-h-textarea {
+  @apply min-h-56;
+}

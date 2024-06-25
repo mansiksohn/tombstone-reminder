@@ -1,32 +1,25 @@
 .death-mask-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-top: 20px;
-  
-    .selected-image {
-      width: 160px;
-      height: auto;
-      margin-bottom: 20px;
-    }
-  
-    .image-selector {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-  
-      .option-image {
-        width: 50px;
-        height: auto;
-        margin: 10px;
-        cursor: pointer;
-        border: 2px solid transparent;
-  
-        &:hover {
-          border-color: #27A385; /* soul-green-500 */
-        }
-      }
-    }
-  }
-  
+  position: relative;
+}
+
+.coffin {
+  @apply bg-grey-111 p-4 rounded-lg;
+}
+
+.selected-image {
+  @apply block mx-auto p-4 cursor-pointer;
+}
+
+.image-selector {
+  @apply absolute top-0 left-0 right-0 mx-auto p-4 bg-grey-111 border rounded-lg;
+  width: 80%;
+  top: -50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.option-image {
+  @apply cursor-pointer;
+}
