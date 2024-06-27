@@ -28,6 +28,7 @@
   .menu-close-button {
     @apply absolute top-4 right-4 text-white text-2xl m-0 cursor-pointer;
     background-color: transparent !important;
+    z-index: 60; // z-index를 높여 유저 이름보다 위에 표시되도록 설정
   }
   
   .menu-content {
@@ -49,6 +50,7 @@
   
   .user-name-container {
     @apply absolute top-6 left-6;
+    z-index: 50; // 유저 이름 컨테이너의 z-index 설정
   }
   
   .user-name {

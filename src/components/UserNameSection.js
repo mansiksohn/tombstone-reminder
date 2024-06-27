@@ -8,7 +8,9 @@ function UserNameSection({ userName, setUserName, handleSave }) {
   };
 
   const handleChange = (e) => {
-    setUserName(e.target.value);
+    if (e.target.value.length <= 12) {
+      setUserName(e.target.value);
+    }
   };
 
   const handleSaveClick = () => {
@@ -37,6 +39,8 @@ function UserNameSection({ userName, setUserName, handleSave }) {
             onKeyPress={handleKeyPress}
             className="border p-2 rounded-l text-black"
             autoFocus
+            maxLength={12} // 입력 필드에 대한 길이 제한 설정
+            placeholder="이름 12자 이하" // placeholder 설정
           />
           <button onClick={handleSaveClick} className="bg-soul-green-500 text-white p-2 rounded-r">Save</button>
         </div>

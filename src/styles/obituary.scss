@@ -2,11 +2,11 @@
   @apply px-4;
 }
 .obituary-container {
-  @apply bg-soul-green-950 p-4 rounded-lg min-h-60;
+  @apply bg-soul-green-950 p-4 rounded-lg min-h-60 content-center;
 }
 
 .obituary-text {
-  @apply text-white;
+  @apply text-white text-center;
   cursor: pointer;
 }
 

@@ -8,7 +8,9 @@ function TombstoneSection({ tombstoneName, setTombstoneName, handleSave }) {
   };
 
   const handleChange = (e) => {
-    setTombstoneName(e.target.value);
+    if (e.target.value.length <= 160) {
+      setTombstoneName(e.target.value);
+    }
   };
 
   const handleSaveClick = () => {
@@ -23,9 +25,15 @@ function TombstoneSection({ tombstoneName, setTombstoneName, handleSave }) {
     }
   };
 
+  const placeholderText = 'Δεν ελπίζω τίποταΔε φοβούμαι τίποταΕίμαι λέφτερος';
+
   return (
     <div className="tombstone-container mt-6 relative">
-      <img src={process.env.PUBLIC_URL + '../assets/images/headstone.svg'} alt="Tombstone" className="tombstone-image" />
+      <img 
+        src={tombstoneName ? process.env.PUBLIC_URL + '../assets/images/headstone.svg' : process.env.PUBLIC_URL + '../assets/images/headstone-placeholder.svg'} 
+        alt="Tombstone" 
+        className="tombstone-image" 
+      />
       <div className="tombstone-name-overlay">
         {isEditing ? (
           <div className="flex items-center justify-center">
@@ -37,12 +45,16 @@ function TombstoneSection({ tombstoneName, setTombstoneName, handleSave }) {
               onKeyPress={handleKeyPress}
               className="border p-2 rounded-l text-black"
               autoFocus
+              maxLength={160} // 입력 필드에 대한 길이 제한 설정
             />
-            <button onClick={handleSaveClick} className="bg-green-500 text-white p-2 rounded-r">Save</button>
+            <button onClick={handleSaveClick} className="bg-soul-green-500 text-white p-2 rounded-r">Save</button>
           </div>
         ) : (
-          <h2 onClick={handleClick} className="text-2xl font-semibold cursor-pointer">
-            {tombstoneName}
+          <h2 
+            onClick={handleClick} 
+            className={`text-2xl tombstone-name ${!tombstoneName ? 'placeholder-text' : ''}`}
+          >
+            {tombstoneName || <span className="text-grey-222">{placeholderText}</span>}
           </h2>
         )}
       </div>

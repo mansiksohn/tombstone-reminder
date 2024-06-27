@@ -1,20 +1,23 @@
 .goat-section {
-    @apply bg-gray-800 p-4 rounded-lg mb-8 text-white;
-  }
-  
-  .goat-section h3 {
-    @apply text-xl font-bold;
-  }
-  
-  .goat-section p, .goat-section a {
-    @apply text-base font-normal leading-relaxed text-green-500;
-  }
-  
-  .goat-section button {
-    @apply bg-green-500 border-none text-white py-1 px-2 text-center text-sm my-1 mx-1 cursor-pointer rounded-lg;
-  }
-  
-  .goat-section button:hover {
-    @apply bg-green-600;
-  }
-  
+  @apply p-4 rounded-lg mb-8 text-white;
+}
+
+.goat-container {
+  @apply p-4 rounded-lg mb-8 text-white;
+}
+
+.goat-section h3 {
+  @apply text-xl font-bold;
+}
+
+.goat-section p, .goat-section a {
+  @apply text-base font-normal leading-relaxed text-soul-green-500;
+}
+
+.goat-section button {
+  @apply bg-soul-green-500 border-none text-white py-1 px-2 text-center text-sm my-1 mx-1 cursor-pointer rounded-lg;
+}
+
+.goat-section button:hover {
+  @apply bg-soul-green-600;
+}
