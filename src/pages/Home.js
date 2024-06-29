@@ -17,7 +17,6 @@ import supabase from '../utils/supabaseClient';
 function Home() {
   const {
     localUser,
-    userId,  // userId 추가
     isOnboarded,
     userName,
     tombstoneName,
@@ -38,6 +37,7 @@ function Home() {
     setNewGoat,
     handleCopyLink,
     handleSave,
+    handleEditGoat,
     handleDeleteGoat,
     handleOnboardingComplete,
   } = useUserData();
@@ -56,15 +56,7 @@ function Home() {
         <GroundSection />
         <DeathMaskSection />
         <ObituarySection obituary={obituary} setObituary={setObituary} handleSave={handleSave} />
-        <GoatSection
-          userId={userId}  // userId 전달
-          goat={goat}
-          setGoat={setGoat}
-          newGoat={newGoat}
-          setNewGoat={setNewGoat}
-          handleSave={handleSave}
-          handleDeleteGoat={handleDeleteGoat}
-        />
+        <GoatSection goat={goat || []} setGoat={setGoat} newGoat={newGoat} setNewGoat={setNewGoat} handleSave={handleSave} handleEditGoat={handleEditGoat} handleDeleteGoat={handleDeleteGoat} />
         <ShareSection handleCopyLink={handleCopyLink} buttonText={buttonText} buttonColor={buttonColor} />
       </main>
     </div>

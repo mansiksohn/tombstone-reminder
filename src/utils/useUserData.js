@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import supabase from '../utils/supabaseClient';
+import supabase from './supabaseClient';
 import {
   getCurrentUserId,
   fetchIsOnboarded,
@@ -16,19 +16,18 @@ import {
   upsertDeathDate,
   upsertObituary,
   upsertGoat,
-} from '../utils/supabaseService';
+} from './supabaseService';
 
 const useUserData = () => {
   const [localUser, setLocalUser] = useState(null);
   const [isOnboarded, setIsOnboarded] = useState(false);
-  const [userId, setUserId] = useState(null);  // userId 상태 추가
   const [userName, setUserName] = useState('');
   const [tombstoneName, setTombstoneName] = useState('Your Name');
   const [birthDate, setBirthDate] = useState('');
   const [deathDate, setDeathDate] = useState('');
   const [obituary, setObituary] = useState('');
-  const [goat, setGoat] = useState([]);  // 빈 배열로 초기화
-  const [newGoat, setNewGoat] = useState({ description: '', link: '' });
+  const [goat, setGoat] = useState([]);
+  const [newGoat, setNewGoat] = useState({ tag: '', description: '', link: '' });
   const [buttonText, setButtonText] = useState('Copy Link to Clipboard');
   const [buttonColor, setButtonColor] = useState('bg-green-500');
   const [loading, setLoading] = useState(true);
@@ -36,9 +35,7 @@ const useUserData = () => {
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
       setLocalUser(session ? session.user : null);
-      if (session) {
-        setUserId(session.user.id); // userId 설정
-      } else {
+      if (!session) {
         setLoading(false);
       }
     });
@@ -52,29 +49,31 @@ const useUserData = () => {
 
   useEffect(() => {
     const loadUserData = async () => {
-      if (!userId) return;
-      const is_onboarded = await fetchIsOnboarded(userId);
-      setIsOnboarded(is_onboarded);
-      if (is_onboarded) {
-        const user_name = await fetchUserName(userId);
-        const tombstone_name = await fetchTombstoneName(userId);
-        const birth_date = await fetchBirthDate(userId);
-        const death_date = await fetchDeathDate(userId);
-        const fetchedObituary = await fetchObituary(userId);
-        const fetchedGoat = await fetchGoat(userId);
-        if (user_name) setUserName(user_name);
-        if (tombstone_name) setTombstoneName(tombstone_name);
-        setBirthDate(birth_date);
-        setDeathDate(death_date);
-        setObituary(fetchedObituary);
-        setGoat(fetchedGoat || []);  // null 방지를 위해 빈 배열 설정
+      const userId = await getCurrentUserId();
+      if (userId) {
+        const is_onboarded = await fetchIsOnboarded(userId);
+        setIsOnboarded(is_onboarded);
+        if (is_onboarded) {
+          const user_name = await fetchUserName(userId);
+          const tombstone_name = await fetchTombstoneName(userId);
+          const birth_date = await fetchBirthDate(userId);
+          const death_date = await fetchDeathDate(userId);
+          const fetchedObituary = await fetchObituary(userId);
+          const fetchedGoat = await fetchGoat(userId);
+          if (user_name) setUserName(user_name);
+          if (tombstone_name) setTombstoneName(tombstone_name);
+          setBirthDate(birth_date);
+          setDeathDate(death_date);
+          setObituary(fetchedObituary);
+          setGoat(fetchedGoat);
+        }
       }
       setLoading(false);
     };
     if (localUser) {
       loadUserData();
     }
-  }, [localUser, userId]);
+  }, [localUser]);
 
   const handleCopyLink = async () => {
     try {
@@ -118,15 +117,28 @@ const useUserData = () => {
           setObituary(value);
           break;
         case 'goat':
-          await upsertGoat(value, userId);
-          setGoat(value);
-          setNewGoat({ description: '', link: '' });
+          let updatedGoat = Array.isArray(goat) ? [...goat, value] : [value];
+          await upsertGoat(updatedGoat, userId);
+          setGoat(updatedGoat);
+          setNewGoat({ tag: '', description: '', link: '' });
           break;
         default:
           break;
       }
     } catch (error) {
       console.error(`Error saving ${field}:`, error);
+    }
+  };
+
+  const handleEditGoat = async (index, updatedGoatItem) => {
+    try {
+      const userId = await getCurrentUserId();
+      if (!userId) throw new Error('User is not logged in');
+      const updatedGoat = goat.map((item, i) => (i === index ? updatedGoatItem : item));
+      await upsertGoat(updatedGoat, userId);
+      setGoat(updatedGoat);
+    } catch (error) {
+      console.error('Error updating goat:', error);
     }
   };
 
@@ -154,14 +166,13 @@ const useUserData = () => {
     if (user_name) setUserName(user_name);
     if (tombstone_name) setTombstoneName(tombstone_name);
     setObituary(fetchedObituary);
-    setGoat(fetchedGoat || []);  // null 방지를 위해 빈 배열 설정
+    setGoat(fetchedGoat);
     setBirthDate(birth_date);
     setDeathDate(death_date);
   };
 
   return {
     localUser,
-    userId,  // userId 반환
     isOnboarded,
     userName,
     tombstoneName,
@@ -182,6 +193,7 @@ const useUserData = () => {
     setNewGoat,
     handleCopyLink,
     handleSave,
+    handleEditGoat,
     handleDeleteGoat,
     handleOnboardingComplete,
   };

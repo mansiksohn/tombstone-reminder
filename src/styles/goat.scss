@@ -2,7 +2,7 @@
   @apply p-4 rounded-lg my-8 text-white;
 }
 
-.goat-title {
+.goat-section h3 {
   @apply text-xl text-center font-bold;
 }
 
@@ -12,11 +12,6 @@
 
 .goat-item {
   @apply flex justify-between items-center p-2 mb-2 bg-grey-111 rounded-lg;
-  cursor: pointer;
-}
-
-.goat-item.placeholder {
-  @apply bg-grey-111 p-4 rounded-lg mb-4 flex items-center justify-center;
 }
 
 .goat-item .tag {
@@ -40,10 +35,14 @@
   @apply border p-2 rounded text-black mb-2 w-full;
 }
 
+.goat-input input.denied {
+  @apply ring-4 ring-red-500;
+}
+
 .goat-input button {
   @apply bg-soul-green-500 text-white p-2 rounded w-full;
 }
 
-.goat-section button {
-  @apply bg-soul-green-500 text-white p-2 rounded mt-4;
+.goat-input button:disabled {
+  @apply bg-gray-500 cursor-not-allowed;
 }
