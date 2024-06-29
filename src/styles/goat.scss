@@ -1,23 +1,49 @@
 .goat-section {
-  @apply p-4 rounded-lg mb-8 text-white;
+  @apply p-4 rounded-lg my-8 text-white;
 }
 
-.goat-container {
-  @apply p-4 rounded-lg mb-8 text-white;
+.goat-title {
+  @apply text-xl text-center font-bold;
 }
 
-.goat-section h3 {
-  @apply text-xl font-bold;
+.goat-subtitle {
+  @apply block text-center mb-4;
 }
 
-.goat-section p, .goat-section a {
-  @apply text-base font-normal leading-relaxed text-soul-green-500;
+.goat-item {
+  @apply flex justify-between items-center p-2 mb-2 bg-grey-111 rounded-lg;
+  cursor: pointer;
+}
+
+.goat-item.placeholder {
+  @apply bg-grey-111 p-4 rounded-lg mb-4 flex items-center justify-center;
+}
+
+.goat-item .tag {
+  @apply bg-soul-green-500 text-white rounded-full flex-none w-16 px-2 py-1;
+}
+
+.goat-item .description {
+  @apply text-xl text-soul-green-500 flex-auto px-2 py-1 mx-2;
+}
+
+.goat-item a {
+  @apply text-soul-green-500 flex-none;
+}
+
+.goat-input {
+  @apply mt-4;
+}
+
+.goat-input select,
+.goat-input input {
+  @apply border p-2 rounded text-black mb-2 w-full;
+}
+
+.goat-input button {
+  @apply bg-soul-green-500 text-white p-2 rounded w-full;
 }
 
 .goat-section button {
-  @apply bg-soul-green-500 border-none text-white py-1 px-2 text-center text-sm my-1 mx-1 cursor-pointer rounded-lg;
-}
-
-.goat-section button:hover {
-  @apply bg-soul-green-600;
+  @apply bg-soul-green-500 text-white p-2 rounded mt-4;
 }
