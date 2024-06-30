@@ -12,12 +12,3 @@
     width: 160px;
     margin: 16px 0;
   }
-  
-  button {
-    @apply bg-gray-800 text-white py-2 px-4 rounded mt-5;
-  }
-  
-  button:hover {
-    @apply bg-gray-600;
-  }
-  

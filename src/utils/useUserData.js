@@ -22,14 +22,14 @@ const useUserData = () => {
   const [localUser, setLocalUser] = useState(null);
   const [isOnboarded, setIsOnboarded] = useState(false);
   const [userName, setUserName] = useState('');
-  const [tombstoneName, setTombstoneName] = useState('Your Name');
+  const [tombstoneName, setTombstoneName] = useState('');
   const [birthDate, setBirthDate] = useState('');
   const [deathDate, setDeathDate] = useState('');
   const [obituary, setObituary] = useState('');
   const [goat, setGoat] = useState([]);
   const [newGoat, setNewGoat] = useState({ tag: '', description: '', link: '' });
   const [buttonText, setButtonText] = useState('Copy Link to Clipboard');
-  const [buttonColor, setButtonColor] = useState('bg-green-500');
+  const [buttonColor, setButtonColor] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -81,10 +81,10 @@ const useUserData = () => {
       const link = await createShareLink(userId);
       await navigator.clipboard.writeText(link);
       setButtonText('Link Copied');
-      setButtonColor('bg-blue-500');
+      setButtonColor('bg-soul-green-900');
       setTimeout(() => {
         setButtonText('Copy Link to Clipboard');
-        setButtonColor('bg-green-500');
+        setButtonColor('bg-soul-green-500');
       }, 1000);
     } catch (error) {
       console.error('Error creating or copying link:', error);

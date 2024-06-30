@@ -1,0 +1,26 @@
+.tombstone-container {
+    position: relative;
+    text-align: center;
+  }
+  
+  .tombstone-image {
+    @apply w-full max-w-xs mx-auto; // 이미지 크기를 조정하고 가운데 정렬
+  }
+  
+  .tombstone-name-overlay {
+    @apply absolute inset-0 flex flex-col items-center justify-center;
+  }
+  
+  .placeholder-text {
+    @apply break-keep text-grey-333;
+  }
+  
+  .textarea {
+    @apply min-w-60 max-w-96 min-h-full mt-16 break-keep font-bold;
+  }
+  
+  .tombstone-name {
+    @apply min-w-60 max-w-64 mt-16 break-words font-bold cursor-pointer;
+    white-space: pre-wrap; /* 줄바꿈을 포함하여 공백을 유지 */
+  }
+  

@@ -16,7 +16,7 @@ const tags = [
 
 function GoatSection({ goat, setGoat, newGoat, setNewGoat, handleSave, handleEditGoat, handleDeleteGoat }) {
   const [editingIndex, setEditingIndex] = useState(-1);
-  const [showInputField, setShowInputField] = useState(false); // 입력 필드 표시 상태 추가
+  const [showInputField, setShowInputField] = useState(false);
 
   useEffect(() => {
     if (!newGoat.tag) {
@@ -32,7 +32,7 @@ function GoatSection({ goat, setGoat, newGoat, setNewGoat, handleSave, handleEdi
 
   const handleSaveGoat = () => {
     handleSave('goat', newGoat);
-    setShowInputField(false); // 저장 후 입력 필드 숨기기
+    setShowInputField(false);
   };
 
   const handleEditClick = (index) => {
@@ -52,19 +52,37 @@ function GoatSection({ goat, setGoat, newGoat, setNewGoat, handleSave, handleEdi
 
   const isSaveDisabled = newGoat.description.length === 0;
 
+  const formatLink = (link) => {
+    if (!link.startsWith('http://') && !link.startsWith('https://')) {
+      return 'http://' + link;
+    }
+    return link;
+  };
+
+  const getIconSrc = (link) => {
+    if (link.includes('instagram.com')) {
+      return '/assets/images/instagram.svg';
+    } else if (link.includes('twitter.com') || link.includes('x.com')) {
+      return '/assets/images/twitter.svg';
+    } else if (link.includes('youtube.com')) {
+      return '/assets/images/youtube.svg';
+    }
+    return '/assets/images/link-45deg.svg';
+  };
+
   return (
     <div className="goat-section">
       <h3 className="goat-title text-center text-xl font-bold">GOAT</h3>
-      <span className="goat-subtitle">(당신 최고의 순간)</span>
+      <span className="goat-subtitle">:: 최고의 순간 ::</span>
       {goat.map((item, index) => (
         <div key={index} className="goat-item">
           {editingIndex === index ? (
-            <div className="goat-input mt-4">
+            <div className="goat-input">
               <select
                 name="tag"
                 value={newGoat.tag || ''}
                 onChange={handleNewGoatChange}
-                className="border p-2 rounded text-black mb-2 w-full"
+                className="rounded mb-2"
               >
                 {tags.map((tag, idx) => (
                   <option key={idx} value={tag}>{tag}</option>
@@ -90,7 +108,7 @@ function GoatSection({ goat, setGoat, newGoat, setNewGoat, handleSave, handleEdi
               <button onClick={handleEditSave} className="bg-soul-green-500 text-white p-2 rounded w-full mb-2" disabled={isSaveDisabled}>
                 Update
               </button>
-              <button onClick={() => setEditingIndex(-1)} className="bg-red-500 text-white p-2 rounded w-full mb-2">Cancel</button>
+              <button onClick={() => setEditingIndex(-1)} className="bg-amber-500 text-white p-2 rounded w-full mb-2">Cancel</button>
               <button onClick={handleDelete} className="bg-red-500 text-white p-2 rounded w-full">Delete</button>
             </div>
           ) : (
@@ -98,8 +116,8 @@ function GoatSection({ goat, setGoat, newGoat, setNewGoat, handleSave, handleEdi
               <span className="tag">{item.tag}</span>
               <span className="description">{item.description}</span>
               {item.link && (
-                <a href={item.link} target="_blank" rel="noopener noreferrer" className="text-soul-green-500">
-                  <img src={process.env.PUBLIC_URL + '/assets/images/link-45deg.svg'} alt="Link Icon" className="w-5 h-5" />
+                <a href={formatLink(item.link)} target="_blank" rel="noopener noreferrer" className="text-soul-green-500">
+                  <img src={process.env.PUBLIC_URL + getIconSrc(item.link)} alt="Link Icon" className="w-5 h-5" />
                 </a>
               )}
             </div>
@@ -107,14 +125,14 @@ function GoatSection({ goat, setGoat, newGoat, setNewGoat, handleSave, handleEdi
         </div>
       ))}
       {goat.length < 3 && editingIndex === -1 && (
-        <div className="goat-input mt-4">
+        <div className="goat-input">
           {showInputField ? (
             <>
               <select
                 name="tag"
                 value={newGoat.tag || ''}
                 onChange={handleNewGoatChange}
-                className="border p-2 rounded text-black mb-2 w-full"
+                className="rounded mb-2"
               >
                 {tags.map((tag, index) => (
                   <option key={index} value={tag}>{tag}</option>
@@ -142,7 +160,7 @@ function GoatSection({ goat, setGoat, newGoat, setNewGoat, handleSave, handleEdi
               </button>
             </>
           ) : (
-            <div className="flex justify-center items-center h-12" onClick={() => setShowInputField(true)}>
+            <div className="placeholder flex justify-center items-center h-12" onClick={() => setShowInputField(true)}>
               <span className="text-soul-green-500 text-2xl">+</span>
             </div>
           )}

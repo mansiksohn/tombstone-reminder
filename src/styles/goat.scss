@@ -11,15 +11,15 @@
 }
 
 .goat-item {
-  @apply flex justify-between items-center p-2 mb-2 bg-grey-111 rounded-lg;
+  @apply justify-between items-center p-2 mb-2 bg-grey-111 rounded-lg;
 }
 
 .goat-item .tag {
-  @apply bg-soul-green-500 text-white rounded-full flex-none w-16 px-2 py-1;
+  @apply bg-soul-green-500 text-white text-center flex-none rounded-full w-16 px-2 py-0;
 }
 
 .goat-item .description {
-  @apply text-xl text-soul-green-500 flex-auto px-2 py-1 mx-2;
+  @apply cursor-pointer text-xl text-soul-green-500 flex-auto px-2 py-1 mx-2 underline;
 }
 
 .goat-item a {
@@ -27,10 +27,13 @@
 }
 
 .goat-input {
-  @apply mt-4;
+  @apply mt-0;
 }
 
-.goat-input select,
+.goat-input select {
+  @apply bg-soul-green-500 text-white text-center flex-none rounded-full w-24 px-2 py-0;
+}
+
 .goat-input input {
   @apply border p-2 rounded text-black mb-2 w-full;
 }
@@ -40,9 +43,17 @@
 }
 
 .goat-input button {
-  @apply bg-soul-green-500 text-white p-2 rounded w-full;
+  @apply p-2 rounded w-full;
 }
 
 .goat-input button:disabled {
   @apply bg-gray-500 cursor-not-allowed;
+}
+
+.placeholder  {
+  @apply bg-grey-111 cursor-pointer rounded-lg;
+}
+
+.svg-icon {
+  fill: #27A385;
 }

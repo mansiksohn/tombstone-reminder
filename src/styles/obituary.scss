@@ -6,8 +6,7 @@
 }
 
 .obituary-text {
-  @apply text-white text-center;
-  cursor: pointer;
+  @apply text-white text-center break-keep cursor-pointer;
 }
 
 .min-h-textarea {
