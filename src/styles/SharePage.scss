@@ -20,7 +20,10 @@
   }
   
   .tombstone-name {
-    @apply min-w-60 max-w-64 mt-16 break-words font-bold cursor-pointer;
+    @apply min-w-60 max-w-64 mt-16 break-words font-bold cursor-pointer text-grey-333;
     white-space: pre-wrap; /* 줄바꿈을 포함하여 공백을 유지 */
   }
   
+  .flower-section {
+    position: absolute;
+  }

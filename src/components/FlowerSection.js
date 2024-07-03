@@ -1,49 +1,65 @@
-import React, { useState, useEffect } from 'react';
-import supabase from '../utils/supabaseClient';
+import React, { useState } from 'react';
+import '../styles/flower-section.scss';
 
-const FlowerSection = ({ userId, flowers, setFlowers }) => {
-  const [canPlaceFlower, setCanPlaceFlower] = useState(true);
+const flowers = [
+  '/assets/images/Blossom.svg',
+  '/assets/images/Bouquet.svg',
+  '/assets/images/Hibiscus.svg',
+  '/assets/images/Rose.svg',
+  '/assets/images/Sunflower.svg',
+  '/assets/images/Tulip.svg',
+];
 
-  const handlePlaceFlower = async () => {
-    if (!canPlaceFlower) return;
+const getRandomFlower = () => {
+  const randomIndex = Math.floor(Math.random() * flowers.length);
+  return flowers[randomIndex];
+};
 
-    try {
-      const newFlower = { user_id: userId, placed_at: new Date().toISOString() };
+const FlowerSection = () => {
+  const [flowerPositions, setFlowerPositions] = useState([]);
 
-      const { data, error } = await supabase
-        .from('Tombs')
-        .update({ flowers: [...flowers, newFlower] })
-        .eq('user_id', userId)
-        .select();
+  const handleAddFlower = () => {
+    const randomFlower = getRandomFlower();
+    const newFlower = {
+      src: randomFlower,
+      rotation: Math.random() * (-120) + 60,
+      size: 0.9 + Math.random() * 0.2,
+      position: {
+        x: Math.random() * 100 - 50,
+        y: Math.random() * 50 - 70,
+      },
+      animate: true,
+    };
+    setFlowerPositions([...flowerPositions, newFlower]);
 
-      if (error) {
-        console.error('Error placing flower:', error);
-        return;
-      }
-
-      setFlowers(data[0].flowers);
-      setCanPlaceFlower(false);
-
-      setTimeout(() => {
-        setCanPlaceFlower(true);
-      }, 24 * 60 * 60 * 1000); // 24시간 후에 꽃을 다시 놓을 수 있도록 설정
-    } catch (error) {
-      console.error('Error:', error);
-    }
+    // Remove animation class after animation ends
+    setTimeout(() => {
+      setFlowerPositions((prevFlowers) =>
+        prevFlowers.map((flower, index) =>
+          index === prevFlowers.length - 1
+            ? { ...flower, animate: false }
+            : flower
+        )
+      );
+    }, 1000); // Duration of the animation
   };
 
   return (
-    <div>
-      <div className="flowers-section mt-6">
-        {flowers.map((flower, index) => (
-          <div key={index} className="flower">
-            🌸 {/* 꽃 이모티콘 */}
-          </div>
+    <div className="flower-section">
+      <div className="flower-bowl-container">
+        <button className="add-flower-button" onClick={handleAddFlower}>+</button>
+        {flowerPositions.map((flower, index) => (
+          <img
+            key={index}
+            src={flower.src}
+            alt={`Flower ${index}`}
+            className={`flower ${flower.animate ? 'animate-flower' : ''}`}
+            style={{
+              transform: `translate(${flower.position.x}px, ${flower.position.y}px) rotate(${flower.rotation}deg) scale(${flower.size})`,
+            }}
+          />
         ))}
       </div>
-      <button onClick={handlePlaceFlower} className="bg-green-500 text-white p-2 rounded mt-2" disabled={!canPlaceFlower}>
-        {canPlaceFlower ? 'Place a Flower' : 'You can place a flower once a day'}
-      </button>
     </div>
   );
 };
