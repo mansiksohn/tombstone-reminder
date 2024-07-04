@@ -8,7 +8,7 @@ function Login() {
   return (
     <div className="flex flex-col min-h-screen bg-real-black text-real-white">
       <div className="login-container flex-grow flex flex-col items-center justify-center">
-        <h1 className="header text-2xl font-bold">어서오세요</h1>
+        <h1 className="text-2xl font-bold m-8">어서오세요</h1>
         <p className="text-base">아직 안죽으셨다고요?</p>
         <p>그래도 앞으로 필요해지실겁니다.</p>
         <p>암요 미리미리 준비해야죠.</p>

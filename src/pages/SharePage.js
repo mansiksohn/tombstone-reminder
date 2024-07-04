@@ -63,9 +63,9 @@ const SharePage = () => {
   };
 
   return (
-    <div className="app-container bg-real-black">
+    <div className="home-container bg-real-black">
       <PublicHeader /> {/* PublicHeader 컴포넌트 추가 */}
-      <main className="app-main text-center">
+      <main className="main-content text-center">
         <h2 className="text-2xl text-center p-4">
           <span className="block">
             <span className="text-soul-green-500 font-bold underline">{userName || '신원미상'}</span>
