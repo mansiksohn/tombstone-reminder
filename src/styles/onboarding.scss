@@ -1,0 +1,14 @@
+.onboarding-chat-container {
+    @apply h-screen;
+}
+
+.chat-box {
+    @apply mb-auto;
+}
+.chat-bubble {
+    @apply text-3xl text-real-white m-4;
+}
+
+.input-box {
+    @apply h-24;
+}

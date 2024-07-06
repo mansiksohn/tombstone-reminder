@@ -30,18 +30,18 @@ const OnboardingChat = ({ onOnboardingComplete }) => {
   };
 
   return (
-    <div className="onboarding-chat-container p-4 rounded-lg shadow-lg text-white">
-      <div className="chat-box mb-4">
+    <div className="onboarding-chat-container flex flex-col p-4 rounded-lg shadow-lg text-white">
+      <div className="chat-box flex-1">
         {step === 0 && (
           <div className="chat-message">
-            <div className="chat-bubble">안녕하세요? 선생님도 기후대응에 이의가 있으시군요! 이렇게 반가울 데가!</div>
-            <div className="chat-bubble">저는 청끼입니다. 선생님 어떻게 불러드리면 될까요?</div>
+            <div className="chat-bubble">안녕하세요?</div>
+            <div className="chat-bubble">비석에 새길 이름은 뭐로 하실래요? 별명도 좋아요.</div>
           </div>
         )}
         {step === 1 && (
           <div className="chat-message">
-            <div className="chat-bubble">{userName}님, 만나서 반갑습니다!</div>
-            <div className="chat-bubble">선생님의 묘비명을 입력해주세요.</div>
+            <div className="chat-bubble">{userName}님, 제가 특별히 묘비명을 직접 고를 수 있는 기회를 드릴게요</div>
+            <div className="chat-bubble">선생님의 인생을 한 문장으로 표현한다면?</div>
           </div>
         )}
         {step === 2 && (
