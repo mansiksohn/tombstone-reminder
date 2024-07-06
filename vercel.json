@@ -6,7 +6,7 @@
     },
     "builds": [
       {
-        "src": "src/index.js",
+        "src": "package.json",
         "use": "@vercel/static-build",
         "config": {
           "distDir": "build"
@@ -19,5 +19,4 @@
         "dest": "/index.html"
       }
     ]
-  }
-  
+}
