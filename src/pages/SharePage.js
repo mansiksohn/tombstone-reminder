@@ -82,7 +82,7 @@ const SharePage = () => {
         </div>
         <div className="tombstone-container mt-6 relative">
           <img src={process.env.PUBLIC_URL + '/assets/images/headstone.svg'} alt="Tombstone" className="tombstone-image w-full" />
-          <div className="tombstone-name-overlay text-center mt-4">
+          <div className="tombstone-name-overlay text-center">
             <h2 className="text-2xl tombstone-name">{tombstoneName}</h2>
           </div>
         </div>

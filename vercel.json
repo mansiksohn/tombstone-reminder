@@ -1,0 +1,23 @@
+{
+    "version": 2,
+    "env": {
+      "REACT_APP_SUPABASE_URL": "@react_app_supabase_url",
+      "REACT_APP_SUPABASE_ANON_KEY": "@react_app_supabase_anon_key"
+    },
+    "builds": [
+      {
+        "src": "src/index.js",
+        "use": "@vercel/static-build",
+        "config": {
+          "distDir": "build"
+        }
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "/index.html"
+      }
+    ]
+  }
+  
