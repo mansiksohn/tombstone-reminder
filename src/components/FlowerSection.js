@@ -21,6 +21,7 @@ const FlowerSection = () => {
   const handleAddFlower = () => {
     const randomFlower = getRandomFlower();
     const newFlower = {
+      id: Date.now(), // Unique ID for each flower
       src: randomFlower,
       rotation: Math.random() * (-120) + 60,
       size: 0.9 + Math.random() * 0.2,
@@ -35,25 +36,38 @@ const FlowerSection = () => {
     // Remove animation class after animation ends
     setTimeout(() => {
       setFlowerPositions((prevFlowers) =>
-        prevFlowers.map((flower, index) =>
-          index === prevFlowers.length - 1
-            ? { ...flower, animate: false }
-            : flower
+        prevFlowers.map((flower) =>
+          flower.id === newFlower.id ? { ...flower, animate: false } : flower
         )
       );
     }, 1000); // Duration of the animation
+
+    // Fade out and remove flower after 10 seconds
+    setTimeout(() => {
+      setFlowerPositions((prevFlowers) =>
+        prevFlowers.map((flower) =>
+          flower.id === newFlower.id ? { ...flower, fadeOut: true } : flower
+        )
+      );
+    }, 9000); // Time after which the flower should start fading out
+
+    setTimeout(() => {
+      setFlowerPositions((prevFlowers) =>
+        prevFlowers.filter((flower) => flower.id !== newFlower.id)
+      );
+    }, 10000); // Time after which the flower should be removed
   };
 
   return (
     <div className="flower-section">
       <div className="flower-bowl-container">
         <button className="add-flower-button" onClick={handleAddFlower}>+</button>
-        {flowerPositions.map((flower, index) => (
+        {flowerPositions.map((flower) => (
           <img
-            key={index}
+            key={flower.id}
             src={flower.src}
-            alt={`Flower ${index}`}
-            className={`flower ${flower.animate ? 'animate-flower' : ''}`}
+            alt={`Flower ${flower.id}`}
+            className={`flower ${flower.animate ? 'animate-flower' : ''} ${flower.fadeOut ? 'fade-out' : ''}`}
             style={{
               transform: `translate(${flower.position.x}px, ${flower.position.y}px) rotate(${flower.rotation}deg) scale(${flower.size})`,
             }}

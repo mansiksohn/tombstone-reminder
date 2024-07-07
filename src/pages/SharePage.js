@@ -80,7 +80,7 @@ const SharePage = () => {
             <span className="date-input text-white">{deathDate || '????'}</span>
           </div>
         </div>
-        <div className="tombstone-container mt-6 relative">
+        <div className="tombstone-container relative">
           <img src={process.env.PUBLIC_URL + '/assets/images/headstone.svg'} alt="Tombstone" className="tombstone-image w-full" />
           <div className="tombstone-name-overlay text-center">
             <h2 className="text-2xl tombstone-name">{tombstoneName}</h2>
@@ -89,7 +89,7 @@ const SharePage = () => {
         <FlowerSection />
         <GroundSection />
         <div className="death-mask-section p-4">
-          <div className="coffin bg-grey-111 p-4 rounded-lg">
+          <div className="coffin p-4 rounded-lg">
             <img
               src={
                 images.find((img) => img.name === selectedImage)?.path ||

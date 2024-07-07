@@ -5,6 +5,7 @@ import OnboardingChat from '../pages/OnboardingChat';
 import Header from '../components/Header';
 import UserNameSection from '../components/UserNameSection';
 import TombstoneSection from '../components/TombstoneSection';
+import FlowerSection from '../components/FlowerSection';
 import GroundSection from '../components/GroundSection';
 import DeathMaskSection from '../components/DeathMaskSection';
 import DatesSection from '../components/DatesSection';
@@ -53,6 +54,7 @@ function Home() {
         <UserNameSection userName={userName} setUserName={setUserName} handleSave={handleSave} />
         <DatesSection birthDate={birthDate} deathDate={deathDate} setBirthDate={setBirthDate} setDeathDate={setDeathDate} handleSave={handleSave} />
         <TombstoneSection tombstoneName={tombstoneName} setTombstoneName={setTombstoneName} handleSave={handleSave} />
+        <FlowerSection />
         <GroundSection />
         <DeathMaskSection />
         <ObituarySection obituary={obituary} setObituary={setObituary} handleSave={handleSave} />

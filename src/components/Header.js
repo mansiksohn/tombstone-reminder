@@ -6,7 +6,6 @@ function Header({ userName }) { // userName prop을 추가
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    console.log(`Menu is now ${menuOpen ? 'open' : 'closed'}`);
   }, [menuOpen]);
 
   return (

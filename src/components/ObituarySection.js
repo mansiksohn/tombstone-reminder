@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import supabase from '../utils/supabaseClient';
 import '../styles/obituary.scss';
 
 function ObituarySection({ obituary, setObituary, handleSave }) {
   const [isEditing, setIsEditing] = useState(false);
   const [userId, setUserId] = useState(null);
+  const textareaRef = useRef(null);
 
   useEffect(() => {
     const getUser = async () => {
@@ -26,7 +27,7 @@ function ObituarySection({ obituary, setObituary, handleSave }) {
     }
   };
 
-  const handleSaveClick = async () => {
+  const handleSaveClick = useCallback(async () => {
     if (userId) {
       const { data, error } = await supabase
         .from('Tombs')
@@ -40,7 +41,7 @@ function ObituarySection({ obituary, setObituary, handleSave }) {
       }
     }
     setIsEditing(false);
-  };
+  }, [userId, obituary]);
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -48,22 +49,39 @@ function ObituarySection({ obituary, setObituary, handleSave }) {
     }
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (textareaRef.current && !textareaRef.current.contains(event.target)) {
+        handleSaveClick();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [handleSaveClick]);
+
   const defaultObituary = '자신의 일생을 미리 부고로 작성하는 것은 현재와 미래를 성찰하는 유용한 방법이다. 우울해지는 부작용 없이 부고 쓰기를 해보는 방법은, 미래 시제로 자신의 이야기를 써보는 것이다.';
 
   return (
     <div className="obituary-section">
-      <div className="obituary-container">
+      <div className="obituary-container relative">
         {isEditing ? (
-          <textarea
-            value={obituary}
-            onChange={handleChange}
-            onBlur={handleSaveClick}
-            onKeyPress={handleKeyPress}
-            className="border p-2 rounded-l text-black w-full min-h-textarea" // 클래스 이름 수정
-            autoFocus
-            maxLength={160}
-            placeholder={defaultObituary} // Placeholder 설정
-          />
+          <div className="flex flex-col items-end">
+            <textarea
+              ref={textareaRef}
+              value={obituary}
+              onChange={handleChange}
+              onBlur={handleSaveClick}
+              onKeyPress={handleKeyPress}
+              className="obituary-text-area border p-2 rounded-l text-black w-full"
+              autoFocus
+              maxLength={160}
+              placeholder={defaultObituary}
+            />
+            <span className="char-count">{obituary.length}/160</span>
+          </div>
         ) : (
           <p onClick={handleClick} className="obituary-text cursor-pointer text-white">
             {obituary || '부고를 추가해주세요'}

@@ -14,7 +14,7 @@ function TombstoneSection({ tombstoneName, setTombstoneName, handleSave }) {
     value = value.replace(/\s\s+/g, ' ').trim();
     // 줄바꿈 수를 제한
     const newLineCount = (value.match(/\n/g) || []).length;
-    if (newLineCount <= MAX_NEW_LINES && value.length <= 160) {
+    if (newLineCount <= MAX_NEW_LINES && value.length <= 80) {
       setTombstoneName(value);
     }
   };
@@ -38,7 +38,7 @@ function TombstoneSection({ tombstoneName, setTombstoneName, handleSave }) {
   const placeholderText = 'Δεν ελπίζω τίποταΔε φοβούμαι τίποταΕίμαι λέφτερος';
 
   return (
-    <div className="tombstone-container mt-6 relative">
+    <div className="tombstone-container relative">
       <img 
         src={tombstoneName ? process.env.PUBLIC_URL + '../assets/images/headstone.svg' : process.env.PUBLIC_URL + '../assets/images/headstone-placeholder.svg'} 
         alt="Tombstone" 
@@ -54,13 +54,13 @@ function TombstoneSection({ tombstoneName, setTombstoneName, handleSave }) {
               onKeyPress={handleKeyPress}
               className="textarea border p-2 rounded-l text-black"
               autoFocus
-              maxLength={160} // 입력 필드에 대한 길이 제한 설정
+              maxLength={80} // 입력 필드에 대한 길이 제한 설정
             />
           </div>
         ) : (
           <h2 
             onClick={handleClick} 
-            className={`text-2xl tombstone-name ${!tombstoneName ? 'placeholder-text' : ''}`}
+            className={`text-2xl tombstone-name ${!tombstoneName ? 'placeholder-text' : 'filled-text'}`}
             dangerouslySetInnerHTML={formatText(tombstoneName || placeholderText)}
           />
         )}

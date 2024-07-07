@@ -15,11 +15,11 @@
 }
 
 .goat-item .tag {
-  @apply bg-soul-green-500 text-white text-center flex-none rounded-full w-16 px-2 py-0;
+  @apply bg-grey-111 border-2 border-soul-green-500 text-soul-green-500 text-center flex-none rounded-full px-2 py-0;
 }
 
 .goat-item .description {
-  @apply cursor-pointer text-xl text-soul-green-500 flex-auto px-2 py-1 mx-2 underline;
+  @apply cursor-pointer text-xl text-soul-green-500 flex-auto px-2 py-1 mx-2 underline break-all;
 }
 
 .goat-item a {
@@ -31,7 +31,7 @@
 }
 
 .goat-input select {
-  @apply bg-soul-green-500 text-white text-center flex-none rounded-full w-24 px-2 py-0;
+  @apply bg-grey-111 border-2 border-soul-green-500 text-soul-green-500 text-center flex-none rounded-full px-2 py-0;
 }
 
 .goat-input input {
@@ -55,5 +55,5 @@
 }
 
 .svg-icon {
-  fill: #27A385;
+  fill: #00dc82;
 }

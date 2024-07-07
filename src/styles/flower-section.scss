@@ -24,6 +24,8 @@
 .flower {
   position: absolute;
   z-index: 0;
+  transition: opacity 1s ease-out;
+  opacity: 1;
 }
 
 @keyframes drop-flower {
@@ -39,4 +41,8 @@
 
 .animate-flower {
   animation: drop-flower 0.5s ease-in forwards;
+}
+
+.fade-out {
+  opacity: 0;
 }

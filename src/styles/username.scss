@@ -1,0 +1,28 @@
+.username-container {
+    @apply flex flex-col items-center h-16 top-52 px-4 z-10;
+    position: relative;
+  }
+  
+  .username-input {
+    @apply min-w-60 max-w-96 h-16 break-keep font-bold;
+    @apply border-4 p-1 rounded-lg border-soul-green-500 text-soul-green-500;
+    @apply bg-soul-green-950; /* 배경색을 연한 회색으로 변경 */
+    @apply text-lg; /* 글자 크기를 좀 더 크게 */
+    @apply leading-relaxed; /* 줄 간격을 넉넉하게 */
+    resize: none; /* 사용자가 크기 조절하지 못하도록 */
+    transition: background-color 0.3s ease; /* 배경색 전환 애니메이션 */
+    
+    &:focus {
+      @apply bg-real-black;
+      outline: none; /* 기본 포커스 아웃라인 제거 */
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* 포커스 시 그림자 강화 */
+    }
+  }
+  
+  .char-count {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    @apply text-grey-999 text-sm;
+  }

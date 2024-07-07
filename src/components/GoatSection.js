@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 
 const tags = [
   '최고의',
@@ -17,6 +17,7 @@ const tags = [
 function GoatSection({ goat, setGoat, newGoat, setNewGoat, handleSave, handleEditGoat, handleDeleteGoat }) {
   const [editingIndex, setEditingIndex] = useState(-1);
   const [showInputField, setShowInputField] = useState(false);
+  const editFieldRef = useRef(null);
 
   useEffect(() => {
     if (!newGoat.tag) {
@@ -24,6 +25,30 @@ function GoatSection({ goat, setGoat, newGoat, setNewGoat, handleSave, handleEdi
       setNewGoat((prev) => ({ ...prev, tag: randomTag }));
     }
   }, [newGoat, setNewGoat]);
+
+  const handleEditSave = useCallback(() => {
+    if (editingIndex !== -1) {
+      handleEditGoat(editingIndex, newGoat);
+      setEditingIndex(-1);
+    }
+  }, [editingIndex, handleEditGoat, newGoat]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (editFieldRef.current && !editFieldRef.current.contains(event.target)) {
+        if (editingIndex !== -1) {
+          handleEditSave();
+        } else {
+          setShowInputField(false);
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [editingIndex, handleEditSave]);
 
   const handleNewGoatChange = (e) => {
     const { name, value } = e.target;
@@ -38,11 +63,6 @@ function GoatSection({ goat, setGoat, newGoat, setNewGoat, handleSave, handleEdi
   const handleEditClick = (index) => {
     setEditingIndex(index);
     setNewGoat(goat[index]);
-  };
-
-  const handleEditSave = () => {
-    handleEditGoat(editingIndex, newGoat);
-    setEditingIndex(-1);
   };
 
   const handleDelete = () => {
@@ -77,7 +97,7 @@ function GoatSection({ goat, setGoat, newGoat, setNewGoat, handleSave, handleEdi
       {goat.map((item, index) => (
         <div key={index} className="goat-item">
           {editingIndex === index ? (
-            <div className="goat-input">
+            <div className="goat-input" ref={editFieldRef}>
               <select
                 name="tag"
                 value={newGoat.tag || ''}
@@ -105,10 +125,6 @@ function GoatSection({ goat, setGoat, newGoat, setNewGoat, handleSave, handleEdi
                 placeholder="링크"
                 className="border p-2 rounded text-black mb-2 w-full"
               />
-              <button onClick={handleEditSave} className="bg-soul-green-500 text-white p-2 rounded w-full mb-2" disabled={isSaveDisabled}>
-                Update
-              </button>
-              <button onClick={() => setEditingIndex(-1)} className="bg-amber-500 text-white p-2 rounded w-full mb-2">Cancel</button>
               <button onClick={handleDelete} className="bg-red-500 text-white p-2 rounded w-full">Delete</button>
             </div>
           ) : (
@@ -125,7 +141,7 @@ function GoatSection({ goat, setGoat, newGoat, setNewGoat, handleSave, handleEdi
         </div>
       ))}
       {goat.length < 3 && editingIndex === -1 && (
-        <div className="goat-input">
+        <div className="goat-input" ref={editFieldRef}>
           {showInputField ? (
             <>
               <select

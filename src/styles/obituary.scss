@@ -1,14 +1,31 @@
 .obituary-section {
-  @apply px-4;
+  @apply px-4 h-56;
 }
+
 .obituary-container {
-  @apply bg-soul-green-950 p-4 rounded-lg min-h-60 content-center;
+  @apply bg-soul-green-900 p-4 rounded-lg h-56 content-center relative;
 }
 
 .obituary-text {
-  @apply text-white text-center break-keep cursor-pointer;
+  @apply text-white align-middle break-all cursor-pointer h-48;
 }
 
-.min-h-textarea {
-  @apply min-h-56;
+.obituary-text-area {
+  @apply min-w-60 h-56 break-keep;
+  @apply border-2 rounded-lg border-soul-green-500 text-soul-green-500;
+  @apply bg-soul-green-900;
+  resize: none; /* 사용자가 크기 조절하지 못하도록 */
+  transition: background-color 0.3s ease; /* 배경색 전환 애니메이션 */
+  
+  &:focus {
+    @apply bg-real-black; /* 포커스 시 배경색을 흰색으로 변경 */
+    outline: none; /* 기본 포커스 아웃라인 제거 */
+  }
+}
+
+.char-count {
+  position: relative;
+  bottom: 1rem;
+  right: 0.5rem;
+  @apply text-grey-999 bg-black text-sm;
 }

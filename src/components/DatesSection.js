@@ -21,12 +21,12 @@ function DatesSection({ birthDate, deathDate, setBirthDate, setDeathDate, handle
   };
 
   const handleBirthSave = () => {
-    handleSave('birthDate', birthDate);
+    handleSave('birthDate', birthDate || null);
     setIsEditingBirth(false);
   };
 
   const handleDeathSave = () => {
-    handleSave('deathDate', deathDate);
+    handleSave('deathDate', deathDate || null);
     setIsEditingDeath(false);
   };
 

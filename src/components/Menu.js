@@ -11,7 +11,7 @@ function Menu({ menuOpen, setMenuOpen, userName }) {
         <div className="menu-content">
           <div className="user-name-container">
             <div className="user-name text-xl font-bold text-soul-green-500">
-              {userName ? `${userName}` : 'Guest'}
+              {userName ? `${userName}` : '신원미상'}
               <span className="text-white">님</span>
             </div>
           </div>

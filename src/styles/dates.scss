@@ -1,5 +1,7 @@
 .date-container {
-    @apply flex flex-col items-center p-4;
+    @apply flex flex-col items-center top-52 h-8 px-4 z-10;
+    position: relative;
+    width: 100%;
   }
   
   .date-input {
