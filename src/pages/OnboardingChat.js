@@ -5,8 +5,6 @@ import '../styles/index.scss'; // 모든 스타일을 한 곳에서 import
 const OnboardingChat = ({ onOnboardingComplete }) => {
   const [step, setStep] = useState(0);
   const [userName, setUserName] = useState('');
-  const [tombstoneName, setTombstoneName] = useState('');
-  const [birthDate, setBirthDate] = useState('');
   const [inputValue, setInputValue] = useState('');
 
   const handleNextStep = async () => {
@@ -17,10 +15,8 @@ const OnboardingChat = ({ onOnboardingComplete }) => {
       setUserName(inputValue);
       await upsertUserNameToBackend(inputValue, userId);
     } else if (step === 1) {
-      setTombstoneName(inputValue);
       await upsertTombstoneNameToBackend(inputValue, userId);
     } else if (step === 2) {
-      setBirthDate(inputValue);
       await upsertBirthDate(inputValue, userId);
       onOnboardingComplete();
     }
