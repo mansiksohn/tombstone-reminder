@@ -29,17 +29,17 @@ function ObituarySection({ obituary, setObituary, handleSave }) {
 
   const handleSaveClick = useCallback(async () => {
     if (userId) {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('Tombs')
         .update({ obituary: obituary })
         .eq('user_id', userId);
-  
+
       if (error) {
         console.error('Error saving obituary:', error);
       }
     }
     setIsEditing(false);
-  }, [userId, obituary]);  
+  }, [userId, obituary]);
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {

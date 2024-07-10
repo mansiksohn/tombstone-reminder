@@ -33,7 +33,7 @@ export const fetchBirthDate = async (userId) => fetchSingleValue(userId, 'birth_
 export const fetchDeathDate = async (userId) => fetchSingleValue(userId, 'death_date');
 
 const upsertSingleValue = async (userId, values) => {
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from('Tombs')
     .upsert({ user_id: userId, ...values, is_onboarded: true }, { onConflict: ['user_id'] });
 
@@ -42,7 +42,7 @@ const upsertSingleValue = async (userId, values) => {
     return null;
   }
 
-  return data;
+  return true;
 };
 
 export const upsertTombstoneNameToBackend = async (tombName, userId) => upsertSingleValue(userId, { tomb_name: tombName });

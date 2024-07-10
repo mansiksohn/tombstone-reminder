@@ -59,7 +59,7 @@ const OnboardingChat = ({ onOnboardingComplete }) => {
         )}
         {step === 3 && (
           <div className="chat-message">
-            <div className="chat-bubble">감사합니다! 이제 나머지는 직접 골라보세요.</div>
+            <div className="chat-bubble">감사합니다! 온보딩이 완료되었습니다.</div>
           </div>
         )}
       </div>
