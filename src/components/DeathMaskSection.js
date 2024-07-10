@@ -59,17 +59,15 @@ function DeathMaskSection() {
 
   const handleImageClick = async (image) => {
     setSelectedImage(image.path);
-
+  
     if (userId) {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('Tombs')
         .update({ deathmask: image.name })
         .eq('user_id', userId);
-
+  
       if (error) {
         console.error('Error saving image:', error);
-      } else {
-        console.log('Image saved successfully:', data);
       }
     }
     setSelectorVisible(false); // 이미지 선택 후 이미지 선택기 숨기기

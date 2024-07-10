@@ -40,7 +40,7 @@ function TombstoneSection({ tombstoneName, setTombstoneName, handleSave }) {
   return (
     <div className="tombstone-container relative">
       <img 
-        src={tombstoneName ? process.env.PUBLIC_URL + '../assets/images/headstone.svg' : process.env.PUBLIC_URL + '../assets/images/headstone-placeholder.svg'} 
+        src={tombstoneName ? `${process.env.PUBLIC_URL}/assets/images/headstone.svg` : `${process.env.PUBLIC_URL}/assets/images/headstone-placeholder.svg`} 
         alt="Tombstone" 
         className="tombstone-image" 
       />

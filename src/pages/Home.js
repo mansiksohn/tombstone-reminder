@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react'; // `useState`와 `useEffect` 제거
 import '../styles/global.scss'; // 스타일 파일 경로 변경
 import Login from './Login';
 import OnboardingChat from '../pages/OnboardingChat';
@@ -13,7 +13,6 @@ import ObituarySection from '../components/ObituarySection';
 import GoatSection from '../components/GoatSection';
 import ShareSection from '../components/ShareSection';
 import useUserData from '../utils/useUserData';
-import supabase from '../utils/supabaseClient';
 
 function Home() {
   const {

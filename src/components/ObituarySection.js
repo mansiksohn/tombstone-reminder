@@ -33,15 +33,13 @@ function ObituarySection({ obituary, setObituary, handleSave }) {
         .from('Tombs')
         .update({ obituary: obituary })
         .eq('user_id', userId);
-
+  
       if (error) {
         console.error('Error saving obituary:', error);
-      } else {
-        console.log('Obituary saved successfully:', data);
       }
     }
     setIsEditing(false);
-  }, [userId, obituary]);
+  }, [userId, obituary]);  
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -71,7 +69,7 @@ function ObituarySection({ obituary, setObituary, handleSave }) {
           <div className="flex flex-col items-end">
             <textarea
               ref={textareaRef}
-              value={obituary}
+              value={obituary || ''}
               onChange={handleChange}
               onBlur={handleSaveClick}
               onKeyPress={handleKeyPress}
@@ -80,7 +78,7 @@ function ObituarySection({ obituary, setObituary, handleSave }) {
               maxLength={160}
               placeholder={defaultObituary}
             />
-            <span className="char-count">{obituary.length}/160</span>
+            <span className="char-count">{(obituary || '').length}/160</span>
           </div>
         ) : (
           <p onClick={handleClick} className="obituary-text cursor-pointer text-white">

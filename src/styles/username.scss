@@ -15,11 +15,10 @@
     &:focus {
       @apply bg-real-black;
       outline: none; /* 기본 포커스 아웃라인 제거 */
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* 포커스 시 그림자 강화 */
     }
   }
   
-  .char-count {
+  .name-char-count {
     position: absolute;
     right: 12px;
     top: 50%;

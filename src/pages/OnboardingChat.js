@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { getCurrentUserId, upsertUserNameToBackend, upsertTombstoneNameToBackend } from '../utils/supabaseService';
+import { getCurrentUserId, upsertUserNameToBackend, upsertTombstoneNameToBackend, upsertBirthDate } from '../utils/supabaseService';
 import '../styles/index.scss'; // 모든 스타일을 한 곳에서 import
 
 const OnboardingChat = ({ onOnboardingComplete }) => {
   const [step, setStep] = useState(0);
   const [userName, setUserName] = useState('');
   const [tombstoneName, setTombstoneName] = useState('');
+  const [birthDate, setBirthDate] = useState('');
   const [inputValue, setInputValue] = useState('');
 
   const handleNextStep = async () => {
@@ -18,6 +19,9 @@ const OnboardingChat = ({ onOnboardingComplete }) => {
     } else if (step === 1) {
       setTombstoneName(inputValue);
       await upsertTombstoneNameToBackend(inputValue, userId);
+    } else if (step === 2) {
+      setBirthDate(inputValue);
+      await upsertBirthDate(inputValue, userId);
       onOnboardingComplete();
     }
 
@@ -26,6 +30,10 @@ const OnboardingChat = ({ onOnboardingComplete }) => {
   };
 
   const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+  };
+
+  const handleDateChange = (e) => {
     setInputValue(e.target.value);
   };
 
@@ -46,19 +54,34 @@ const OnboardingChat = ({ onOnboardingComplete }) => {
         )}
         {step === 2 && (
           <div className="chat-message">
-            <div className="chat-bubble">감사합니다! 온보딩이 완료되었습니다.</div>
+            <div className="chat-bubble">생이 시작된 날을 기억하시나요?</div>
+          </div>
+        )}
+        {step === 3 && (
+          <div className="chat-message">
+            <div className="chat-bubble">감사합니다! 이제 나머지는 직접 골라보세요.</div>
           </div>
         )}
       </div>
-      {step < 2 && (
+      {step < 3 && (
         <div className="input-box flex">
-          <input
-            type="text"
-            value={inputValue}
-            onChange={handleInputChange}
-            placeholder={step === 0 ? "이름 또는 별명(12자 이하)" : "묘비명 입력"}
-            className="flex-grow p-2 rounded-l-lg text-black"
-          />
+          {step === 2 ? (
+            <input
+              type="date"
+              value={inputValue}
+              onChange={handleDateChange}
+              placeholder="YYYY-MM-DD"
+              className="flex-grow p-2 rounded-l-lg text-black"
+            />
+          ) : (
+            <input
+              type="text"
+              value={inputValue}
+              onChange={handleInputChange}
+              placeholder={step === 0 ? "이름 또는 별명(12자 이하)" : "묘비명 입력"}
+              className="flex-grow p-2 rounded-l-lg text-black"
+            />
+          )}
           <button onClick={handleNextStep} className="p-2 rounded-r-lg">다음</button>
         </div>
       )}

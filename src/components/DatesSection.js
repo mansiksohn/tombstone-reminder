@@ -46,7 +46,7 @@ function DatesSection({ birthDate, deathDate, setBirthDate, setDeathDate, handle
         {isEditingBirth ? (
           <input
             type="date"
-            value={birthDate}
+            value={birthDate || ''}
             onChange={handleBirthChange}
             onBlur={handleBirthSave}
             onKeyPress={handleKeyPress}
@@ -60,7 +60,7 @@ function DatesSection({ birthDate, deathDate, setBirthDate, setDeathDate, handle
         {isEditingDeath ? (
           <input
             type="date"
-            value={deathDate}
+            value={deathDate || ''}
             onChange={handleDeathChange}
             onBlur={handleDeathSave}
             onKeyPress={handleKeyPress}

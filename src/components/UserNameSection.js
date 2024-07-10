@@ -58,7 +58,7 @@ function UserNameSection({ userName, setUserName, handleSave }) {
             maxLength={12} // 입력 필드에 대한 길이 제한 설정
             placeholder="이름 12자 이하" // placeholder 설정
           />
-          <span className="char-count">{userName.length}/12</span>
+          <span className="name-char-count">{userName.length}/12</span>
         </div>
       ) : (
         <h2 onClick={handleClick} className="text-xl cursor-pointer">
