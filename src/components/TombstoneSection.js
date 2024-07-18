@@ -54,7 +54,7 @@ function TombstoneSection({ tombstoneName, setTombstoneName, handleSave }) {
               onKeyPress={handleKeyPress}
               className="textarea border p-2 rounded-l text-black"
               autoFocus
-              maxLength={80} // 입력 필드에 대한 길이 제한 설정
+              maxLength={72} // 입력 필드에 대한 길이 제한 설정
             />
           </div>
         ) : (

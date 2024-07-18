@@ -1,14 +1,72 @@
+.fixed-header {
+    @apply p-2 m-auto;
+    z-index: 1000;
+  }
+
+.header-image {
+    max-width: 48px; // Adjust size as needed
+}
+
+.splash-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #000; // Change this to your desired background color
+}
+
+.splash-image {
+    max-width: 300px; // Adjust the size as needed
+    opacity: 0;
+    animation: fadeIn 3s forwards;
+}
+
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 1s forwards 1s; // 1s delay before fading in
+    transform: translateY(20px);
+}
+  
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}
+
 .onboarding-chat-container {
-    @apply h-screen;
+    @apply h-dvh w-full md:w-auto;
 }
 
 .chat-box {
-    @apply mb-auto;
+    @apply flex flex-col h-dvh m-4;
+}
+.chat-message {
+    @apply gap-y-4 flex flex-col w-4/5;
 }
 .chat-bubble {
-    @apply text-3xl text-real-white m-4;
+    @apply text-xl bg-real-white text-real-black rounded-b-2xl rounded-tr-2xl p-3 w-fit break-keep fade-in;
 }
 
 .input-box {
-    @apply h-24;
+    @apply flex fade-in;
+}
+
+.splash-screen {
+    @apply h-dvh w-full md:w-auto flex flex-col;
+}
+
+.splash-image {
+    @apply object-scale-down max-h-96 m-auto;
+}
+
+.logout-button {
+    @apply bg-transparent text-sm text-grey-999 h-8 px-2 py-0 underline;
+}
+
+.onboarding-char-count {
+    position: absolute;
+    bottom: 2.5rem;
+    right: 6rem;
+    @apply text-grey-999 text-sm;
 }

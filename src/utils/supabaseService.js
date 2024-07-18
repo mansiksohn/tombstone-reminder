@@ -53,7 +53,7 @@ export const upsertBirthDate = async (birthDate, userId) => upsertSingleValue(us
 export const upsertDeathDate = async (deathDate, userId) => upsertSingleValue(userId, { death_date: deathDate });
 
 export const createShareLink = async (userId) => {
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('Tombs')
     .select('tomb_name')
     .eq('user_id', userId)
