@@ -82,7 +82,7 @@ function ObituarySection({ obituary, setObituary, handleSave }) {
           </div>
         ) : (
           <p onClick={handleClick} className="obituary-text cursor-pointer text-white">
-            {obituary || '부고를 추가해주세요'}
+            {obituary || '더 남기고 싶은 말이 있나요?'}
           </p>
         )}
       </div>

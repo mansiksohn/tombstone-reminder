@@ -14,7 +14,7 @@ const ChatStep = ({
 }) => {
   const [showBubble1, setShowBubble1] = useState(false);
   const [showBubble2, setShowBubble2] = useState(false);
-  const [showInput, setShowInput] = useState(false); // 입력 필드 표시 여부 상태 추가
+  const [showInput, setShowInput] = useState(false);
 
   useEffect(() => {
     setShowBubble1(false);
@@ -39,6 +39,11 @@ const ChatStep = ({
       bubbleTimers.forEach(timer => clearTimeout(timer));
     };
   }, [step]);
+
+  const handleFinish = () => {
+    // 여기에서 홈 화면으로 리디렉션하거나 온보딩 완료 후 수행할 작업을 추가
+    window.location.href = '/'; // 홈 화면으로 리디렉션
+  };
 
   const renderStepContent = () => {
     switch (step) {
@@ -102,7 +107,7 @@ const ChatStep = ({
         return (
           <>
             <div className="chat-message">
-              {showBubble1 && <div className="chat-bubble">생이 시작된 날을 기억하시나요?</div>}
+              {showBubble1 && <div className="chat-bubble">생일을 기억하시나요?</div>}
             </div>
             <div className="grow"></div>
             {showInput && (
@@ -128,7 +133,7 @@ const ChatStep = ({
         return (
           <>
             <div className="chat-message">
-              {showBubble1 && <div className="chat-bubble">묘지에 묻을 것을 골라주세요. 고르지 않는 것도 가능합니다.</div>}
+              {showBubble1 && <div className="chat-bubble">대신 묻어둘 것을 골라주세요.</div>}
             </div>
             <div className="grow"></div>
             {showInput && (
@@ -147,7 +152,11 @@ const ChatStep = ({
       case 4:
         return (
           <div className="chat-message">
-            <div className="chat-bubble">감사합니다! 온보딩이 완료되었습니다.</div>
+            <div className="chat-bubble">감사합니다! 다 만들었습니다.</div>
+          <div className="grow"></div>
+            <div className="input-box flex mt-4">
+              <button onClick={handleFinish} className="p-2 rounded-lg w-full">묘비 보러가기</button>
+            </div>
           </div>
         );
       default:
