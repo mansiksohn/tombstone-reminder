@@ -10,7 +10,7 @@ function Header({ userName }) { // userName prop을 추가
 
   return (
     <header className="header">
-      <h1 className="header-title">묘꾸</h1>
+      <h1 className="header-title">묘비log</h1>
       <button onClick={() => setMenuOpen(!menuOpen)} className="menu-button">
         ☰
       </button>

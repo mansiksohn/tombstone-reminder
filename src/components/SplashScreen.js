@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import { useRive } from '@rive-app/react-canvas';
 
 const SplashScreen = ({ onNext }) => {
   const [showNextButton, setShowNextButton] = useState(false);
+
+  // useRive 훅을 사용하여 Rive 애니메이션 로드 및 설정
+  const { RiveComponent } = useRive({
+    src: '/assets/animations/incense_stick.riv',
+    autoplay: true, // 애니메이션을 자동으로 재생
+  });
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -13,9 +20,9 @@ const SplashScreen = ({ onNext }) => {
 
   return (
     <div className="splash-screen">
-      <img src="/assets/images/onboarding-mirror.jpg" alt="Onboarding Mirror" className="splash-image fade-in" />
+      <RiveComponent className="splash-animation w-full" />
       {showNextButton && (
-        <button onClick={onNext} className="p-2 rounded-lg fade-in w-full">다음</button>
+        <button onClick={onNext} className="p-2 rounded-lg splash-animation w-full">시작하기</button>
       )}
     </div>
   );

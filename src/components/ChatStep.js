@@ -52,7 +52,7 @@ const ChatStep = ({
           <>
             <div className="chat-message">
               {showBubble1 && <div className="chat-bubble fade-in">안녕하세요?</div>}
-              {showBubble2 && <div className="chat-bubble fade-in">비석에 새길 이름은 뭐로 하실래요? 별명도 좋아요.</div>}
+              {showBubble2 && <div className="chat-bubble fade-in">뭐라고 불러드릴까요? 묘비에 적어드릴게요.</div>}
             </div>
             <div className="grow"></div>
             {showInput && (
@@ -79,7 +79,7 @@ const ChatStep = ({
         return (
           <>
             <div className="chat-message">
-              {showBubble1 && <div className="chat-bubble">{userName}님, 제가 특별히 묘비명을 직접 고를 수 있는 기회를 드릴게요</div>}
+              {showBubble1 && <div className="chat-bubble">{userName}님, 반가워요. 묘비명 각인도 무료로 해드릴게요.</div>}
               {showBubble2 && <div className="chat-bubble">선생님의 인생을 한 문장으로 표현한다면?</div>}
             </div>
             <div className="grow"></div>
@@ -149,16 +149,18 @@ const ChatStep = ({
             )}
           </>
         );
-      case 4:
-        return (
-          <div className="chat-message">
-            <div className="chat-bubble">감사합니다! 다 만들었습니다.</div>
-          <div className="grow"></div>
-            <div className="input-box flex mt-4">
-              <button onClick={handleFinish} className="p-2 rounded-lg w-full">묘비 보러가기</button>
-            </div>
-          </div>
-        );
+        case 4:
+          return (
+            <>
+              <div className="chat-message">
+                <div className="chat-bubble">감사합니다! 이제 다 만들었습니다.</div>
+              </div>
+              <div className="grow"></div>
+              <div className="bottom-button-container">
+                <button onClick={handleFinish} className="p-2 rounded-lg w-full">묘비 보러가기</button>
+              </div>
+            </>
+          );        
       default:
         return null;
     }

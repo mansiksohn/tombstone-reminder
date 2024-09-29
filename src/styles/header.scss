@@ -56,3 +56,16 @@
 .user-name {
   @apply text-2xl font-bold m-0 text-soul-green-500;
 }
+
+.account-delete-button {
+  background-color: transparent;
+  border: 1px solid transparent;
+  padding: 8px 16px;
+  cursor: pointer;
+  color: $soul-red !important;
+  font-weight: bold;
+}
+
+.account-delete-button:hover {
+  border: 1px solid red;
+}

@@ -66,3 +66,30 @@ export const createShareLink = async (userId) => {
 
   return `${window.location.origin}/share/${userId}`;
 };
+
+export const deleteAccount = async (userId) => {
+  try {
+    // Tombs 테이블에서 유저 데이터를 삭제
+    const { error: tombsError } = await supabase
+      .from('Tombs')
+      .delete()
+      .eq('user_id', userId);
+
+    if (tombsError) {
+      console.error('Error deleting user data from Tombs:', tombsError);
+      return false;
+    }
+
+    // 계정 삭제 (Supabase 인증 계정 삭제)
+    const { error: authError } = await supabase.auth.admin.deleteUser(userId);
+    if (authError) {
+      console.error('Error deleting user from Supabase auth:', authError);
+      return false;
+    }
+
+    return true; // 삭제 성공
+  } catch (error) {
+    console.error('Error deleting account:', error);
+    return false;
+  }
+};
