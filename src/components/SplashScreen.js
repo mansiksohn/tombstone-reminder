@@ -22,7 +22,7 @@ const SplashScreen = ({ onNext }) => {
     <div className="splash-screen">
       <RiveComponent className="splash-animation w-full" />
       {showNextButton && (
-        <button onClick={onNext} className="p-2 rounded-lg splash-animation w-full">시작하기</button>
+        <button onClick={onNext} className="p-2 rounded-lg splash-animation w-full">묘비 만들기</button>
       )}
     </div>
   );

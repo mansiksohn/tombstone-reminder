@@ -51,8 +51,8 @@ const ChatStep = ({
         return (
           <>
             <div className="chat-message">
-              {showBubble1 && <div className="chat-bubble fade-in">안녕하세요?</div>}
-              {showBubble2 && <div className="chat-bubble fade-in">뭐라고 불러드릴까요? 묘비에 적어드릴게요.</div>}
+              {showBubble1 && <div className="chat-bubble fade-in">아직 살아계시군요?<br />뭐, 준비는 빠를수록 좋죠.</div>}
+              {showBubble2 && <div className="chat-bubble fade-in">성함이 어떻게 되십니까? 묘비에 새겨드릴게요.</div>}
             </div>
             <div className="grow"></div>
             {showInput && (
@@ -65,9 +65,9 @@ const ChatStep = ({
                     placeholder="이름 또는 별명(12자 이하)"
                     className="flex-grow p-2 rounded-l-lg text-black"
                   />
+                  <div className="onboarding-char-count">{inputValue.length}/12</div>
                   <button onClick={handleNextStep} className="p-2 rounded-r-lg">다음</button>
                 </div>
-                <div className="onboarding-char-count">{inputValue.length}/12</div>
                 <div className="logout-link">
                   <button onClick={handleLogout} className="logout-button">로그아웃</button>
                 </div>
@@ -79,8 +79,8 @@ const ChatStep = ({
         return (
           <>
             <div className="chat-message">
-              {showBubble1 && <div className="chat-bubble">{userName}님, 반가워요. 묘비명 각인도 무료로 해드릴게요.</div>}
-              {showBubble2 && <div className="chat-bubble">선생님의 인생을 한 문장으로 표현한다면?</div>}
+              {showBubble1 && <div className="chat-bubble">{userName}님이시군요. 반갑습니다!</div>}
+              {showBubble2 && <div className="chat-bubble">묘비명 각인은 무료로 해드립니다. 선생님 인생을 한 문장으로 남겨보세요.</div>}
             </div>
             <div className="grow"></div>
             {showInput && (
@@ -108,6 +108,7 @@ const ChatStep = ({
           <>
             <div className="chat-message">
               {showBubble1 && <div className="chat-bubble">생일을 기억하시나요?</div>}
+              {showBubble2 && <div className="chat-bubble">요기 밑에 남겨주시면 같이 써드릴게요.</div>}
             </div>
             <div className="grow"></div>
             {showInput && (
@@ -133,7 +134,8 @@ const ChatStep = ({
         return (
           <>
             <div className="chat-message">
-              {showBubble1 && <div className="chat-bubble">대신 묻어둘 것을 골라주세요.</div>}
+              {showBubble1 && <div className="chat-bubble">마지막으로, 묻어두고 싶은 것을 하나 골라보세요.</div>}
+              {showBubble2 && <div className="chat-bubble">뭐라도 채워놔야 하거든요.</div>}
             </div>
             <div className="grow"></div>
             {showInput && (
@@ -153,7 +155,7 @@ const ChatStep = ({
           return (
             <>
               <div className="chat-message">
-                <div className="chat-bubble">감사합니다! 이제 다 만들었습니다.</div>
+                <div className="chat-bubble">감사합니다!<br />이제 다 만들었습니다.</div>
               </div>
               <div className="grow"></div>
               <div className="bottom-button-container">

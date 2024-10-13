@@ -60,7 +60,7 @@ function ObituarySection({ obituary, setObituary, handleSave }) {
     };
   }, [handleSaveClick]);
 
-  const defaultObituary = '자신의 일생을 미리 부고로 작성하는 것은 현재와 미래를 성찰하는 유용한 방법이다. 우울해지는 부작용 없이 부고 쓰기를 해보는 방법은, 미래 시제로 자신의 이야기를 써보는 것이다.';
+  const defaultObituary = '자신의 일생을 미리 부고로 작성하는 것은 현재와 미래를 성찰하는 유용한 방법이다. 우울해지는 부작용 없이 부고 쓰기를 해보는 방법은, 미래 시제로 자신의 이야기를 써보는 것이다.(안토니아 케이스, "과거의 나보다 더 나은 사람이 되는 것")';
 
   return (
     <div className="obituary-section">

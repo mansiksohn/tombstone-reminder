@@ -9,7 +9,7 @@ function Menu({ menuOpen, setMenuOpen, userName }) {
   const [isDeleting, setIsDeleting] = useState(false); // 삭제 진행 상태
 
   const handleConfirmDelete = async () => {
-    const confirmed = window.confirm('정말로 계정을 삭제하시겠습니까? 🕳️이 작업은 되돌릴 수 없습니다.');
+    const confirmed = window.confirm('🕳️정말로 계정을 삭제할까요? 다시 되돌릴 수 없습니다.');
     if (confirmed) {
       try {
         setIsDeleting(true); // 삭제 진행 중 상태 설정
