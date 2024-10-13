@@ -17,36 +17,36 @@ const SharePage = () => {
   const [birthDate, setBirthDate] = useState('');
   const [deathDate, setDeathDate] = useState('');
 
-  useEffect(() => {
-    const fetchTombstone = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('Tombs')
-          .select('user_name, tomb_name, flowers, goat, obituary, deathmask, birth_date, death_date')
-          .eq('user_id', userId)
-          .single();
+useEffect(() => {
+  const fetchTombstone = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('Tombs')
+        .select('user_name, tomb_name, goat, obituary, deathmask, birth_date, death_date') // 'flowers' 컬럼 제거
+        .eq('user_id', userId)
+        .single();
 
-        if (error) {
-          console.error('Error fetching tombstone:', error);
-          return;
-        }
-
-        if (data) {
-          console.log('Fetched data:', data);
-          setUserName(data.user_name);
-          setTombstoneName(data.tomb_name);
-          setGoat(data.goat || []);
-          setObituary(data.obituary);
-          setSelectedImage(data.deathmask);
-          setBirthDate(data.birth_date);
-          setDeathDate(data.death_date);
-        } else {
-          console.error('No data found for the given user_id.');
-        }
-      } catch (error) {
+      if (error) {
         console.error('Error fetching tombstone:', error);
+        return;
       }
-    };
+
+      if (data) {
+        console.log('Fetched data:', data);
+        setUserName(data.user_name);
+        setTombstoneName(data.tomb_name);
+        setGoat(data.goat || []);
+        setObituary(data.obituary);
+        setSelectedImage(data.deathmask);
+        setBirthDate(data.birth_date);
+        setDeathDate(data.death_date);
+      } else {
+        console.error('No data found for the given user_id.');
+      }
+    } catch (error) {
+      console.error('Error fetching tombstone:', error);
+    }
+  };
 
     fetchTombstone();
   }, [userId]);

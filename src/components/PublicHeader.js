@@ -1,13 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/index.scss'; // 모든 스타일을 한 곳에서 import
 
 function PublicHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
-
-  useEffect(() => {
-    console.log(`Menu is now ${menuOpen ? 'open' : 'closed'}`);
-  }, [menuOpen]);
 
   return (
     <header className="header">
