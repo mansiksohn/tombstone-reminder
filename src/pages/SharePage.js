@@ -20,6 +20,8 @@ const SharePage = () => {
 useEffect(() => {
   const fetchTombstone = async () => {
     try {
+      console.log(userId); // userId가 올바르게 출력되는지 확인
+
       const { data, error } = await supabase
         .from('Tombs')
         .select('user_name, tomb_name, goat, obituary, deathmask, birth_date, death_date') // 'flowers' 컬럼 제거
@@ -32,24 +34,27 @@ useEffect(() => {
       }
 
       if (data) {
-        console.log('Fetched data:', data);
-        setUserName(data.user_name);
-        setTombstoneName(data.tomb_name);
-        setGoat(data.goat || []);
-        setObituary(data.obituary);
-        setSelectedImage(data.deathmask);
-        setBirthDate(data.birth_date);
-        setDeathDate(data.death_date);
-      } else {
-        console.error('No data found for the given user_id.');
+          setUserName(data.user_name);
+          setTombstoneName(data.tomb_name);
+          setGoat(data.goat || []);
+          setObituary(data.obituary);
+          setSelectedImage(data.deathmask);
+          setBirthDate(data.birth_date);
+          setDeathDate(data.death_date);
+        }
+      } catch (error) {
+        console.error('Error fetching tombstone:', error);
       }
-    } catch (error) {
-      console.error('Error fetching tombstone:', error);
-    }
-  };
+    };
 
-    fetchTombstone();
+    if (userId) {
+      fetchTombstone();
+    }
   }, [userId]);
+
+  if (!userName && !tombstoneName) {
+    return <p>해당 묘비 정보를 찾을 수 없습니다.</p>;
+  }
 
   const getIconSrc = (link) => {
     if (link.includes('instagram.com')) {
