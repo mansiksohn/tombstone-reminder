@@ -4,7 +4,7 @@ import '../styles/DeathMaskSection.scss';
 import images from '../data/images'; // 공통 이미지 배열을 임포트
 
 function DeathMaskSection() {
-  const [selectedImage, setSelectedImage] = useState('./assets/images/deathmask/Place Skull.png');
+  const [selectedImage, setSelectedImage] = useState('/assets/images/deathmask/Place Skull.png');
   const [userId, setUserId] = useState(null);
   const [selectorVisible, setSelectorVisible] = useState(false);
   const selectorRef = useRef(null); // 팝업을 참조하기 위한 ref 생성
@@ -50,7 +50,7 @@ function DeathMaskSection() {
           setSelectedImage(selectedImage.path);
         }
       } else {
-        setSelectedImage('./assets/images/deathmask/Place Skull.png');
+        setSelectedImage('/assets/images/deathmask/Place Skull.png');
       }
     } else if (error) {
       console.error('Error fetching deathmask:', error);

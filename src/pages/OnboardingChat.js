@@ -13,7 +13,7 @@ const OnboardingChat = ({ onOnboardingComplete }) => {
   const [userName, setUserName] = useState('');
   const [tombstoneName, setTombstoneName] = useState('');
   const [birthDate, setBirthDate] = useState('');
-  const [selectedImage, setSelectedImage] = useState('./assets/images/deathmask/Place Skull.png');
+  const [selectedImage, setSelectedImage] = useState('/assets/images/deathmask/Place Skull.png');
   const [inputValue, setInputValue] = useState('');
   const [userId, setUserId] = useState(null);
 
