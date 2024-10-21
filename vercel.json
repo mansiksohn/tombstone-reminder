@@ -1,9 +1,8 @@
 {
-    "rewrites": [
-      {
-        "source": "/(.*)",
-        "destination": "/index.html"
-      }
-    ]
-  }
-  
+  "routes": [
+    { "src": "^/static/(.*)", "dest": "/static/$1" },
+    { "src": "^/.*\\.(js|css|map|json)$", "dest": "/$0" },
+    { "src": "^/(favicon.ico|logo192.png|logo512.png|manifest.json|asset-manifest.json)$", "dest": "/$1" },
+    { "src": "^/(.*)$", "dest": "/index.html" }
+  ]
+}
