@@ -2,7 +2,7 @@
   "name": "tombstone-reminder",
   "version": "0.1.0",
   "private": true,
-  "homepage": ".",
+  "homepage": "https://tombstone.vercel.app",
   "dependencies": {
     "@react-oauth/google": "^0.12.1",
     "@rive-app/react-canvas": "^4.13.8",
