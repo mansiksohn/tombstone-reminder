@@ -8,7 +8,7 @@ import { Analytics } from '@vercel/analytics/react';  // Analytics 추가
 function App() {
   return (
     <div className="app-container bg-black min-h-screen max-w-3xl mx-auto">
-      <Router>
+      <Router basename={process.env.PUBLIC_URL}>
         <Routes>
           <Route path="/share/:userId" element={<SharePage />} />
           <Route path="/" element={<Home />} />
