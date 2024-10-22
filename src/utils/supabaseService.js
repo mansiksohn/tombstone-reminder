@@ -3,7 +3,7 @@ import supabase from './supabaseClient';
 export const getCurrentUserId = async () => {
   const { data: { user }, error } = await supabase.auth.getUser();
   if (error) {
-    console.error('Error fetching user:', error);
+    alert('Error fetching user: ' + error.message);  // 사용자에게 에러 알림 추가
     return null;
   }
   return user ? user.id : null;

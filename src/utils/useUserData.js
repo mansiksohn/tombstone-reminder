@@ -39,6 +39,7 @@ const useUserData = () => {
         setLoading(false);
       }
     });
+
     const subscription = data?.subscription;
     return () => {
       if (subscription) {
@@ -48,31 +49,48 @@ const useUserData = () => {
   }, []);
 
   useEffect(() => {
+    let isMounted = true; // 컴포넌트가 마운트된 상태를 추적하는 플래그
+
     const loadUserData = async () => {
-      const userId = await getCurrentUserId();
-      if (userId) {
-        const is_onboarded = await fetchIsOnboarded(userId);
-        setIsOnboarded(is_onboarded);
-        if (is_onboarded) {
-          const user_name = await fetchUserName(userId);
-          const tombstone_name = await fetchTombstoneName(userId);
-          const birth_date = await fetchBirthDate(userId);
-          const death_date = await fetchDeathDate(userId);
-          const fetchedObituary = await fetchObituary(userId);
-          const fetchedGoat = await fetchGoat(userId);
-          if (user_name) setUserName(user_name);
-          if (tombstone_name) setTombstoneName(tombstone_name);
-          setBirthDate(birth_date);
-          setDeathDate(death_date);
-          setObituary(fetchedObituary);
-          setGoat(fetchedGoat);
+      try {
+        const userId = await getCurrentUserId();
+        if (userId && isMounted) {
+          const [is_onboarded, user_name, tombstone_name, birth_date, death_date, fetchedObituary, fetchedGoat] = await Promise.all([
+            fetchIsOnboarded(userId),
+            fetchUserName(userId),
+            fetchTombstoneName(userId),
+            fetchBirthDate(userId),
+            fetchDeathDate(userId),
+            fetchObituary(userId),
+            fetchGoat(userId),
+          ]);
+
+          if (isMounted) {
+            setIsOnboarded(is_onboarded);
+            setUserName(user_name || '');
+            setTombstoneName(tombstone_name || '');
+            setBirthDate(birth_date || '');
+            setDeathDate(death_date || '');
+            setObituary(fetchedObituary || '');
+            setGoat(fetchedGoat || []);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading user data:', error);
+      } finally {
+        if (isMounted) {
+          setLoading(false);
         }
       }
-      setLoading(false);
     };
+
     if (localUser) {
       loadUserData();
     }
+
+    return () => {
+      isMounted = false; // 컴포넌트가 언마운트되면 플래그를 false로 설정
+    };
   }, [localUser]);
 
   const handleCopyLink = async () => {
