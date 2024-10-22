@@ -2,7 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './pages/Home';
 import SharePage from './pages/SharePage';
-import './styles/global.scss'; // 필요 시 스타일 파일 추가
+import './styles/global.scss';
+import { Analytics } from '@vercel/analytics/react';  // Analytics 추가
 
 function App() {
   return (
@@ -13,9 +14,9 @@ function App() {
           <Route path="/" element={<Home />} />
         </Routes>
       </Router>
+      <Analytics /> {/* Analytics 컴포넌트 추가 */}
     </div>
   );
 }
 
 export default App;
- 
