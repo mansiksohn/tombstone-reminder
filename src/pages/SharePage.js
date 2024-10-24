@@ -71,7 +71,7 @@ useEffect(() => {
     <div className="home-container bg-real-black">
       <PublicHeader /> {/* PublicHeader 컴포넌트 추가 */}
       <main className="main-content text-center">
-        <div className="username-container text-center">
+        <div className="username-container text-center text-xl">
           <span className="block">
             <span className="text-soul-green-500 font-bold underline">{userName || '신원미상'}</span>
             <span className="text-white">님</span>
@@ -88,7 +88,7 @@ useEffect(() => {
         <div className="tombstone-container relative">
           <img src={process.env.PUBLIC_URL + '/assets/images/headstone.svg'} alt="Tombstone" className="tombstone-image w-full" />
           <div className="tombstone-name-overlay text-center">
-            <h2 className="text-2xl tombstone-name">{tombstoneName}</h2>
+            <h2 className="text-2xl tombstone-name filled-text">{tombstoneName}</h2>
           </div>
         </div>
         <FlowerSection />
