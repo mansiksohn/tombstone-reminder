@@ -10,14 +10,12 @@ function TombstoneSection({ tombstoneName, setTombstoneName, handleSave }) {
 
   const handleChange = (e) => {
     let value = e.target.value;
-    // 연속된 공백을 하나로 줄이고, 앞뒤 공백을 제거
-    value = value.replace(/\s\s+/g, ' ').trim();
-    // 줄바꿈 수를 제한
+    // 줄바꿈 수를 제한하는 로직은 유지하지만, 공백을 줄이는 부분은 제거
     const newLineCount = (value.match(/\n/g) || []).length;
     if (newLineCount <= MAX_NEW_LINES && value.length <= 80) {
       setTombstoneName(value);
     }
-  };
+  }; 
 
   const handleSaveClick = () => {
     handleSave('tombstoneName', tombstoneName);
