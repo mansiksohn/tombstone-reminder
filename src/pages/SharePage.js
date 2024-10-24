@@ -53,7 +53,7 @@ useEffect(() => {
   }, [userId]);
 
   if (!userName && !tombstoneName) {
-    return <p>해당 묘비 정보를 찾을 수 없습니다.</p>;
+    return <p>어? 묘비가 어디갔지?</p>;
   }
 
   const getIconSrc = (link) => {
@@ -71,13 +71,13 @@ useEffect(() => {
     <div className="home-container bg-real-black">
       <PublicHeader /> {/* PublicHeader 컴포넌트 추가 */}
       <main className="main-content text-center">
-        <h2 className="text-2xl text-center p-4">
+        <div className="username-container text-center">
           <span className="block">
             <span className="text-soul-green-500 font-bold underline">{userName || '신원미상'}</span>
             <span className="text-white">님</span>
-            <span className="block pt-2">여기에 잠들다</span>
+            <span className="block pt-1">여기에 잠들다</span>
           </span>
-        </h2>
+        </div>
         <div className="date-container flex flex-col items-center"> {/* 날짜 영역 추가 */}
           <div className="flex items-center">
             <span className="date-input text-white">{birthDate || '????'}</span>
