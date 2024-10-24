@@ -15,12 +15,20 @@
   @apply break-keep text-grey-333;
 }
 
+.filled-text {
+  @apply text-soul-green-500; // 입력된 텍스트 색상
+}
+
 .textarea {
-  @apply min-w-60 max-w-96 min-h-full mt-16 break-keep font-bold;
+  @apply min-w-60 max-w-80 h-36 mt-32 break-keep font-bold text-center;
+  @apply border-4 p-2 rounded-lg border-soul-green-500 text-soul-green-500;
+  @apply bg-soul-green-950;
+  @apply text-2xl;
+  resize: none; /* 사용자가 크기 조절하지 못하도록 */
 }
 
 .tombstone-name {
-  @apply min-w-60 max-w-64 mt-16 break-words font-bold cursor-pointer text-grey-333;
+  @apply min-w-60 max-w-64 mt-16 break-words font-bold text-grey-333;
   white-space: pre-wrap; /* 줄바꿈을 포함하여 공백을 유지 */
 }
 
