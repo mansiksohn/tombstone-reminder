@@ -142,7 +142,7 @@ const ChatStep = ({
               <>
                 <DeathMaskSection selectedImage={selectedImage} onSelect={handleNextStep} images={images} />
                 <div className="input-box flex w-fit">
-                  <button onClick={handleNextStep} className="p-2 rounded-lg w-full w-14">다음</button>
+                  <button onClick={handleNextStep} className="p-2 rounded-lg w-full">다음</button>
                 </div>
                 <div className="logout-link">
                   <button onClick={handleLogout} className="logout-button">로그아웃</button>
