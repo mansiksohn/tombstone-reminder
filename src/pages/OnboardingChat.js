@@ -76,7 +76,7 @@ const OnboardingChat = ({ onOnboardingComplete }) => {
   };
 
   return (
-    <div className="onboarding-chat-container flex flex-col p-4 rounded-lg shadow-lg text-white">
+    <div className="onboarding-chat-container flex flex-col p-4 rounded-lg text-white">
       {step === -1 && <SplashScreen onNext={handleNextStep} />}
       {step > -1 && <Header />}
       {step > -1 && (

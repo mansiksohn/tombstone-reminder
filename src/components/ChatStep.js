@@ -57,16 +57,16 @@ const ChatStep = ({
             <div className="grow"></div>
             {showInput && (
               <>
-                <div className="input-box flex">
+                <div className="input-box flex w-fit">
                   <input
                     type="text"
                     value={inputValue}
                     onChange={handleInputChange}
                     placeholder="이름 또는 별명(12자 이하)"
-                    className="flex-grow p-2 rounded-l-lg text-black"
+                    className="flex-grow p-2 rounded-l-lg text-black w-full"
                   />
                   <div className="onboarding-char-count">{inputValue.length}/12</div>
-                  <button onClick={handleNextStep} className="p-2 rounded-r-lg">다음</button>
+                  <button onClick={handleNextStep} className="p-2 rounded-r-lg w-14">다음</button>
                 </div>
                 <div className="logout-link">
                   <button onClick={handleLogout} className="logout-button">로그아웃</button>
@@ -85,15 +85,15 @@ const ChatStep = ({
             <div className="grow"></div>
             {showInput && (
               <>
-                <div className="input-box flex">
+                <div className="input-box flex w-fit">
                   <input
                     type="text"
                     value={inputValue}
                     onChange={handleInputChange}
                     placeholder="묘비명 입력 (72자 이하)"
-                    className="flex-grow p-2 rounded-l-lg text-black"
+                    className="flex-grow p-2 rounded-l-lg text-black w-full"
                   />
-                  <button onClick={handleNextStep} className="p-2 rounded-r-lg">다음</button>
+                  <button onClick={handleNextStep} className="p-2 rounded-r-lg w-14">다음</button>
                 </div>
                 <div className="onboarding-char-count">{inputValue.length}/72</div>
                 <div className="logout-link">
@@ -113,15 +113,15 @@ const ChatStep = ({
             <div className="grow"></div>
             {showInput && (
               <>
-                <div className="input-box flex">
+                <div className="input-box flex w-fit">
                   <input
                     type="date"
                     value={inputValue}
                     onChange={handleDateChange}
                     placeholder="YYYY-MM-DD"
-                    className="flex-grow p-2 rounded-l-lg text-black"
+                    className="flex-grow p-2 rounded-l-lg text-black w-full"
                   />
-                  <button onClick={handleNextStep} className="p-2 rounded-r-lg">다음</button>
+                  <button onClick={handleNextStep} className="p-2 rounded-r-lg w-14">다음</button>
                 </div>
                 <div className="logout-link">
                   <button onClick={handleLogout} className="logout-button">로그아웃</button>
@@ -141,8 +141,8 @@ const ChatStep = ({
             {showInput && (
               <>
                 <DeathMaskSection selectedImage={selectedImage} onSelect={handleNextStep} images={images} />
-                <div className="input-box flex">
-                  <button onClick={handleNextStep} className="p-2 rounded-lg w-full">다음</button>
+                <div className="input-box flex w-fit">
+                  <button onClick={handleNextStep} className="p-2 rounded-lg w-full w-14">다음</button>
                 </div>
                 <div className="logout-link">
                   <button onClick={handleLogout} className="logout-button">로그아웃</button>

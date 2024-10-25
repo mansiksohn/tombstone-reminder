@@ -7,12 +7,6 @@
     max-width: 48px; // Adjust size as needed
 }
 
-// .splash-image {
-//    max-width: 300px; // Adjust the size as needed
-//    opacity: 0;
-//    animation: fadeIn 13s forwards;
-//}
-
 .fade-in {
     opacity: 0;
     animation: fadeIn 1s forwards 1s; // 1s delay before fading in
@@ -93,8 +87,6 @@
     margin-top: 20px;
     padding: 10px 20px;
     font-size: 1.2rem;
-    background-color: #00FF7F; /* 적절한 배경색 */
-    color: #000; /* 글자색 */
     border: none;
     border-radius: 5px;
     cursor: pointer;
