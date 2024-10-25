@@ -20,6 +20,8 @@
   @apply relative z-10 text-2xl m-0 font-bold cursor-pointer w-40;
   border-radius: 8px 8px 96px 96px;
   @apply bg-grey-333 text-grey-333;
+  z-index: 1000;
+  pointer-events: auto;
 }
 
 @media (hover: hover) {
