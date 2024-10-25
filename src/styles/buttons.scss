@@ -7,9 +7,3 @@ button {
       @apply bg-soul-green-600;
     }
   }
-
-  @media (hover: none) {
-    button {      
-      @apply bg-grey-333; // 모바일에서 호버 효과를 비활성화
-    }
-  }

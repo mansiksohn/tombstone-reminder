@@ -17,8 +17,22 @@
 }
 
 .add-flower-button {
-  @apply relative z-10 text-2xl m-0 font-bold cursor-pointer bg-grey-333 text-grey-333 w-40;
+  @apply relative z-10 text-2xl m-0 font-bold cursor-pointer w-40;
   border-radius: 8px 8px 96px 96px;
+  @apply bg-grey-333 text-grey-333;
+}
+
+@media (hover: hover) {
+  .add-flower-button:hover {
+    @apply bg-soul-green-500 text-white; // 데스크탑에서 호버 시 스타일 변경
+  }
+}
+
+@media (hover: none) {
+  .add-flower-button {
+    // 모바일 장치에서의 스타일 설정 (호버 없는 기본 스타일 유지)
+    @apply bg-grey-333 text-grey-333;
+  }
 }
 
 .flower {
