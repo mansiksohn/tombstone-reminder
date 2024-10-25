@@ -57,7 +57,7 @@ const ChatStep = ({
             <div className="grow"></div>
             {showInput && (
               <>
-                <div className="input-box flex w-fit">
+                <div className="input-box flex w-full">
                   <input
                     type="text"
                     value={inputValue}
@@ -85,7 +85,7 @@ const ChatStep = ({
             <div className="grow"></div>
             {showInput && (
               <>
-                <div className="input-box flex w-fit">
+                <div className="input-box flex w-full">
                   <input
                     type="text"
                     value={inputValue}
@@ -113,7 +113,7 @@ const ChatStep = ({
             <div className="grow"></div>
             {showInput && (
               <>
-                <div className="input-box flex w-fit">
+                <div className="input-box flex w-full">
                   <input
                     type="date"
                     value={inputValue}
@@ -141,7 +141,7 @@ const ChatStep = ({
             {showInput && (
               <>
                 <DeathMaskSection selectedImage={selectedImage} onSelect={handleNextStep} images={images} />
-                <div className="input-box flex w-fit">
+                <div className="input-box flex w-full">
                   <button onClick={handleNextStep} className="p-2 rounded-lg w-full">다음</button>
                 </div>
                 <div className="logout-link">
