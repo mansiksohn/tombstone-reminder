@@ -1,13 +1,13 @@
 import React from 'react';
 
-function ShareSection({ link, buttonText, buttonColor }) {
+function ShareSection({ link, linkText = "공유할 페이지 열기" }) {
   return (
     <div className="share-section mt-6">
       <a
         href={link}
-        target="_blank" // 새 탭에서 열리도록 설정 (필요에 따라 제거 가능)
-        rel="noopener noreferrer" // 보안 강화
-        className="text-soul-green-500 underline" // 하이퍼링크 스타일 지정
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-500 underline" // 기본 하이퍼링크 스타일
       >
         {linkText}
       </a>
