@@ -39,14 +39,12 @@ const useUserData = () => {
         setLoading(false);
       }
     });
-
-    const subscription = data?.subscription;
+  
     return () => {
-      if (subscription) {
-        subscription.unsubscribe();
-      }
+      data?.subscription?.unsubscribe();
     };
   }, []);
+  
 
   useEffect(() => {
     let isMounted = true; // 컴포넌트가 마운트된 상태를 추적하는 플래그
@@ -193,8 +191,6 @@ const useUserData = () => {
     obituary,
     goat,
     newGoat,
-    buttonText,
-    buttonColor,
     loading,
     setUserName,
     setTombstoneName,
