@@ -5,4 +5,8 @@
 .share-section .button {
     @apply p-4 rounded-lg w-full my-8 bg-soul-green-500 text-white cursor-pointer;
 }
-    
+
+button.pressed {
+  background-color: #19826B; // 눌린 상태의 배경색
+  transform: scale(0.98);    // 살짝 축소 효과
+}
