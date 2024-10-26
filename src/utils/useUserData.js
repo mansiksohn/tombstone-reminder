@@ -93,19 +93,13 @@ const useUserData = () => {
     };
   }, [localUser]);
 
-  const handleCopyLink = async () => {
+  const handleCreateShareLink = async () => {
     try {
       const userId = await getCurrentUserId();
-      const link = await createShareLink(userId);
-      await navigator.clipboard.writeText(link);
-      setButtonText('Link Copied');
-      setButtonColor('bg-soul-green-900');
-      setTimeout(() => {
-        setButtonText('Copy Link to Clipboard');
-        setButtonColor('bg-soul-green-500');
-      }, 1000);
+      return await createShareLink(userId);
     } catch (error) {
-      console.error('Error creating or copying link:', error);
+      console.error('Error creating share link:', error);
+      throw error;
     }
   };
 
@@ -209,7 +203,7 @@ const useUserData = () => {
     setObituary,
     setGoat,
     setNewGoat,
-    handleCopyLink,
+    handleCreateShareLink,
     handleSave,
     handleEditGoat,
     handleDeleteGoat,
