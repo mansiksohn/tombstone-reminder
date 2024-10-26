@@ -101,7 +101,7 @@ const useUserData = () => {
       setButtonText('Link Copied');
       setButtonColor('bg-soul-green-900');
       setTimeout(() => {
-        setButtonText('공유페이지 주소 복사하기');
+        setButtonText('공유페이지 열기');
         setButtonColor('bg-soul-green-500');
       }, 1000);
     } catch (error) {
