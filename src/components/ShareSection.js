@@ -7,9 +7,9 @@ function ShareSection({ link, buttonText, buttonColor }) {
         href={link}
         target="_blank" // 새 탭에서 열리도록 설정 (필요에 따라 제거 가능)
         rel="noopener noreferrer" // 보안 강화
-        className={`${buttonColor} text-white p-2 rounded w-full text-center block`}
+        className="text-soul-green-500 underline" // 하이퍼링크 스타일 지정
       >
-        {buttonText}
+        {linkText}
       </a>
     </div>
   );
