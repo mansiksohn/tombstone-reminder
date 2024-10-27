@@ -65,6 +65,3 @@ function Home() {
 }
 
 export default Home;
-
-const { link, handleCopyLink, buttonText, buttonColor } = useUserData();
-console.log('Link in Home.js:', link); // Home.js에서 link 값 확인
