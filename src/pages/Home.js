@@ -1,4 +1,4 @@
-import React from 'react'; // `useState`와 `useEffect` 제거
+import React from 'react';
 import '../styles/global.scss'; // 스타일 파일 경로 변경
 import Login from './Login';
 import OnboardingChat from '../pages/OnboardingChat';
@@ -28,6 +28,7 @@ function Home() {
     buttonText,
     buttonColor,
     loading,
+    link, // useUserData에서 가져온 link 추가
     setUserName,
     setTombstoneName,
     setBirthDate,
@@ -41,9 +42,6 @@ function Home() {
     handleDeleteGoat,
     handleOnboardingComplete,
   } = useUserData();
-
-  function Home() {
-    const { link, handleCopyLink, buttonText, buttonColor } = useUserData();
 
   if (loading) return <div className="loading">Loading...</div>; // 로딩 상태 표시
   if (!localUser) return <Login />;
