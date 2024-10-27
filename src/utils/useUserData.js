@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { getCurrentUserId, createShareLink } from './supabaseService';
 import supabase from './supabaseClient';
 import {
   getCurrentUserId,
