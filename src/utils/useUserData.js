@@ -31,7 +31,7 @@ const useUserData = () => {
   const [loading, setLoading] = useState(true);
   const [buttonText, setButtonText] = useState('공유할 페이지 열기 >');
   const [buttonColor, setButtonColor] = useState('');
-  const [link, setLink] = useState(''); // 빈 문자열로 초기화
+  const [link, setLink] = useState('');
 
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
@@ -50,32 +50,44 @@ const useUserData = () => {
   }, []);
 
   useEffect(() => {
-    let isMounted = true; // 컴포넌트가 마운트된 상태를 추적하는 플래그
+    let isMounted = true;
 
     const loadUserData = async () => {
       try {
         const userId = await getCurrentUserId();
-        if (userId && isMounted) {
-          const [is_onboarded, user_name, tombstone_name, birth_date, death_date, fetchedObituary, fetchedGoat] = await Promise.all([
-            fetchIsOnboarded(userId),
-            fetchUserName(userId),
-            fetchTombstoneName(userId),
-            fetchBirthDate(userId),
-            fetchDeathDate(userId),
-            fetchObituary(userId),
-            fetchGoat(userId),
-          ]);
+        if (!userId || !isMounted) return;
 
-          if (isMounted) {
-            setIsOnboarded(is_onboarded);
-            setUserName(user_name || '');
-            setTombstoneName(tombstone_name || '');
-            setBirthDate(birth_date || '');
-            setDeathDate(death_date || '');
-            setObituary(fetchedObituary || '');
-            setGoat(fetchedGoat || []);
-          }
+        const [
+          is_onboarded,
+          user_name,
+          tombstone_name,
+          birth_date,
+          death_date,
+          fetchedObituary,
+          fetchedGoat,
+        ] = await Promise.all([
+          fetchIsOnboarded(userId),
+          fetchUserName(userId),
+          fetchTombstoneName(userId),
+          fetchBirthDate(userId),
+          fetchDeathDate(userId),
+          fetchObituary(userId),
+          fetchGoat(userId),
+        ]);
+
+        if (isMounted) {
+          setIsOnboarded(is_onboarded);
+          setUserName(user_name || '');
+          setTombstoneName(tombstone_name || '');
+          setBirthDate(birth_date || '');
+          setDeathDate(death_date || '');
+          setObituary(fetchedObituary || '');
+          setGoat(fetchedGoat || []);
         }
+
+        // Link 생성
+        const generatedLink = await createShareLink(userId);
+        setLink(generatedLink);
       } catch (error) {
         console.error('Error loading user data:', error);
       } finally {
@@ -87,24 +99,14 @@ const useUserData = () => {
 
     if (localUser) {
       loadUserData();
+    } else {
+      setLoading(false);
     }
 
     return () => {
-      isMounted = false; // 컴포넌트가 언마운트되면 플래그를 false로 설정
+      isMounted = false;
     };
   }, [localUser]);
-
-  useEffect(() => {
-    async function initializeLink() {
-      const userId = await getCurrentUserId();
-      if (userId) {
-        const generatedLink = await createShareLink(userId);
-        setLink(generatedLink); // 링크 설정
-      }
-      setLoading(false); // 로딩 상태 업데이트
-    }
-    initializeLink();
-  }, []);
 
   const handleCopyLink = async () => {
     try {
@@ -210,10 +212,9 @@ const useUserData = () => {
     obituary,
     goat,
     newGoat,
-    loading, // loading 상태 반환
+    loading,
     buttonText,
     buttonColor,
-    loading,
     link,
     setUserName,
     setTombstoneName,
