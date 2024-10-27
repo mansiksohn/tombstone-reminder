@@ -93,18 +93,6 @@ const useUserData = () => {
     };
   }, [localUser]);
 
-  useEffect(() => {
-    async function loadUserData() {
-      const userId = await getCurrentUserId();
-      if (userId) {
-        const generatedLink = await createShareLink(userId);
-        setLink(generatedLink);
-        console.log('Generated Link:', generatedLink); // 생성된 링크 확인
-      }
-    }
-    loadUserData();
-  }, []);
-
   const handleCopyLink = async () => {
     try {
       const userId = await getCurrentUserId();
@@ -214,6 +202,7 @@ const useUserData = () => {
     buttonText,
     buttonColor,
     loading,
+    link,
     setUserName,
     setTombstoneName,
     setBirthDate,

@@ -42,6 +42,9 @@ function Home() {
     handleOnboardingComplete,
   } = useUserData();
 
+  function Home() {
+    const { link, handleCopyLink, buttonText, buttonColor } = useUserData();
+
   if (loading) return <div className="loading">Loading...</div>; // 로딩 상태 표시
   if (!localUser) return <Login />;
   if (!isOnboarded) return <OnboardingChat onOnboardingComplete={handleOnboardingComplete} />;
@@ -58,7 +61,7 @@ function Home() {
         <DeathMaskSection />
         <ObituarySection obituary={obituary} setObituary={setObituary} handleSave={handleSave} />
         <GoatSection goat={goat || []} setGoat={setGoat} newGoat={newGoat} setNewGoat={setNewGoat} handleSave={handleSave} handleEditGoat={handleEditGoat} handleDeleteGoat={handleDeleteGoat} />
-        <ShareSection handleCopyLink={handleCopyLink} buttonText={buttonText} buttonColor={buttonColor} />
+        <ShareSection link={link} handleCopyLink={handleCopyLink} buttonText={buttonText} buttonColor={buttonColor} />
       </main>
     </div>
   );
