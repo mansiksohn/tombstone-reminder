@@ -31,6 +31,7 @@ const useUserData = () => {
   const [buttonText, setButtonText] = useState('Copy Link to Clipboard');
   const [buttonColor, setButtonColor] = useState('');
   const [loading, setLoading] = useState(true);
+  const [link, setLink] = useState(''); // 빈 문자열로 초기화
 
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
