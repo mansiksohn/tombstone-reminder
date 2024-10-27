@@ -28,9 +28,9 @@ const useUserData = () => {
   const [obituary, setObituary] = useState('');
   const [goat, setGoat] = useState([]);
   const [newGoat, setNewGoat] = useState({ tag: '', description: '', link: '' });
+  const [loading, setLoading] = useState(true);
   const [buttonText, setButtonText] = useState('Copy Link to Clipboard');
   const [buttonColor, setButtonColor] = useState('');
-  const [loading, setLoading] = useState(true);
   const [link, setLink] = useState(''); // 빈 문자열로 초기화
 
   useEffect(() => {
@@ -97,8 +97,10 @@ const useUserData = () => {
   const handleCopyLink = async () => {
     try {
       const userId = await getCurrentUserId();
-      const link = await createShareLink(userId);
-      await navigator.clipboard.writeText(link);
+      const generatedLink = await createShareLink(userId);
+      setLink(generatedLink); // 생성된 링크를 link 상태에 저장
+      await navigator.clipboard.writeText(generatedLink);
+      
       setButtonText('Link Copied');
       setButtonColor('bg-soul-green-900');
       setTimeout(() => {
