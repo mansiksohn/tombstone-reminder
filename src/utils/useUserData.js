@@ -40,12 +40,14 @@ const useUserData = () => {
         setLoading(false);
       }
     });
-  
+
+    const subscription = data?.subscription;
     return () => {
-      data?.subscription?.unsubscribe();
+      if (subscription) {
+        subscription.unsubscribe();
+      }
     };
   }, []);
-  
 
   useEffect(() => {
     let isMounted = true; // 컴포넌트가 마운트된 상태를 추적하는 플래그
@@ -92,15 +94,6 @@ const useUserData = () => {
     };
   }, [localUser]);
 
-<<<<<<< HEAD
-  const handleCreateShareLink = async () => {
-    try {
-      const userId = await getCurrentUserId();
-      return await createShareLink(userId);
-    } catch (error) {
-      console.error('Error creating share link:', error);
-      throw error;
-=======
   useEffect(() => {
     async function initializeLink() {
       const userId = await getCurrentUserId();
@@ -124,7 +117,6 @@ const useUserData = () => {
       }, 1000);
     } catch (error) {
       console.error('Error copying link:', error);
->>>>>>> testView
     }
   };
 
@@ -218,12 +210,9 @@ const useUserData = () => {
     obituary,
     goat,
     newGoat,
-<<<<<<< HEAD
-=======
     loading, // loading 상태 반환
     buttonText,
     buttonColor,
->>>>>>> testView
     loading,
     link,
     setUserName,
@@ -233,7 +222,7 @@ const useUserData = () => {
     setObituary,
     setGoat,
     setNewGoat,
-    handleCreateShareLink,
+    handleCopyLink,
     handleSave,
     handleEditGoat,
     handleDeleteGoat,
