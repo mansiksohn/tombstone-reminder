@@ -98,9 +98,9 @@ const useUserData = () => {
     try {
       const userId = await getCurrentUserId();
       const generatedLink = await createShareLink(userId);
-      setLink(generatedLink); // 생성된 링크를 link 상태에 저장
+      setLink(generatedLink); // 링크 상태 업데이트
+      console.log('Generated Link:', generatedLink); // 링크가 제대로 생성되었는지 확인
       await navigator.clipboard.writeText(generatedLink);
-      
       setButtonText('Link Copied');
       setButtonColor('bg-soul-green-900');
       setTimeout(() => {
@@ -110,7 +110,7 @@ const useUserData = () => {
     } catch (error) {
       console.error('Error creating or copying link:', error);
     }
-  };
+  }; 
 
   const handleSave = async (field, value) => {
     try {

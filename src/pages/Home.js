@@ -47,6 +47,8 @@ function Home() {
   if (!localUser) return <Login />;
   if (!isOnboarded) return <OnboardingChat onOnboardingComplete={handleOnboardingComplete} />;
 
+  console.log('Link in Home.js:', link); // link가 올바르게 설정되어 있는지 확인
+
   return (
     <div className="home-container">
       <Header userName={userName} />
