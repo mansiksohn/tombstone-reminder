@@ -28,7 +28,8 @@
 }
 
 .tombstone-name {
-  @apply min-w-60 max-w-64 mt-16 break-words font-bold text-grey-333;
+  @apply min-w-60 max-w-64 mt-32 break-words font-bold;
+  word-break: keep-all;
   white-space: pre-wrap; /* 줄바꿈을 포함하여 공백을 유지 */
 }
 
