@@ -29,7 +29,7 @@ const useUserData = () => {
   const [goat, setGoat] = useState([]);
   const [newGoat, setNewGoat] = useState({ tag: '', description: '', link: '' });
   const [loading, setLoading] = useState(true);
-  const [buttonText, setButtonText] = useState('Copy Link to Clipboard');
+  const [buttonText, setButtonText] = useState('공유할 페이지 열기 >');
   const [buttonColor, setButtonColor] = useState('');
   const [link, setLink] = useState(''); // 빈 문자열로 초기화
 

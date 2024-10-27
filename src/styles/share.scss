@@ -1,7 +1,7 @@
 .share-section {
-  @apply p-4 rounded-lg my-8 text-white;
+  @apply p-4 rounded-lg my-8 decoration-solid;
 }
 
 .share-section .button {
-  @apply p-4 rounded-lg w-full my-8 bg-soul-green-500 text-white cursor-pointer;
+  @apply p-4 rounded-lg w-full my-8 bg-soul-green-500 cursor-pointer;
 }
