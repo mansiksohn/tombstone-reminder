@@ -1,4 +1,4 @@
-import React from 'react'; // `useState`와 `useEffect` 제거
+import React from 'react';
 import '../styles/global.scss'; // 스타일 파일 경로 변경
 import Login from './Login';
 import OnboardingChat from '../pages/OnboardingChat';
@@ -28,6 +28,7 @@ function Home() {
     buttonText,
     buttonColor,
     loading,
+    link, // useUserData에서 가져온 link 추가
     setUserName,
     setTombstoneName,
     setBirthDate,
@@ -58,7 +59,7 @@ function Home() {
         <DeathMaskSection />
         <ObituarySection obituary={obituary} setObituary={setObituary} handleSave={handleSave} />
         <GoatSection goat={goat || []} setGoat={setGoat} newGoat={newGoat} setNewGoat={setNewGoat} handleSave={handleSave} handleEditGoat={handleEditGoat} handleDeleteGoat={handleDeleteGoat} />
-        <ShareSection handleCopyLink={handleCopyLink} buttonText={buttonText} buttonColor={buttonColor} />
+        <ShareSection link={link} handleCopyLink={handleCopyLink} buttonText={buttonText} buttonColor={buttonColor} />
       </main>
     </div>
   );

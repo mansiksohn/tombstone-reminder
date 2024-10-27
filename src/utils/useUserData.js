@@ -28,9 +28,10 @@ const useUserData = () => {
   const [obituary, setObituary] = useState('');
   const [goat, setGoat] = useState([]);
   const [newGoat, setNewGoat] = useState({ tag: '', description: '', link: '' });
+  const [loading, setLoading] = useState(true);
   const [buttonText, setButtonText] = useState('Copy Link to Clipboard');
   const [buttonColor, setButtonColor] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [link, setLink] = useState(''); // 빈 문자열로 초기화
 
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
@@ -91,6 +92,7 @@ const useUserData = () => {
     };
   }, [localUser]);
 
+<<<<<<< HEAD
   const handleCreateShareLink = async () => {
     try {
       const userId = await getCurrentUserId();
@@ -98,6 +100,31 @@ const useUserData = () => {
     } catch (error) {
       console.error('Error creating share link:', error);
       throw error;
+=======
+  useEffect(() => {
+    async function initializeLink() {
+      const userId = await getCurrentUserId();
+      if (userId) {
+        const generatedLink = await createShareLink(userId);
+        setLink(generatedLink); // 링크 설정
+      }
+      setLoading(false); // 로딩 상태 업데이트
+    }
+    initializeLink();
+  }, []);
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(link);
+      setButtonText('Link Copied');
+      setButtonColor('bg-soul-green-900');
+      setTimeout(() => {
+        setButtonText('공유페이지 열기');
+        setButtonColor('bg-soul-green-500');
+      }, 1000);
+    } catch (error) {
+      console.error('Error copying link:', error);
+>>>>>>> testView
     }
   };
 
@@ -191,7 +218,14 @@ const useUserData = () => {
     obituary,
     goat,
     newGoat,
+<<<<<<< HEAD
+=======
+    loading, // loading 상태 반환
+    buttonText,
+    buttonColor,
+>>>>>>> testView
     loading,
+    link,
     setUserName,
     setTombstoneName,
     setBirthDate,
