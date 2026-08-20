@@ -1,32 +1,37 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 /node_modules
 /.pnp
 .pnp.js
 
-# testing
-/coverage
+# next.js
+/.next/
+/out/
+next-env.d.ts
 
 # production
 /build
 
+# testing
+/coverage
+
 # misc
 .DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+*.pem
 
+# 환경변수 (.env.example은 커밋한다)
+.env
+.env*.local
+
+# 로그
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.pnpm-debug.log*
 
-# Backend dependencies
-/backend/node_modules
+# vercel / typescript
+.vercel
+*.tsbuildinfo
 
-# Backend environment variables
-/backend/.env
 # DB 백업·덤프 (개인정보 포함)
 *.backup
 *.backup.gz

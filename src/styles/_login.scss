@@ -1,0 +1,16 @@
+@use 'colors' as *;
+
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex-grow: 1;
+    background-color: $real-black;
+  }
+  
+  .login-tombstone-image {
+    width: 160px;
+    margin: 16px 0;
+  }

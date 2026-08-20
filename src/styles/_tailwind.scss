@@ -1,0 +1,6 @@
+// Sass는 @use를 파일 최상단에 요구하므로 Tailwind 지시자를 partial로 감싼다.
+// 이 파일을 globals.scss에서 가장 먼저 @use 해야 preflight가 우리 스타일보다
+// 먼저 나온다 — 순서가 뒤집히면 base 리셋이 @apply를 덮어쓴다.
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
