@@ -20,7 +20,8 @@
 | 언어 | **TypeScript** |
 | GOAT 섹션 | **폐기** |
 | 온보딩 챗 | **3단계로 축소** 후 곧장 compose로 |
-| Supabase | 일시정지 1년 초과 → **새 프로젝트로 이주.** [`SUPABASE-RECOVERY.md`](./SUPABASE-RECOVERY.md) |
+| Supabase | 일시정지 1년 초과 → **새 프로젝트 + 데이터 이관 없음.** [`SUPABASE-RECOVERY.md`](./SUPABASE-RECOVERY.md) |
+| 레거시 데이터 | **이관 안 함.** 15건 전원 6일치 전시 데이터, 클레임 플로우 불필요 |
 
 ---
 
@@ -45,6 +46,17 @@
 5. **공개 URL에 auth user UUID가 그대로 노출** — `/share/{user_id}`. 인증 주체 식별자를 공개 링크에 박는 건 피해야 한다.
 6. **꽃이 저장되지 않는다** — `FlowerSection.js`는 순수 `useState`. 10초 뒤 사라지고 서버에 아무것도 남지 않는다. 위치도 `Math.random()`이라 리로드마다 튄다. 개편의 핵심이 여기다.
 7. `dangerouslySetInnerHTML`로 묘비명 렌더 (`TombstoneSection.js:52`) — 지금은 본인 입력이라 위험이 낮지만, LLM 붙여넣기 + 공개 게시로 바뀌면 반드시 제거해야 한다.
+
+### 백업 분석으로 추가 확인된 것 (2026-08-20)
+
+구 DB 덤프를 열어 확인한 내용. 상세는 [`SUPABASE-RECOVERY.md`](./SUPABASE-RECOVERY.md) §1.
+
+8. **`Tombs` 전체가 익명에게 공개돼 있었다.** `CREATE POLICY ... FOR SELECT USING (true)`. anon 키는 클라이언트 번들에 들어가므로 전원의 묘비명·부고·생년월일이 사실상 전체 공개로 운영됐다. 본인 전용 정책도 함께 걸려 있었지만 다중 정책은 OR로 결합되므로 무력화됐다.
+9. **`user_id`에 `auth.users` 외래키가 없고 기본값이 `gen_random_uuid()`였다.** 계정이 지워져도 묘비가 고아로 남는다.
+10. **`is_onboarded`가 완료 신호가 아니었다.** `upsertSingleValue()`가 모든 저장에 `is_onboarded: true`를 함께 써서, 이름만 입력해도 완료로 기록됐다. 15건 전원 `true`인데 그중 3건은 묘비명조차 없다.
+11. **DB 제약이 전무했다.** UI가 묘비명 72자로 막았지만 78자짜리가, 부고 160자 제한을 넘긴 245자짜리가 저장돼 있다. 검증이 클라이언트에만 있었다.
+
+**개편 방향이 데이터로 뒷받침됐다**: GOAT는 15명 중 14명이 빈 배열, 부고는 1명만 작성. 두 기능 모두 사실상 쓰이지 않았다.
 
 ---
 
@@ -76,51 +88,41 @@ app/
 
 ### 스키마
 
-Supabase를 새 프로젝트로 이주하므로 **기존 테이블에 ALTER를 거는 게 아니라 처음부터 새로 짓는다.** `supabase/migrations/`에 마이그레이션으로 관리.
+**작성·검증 완료** → `supabase/migrations/20260820000000_init.sql`
 
+로컬 PostgreSQL 16에 실제로 적용해 가입 트리거, slug 생성(10,000개 무충돌), 제약조건, RLS를 anon·authenticated·service_role 각 역할에서 검증했다.
+
+구 스키마 대비 달라진 점:
+
+| | 구 스키마 | 새 스키마 |
+|---|---|---|
+| 테이블명 | `public."Tombs"` (대문자, 따옴표 필수) | `public.tombs` |
+| PK | `id bigint` + `user_id` unique | `user_id uuid` PK, `auth.users` 외래키 + cascade |
+| 공개 URL | `/share/{auth UUID}` | `/t/{slug}` — 10자 랜덤, 혼동 문자 제외 |
+| 게시 개념 | 없음 (만들면 곧 공개) | `status` draft/published + `published_at` |
+| 추도문 | `obituary` (1/15 사용) | `eulogy` + `eulogy_source` + `eulogy_captured_at` |
+| GOAT | `goat jsonb` (14/15 빈 배열) | **없음** |
+| 온보딩 진행도 | `is_onboarded` (첫 저장에 true, 신뢰 불가) | `onboarding_step smallint` |
+| 헌화 | **저장 안 함** | `flowers` 테이블 |
+| 제약 | 없음 | 길이·enum·상태 전이 전부 DB에서 |
+
+주목할 제약 하나 — **각인 없이는 게시할 수 없다**:
 ```sql
-create table tombs (                          -- 대문자 "Tombs" → 소문자. 따옴표 지옥 탈출
-  user_id             uuid primary key references auth.users(id) on delete cascade,
-  slug                text unique not null,   -- 공개 URL용. auth UUID 노출 안 함
-  status              text not null default 'draft',   -- draft | published
-  user_name           text,
-  tomb_name           text,                   -- 추도문에서 골라 각인한 한 문장
-  eulogy              text,                   -- LLM 답변 전문
-  eulogy_source       text,                   -- 'chatgpt' | 'claude' | 'gemini' | 'other'
-  eulogy_captured_at  timestamptz,
-  deathmask           text,
-  birth_date          date,
-  death_date          date,
-  is_onboarded        boolean not null default false,
-  published_at        timestamptz,
-  created_at          timestamptz not null default now(),
-  updated_at          timestamptz not null default now()
-);
-
-create table flowers (
-  id           uuid primary key default gen_random_uuid(),
-  tomb_id      uuid not null references tombs(user_id) on delete cascade,
-  flower_type  text not null,          -- Rose | Tulip | Blossom | Bouquet | Hibiscus | Sunflower
-  visitor_hash text,                   -- IP+UA 해시. 레이트리밋용 (원문 미저장)
-  created_at   timestamptz not null default now()
-);
-create index flowers_tomb_created_idx on flowers (tomb_id, created_at desc);
+constraint tombs_published_needs_epitaph
+  check (status <> 'published'
+         or (tomb_name is not null and length(btrim(tomb_name)) > 0))
 ```
-
-구 스키마 대비 달라지는 것:
-- **`goat` 컬럼 없음** — 폐기 확정. 단 레거시 추출 CSV에는 남겨둔다 (버리는 건 나중에도 되지만 되살리는 건 못 한다).
-- **`obituary`(160자) 없음** — `eulogy`가 역할을 대체한다. 레거시 `obituary` 값은 이주 시 `eulogy`로 옮긴다.
-- `tomb_name`은 이름을 유지하되 의미가 바뀐다: "직접 쓴 한 줄" → "추도문에서 골라 각인한 한 문장".
+빈 묘비가 공개되는 일을 DB 레벨에서 막는다. 구 데이터에 묘비명 없는 묘비가 3건 있었다.
 
 ### RLS 정책
-새 프로젝트에 처음부터 제대로 건다. (구 프로젝트의 정책은 로컬 복원본에서 확인만 하고 참고하지 않는다 — 익명 share 페이지가 읽고 있었으므로 사실상 열려 있었을 가능성이 높다.)
+구 프로젝트는 `FOR SELECT USING (true)`로 전체가 열려 있었다(§1). 새 스키마에서 해소했으며, 아래는 마이그레이션에 반영된 실제 정책이다.
 
-목표 상태:
+
 - `tombs` SELECT: 익명은 `status = 'published'` 행만. 본인은 `auth.uid() = user_id`로 전체.
 - `tombs` INSERT/UPDATE: `auth.uid() = user_id`만.
 - `flowers` SELECT: 게시된 묘비의 것만 익명 허용.
 - `flowers` INSERT: **RLS로 전부 차단.** 삽입은 `/api/flowers` 서버 라우트에서 service_role로만. 익명 INSERT를 클라이언트에 열어주면 스팸 방어 지점이 사라진다.
-- `legacy_tombs`(이주용): **SELECT/INSERT/UPDATE 전부 차단.** 이메일이 든 테이블이므로 anon 키로는 한 줄도 읽히면 안 된다. 서버에서 service_role로만.
+(레거시 데이터를 이관하지 않기로 해 `legacy_tombs` 테이블은 만들지 않는다.)
 
 레이트리밋은 Upstash 같은 외부 의존성 없이 — 삽입 직전 같은 `visitor_hash`의 최근 1분 건수를 세는 쿼리 하나로 충분하다.
 
@@ -199,22 +201,21 @@ LLM 답변에는 **실명·직장·지역·인간관계 같은 식별 정보가 
 
 | Phase | 내용 | 산출물 |
 |---|---|---|
-| **0** | **Supabase 이주** — 백업 확보, 로컬 복원·실태 파악, 새 프로젝트, OAuth 재연결, keep-alive | 살아있는 DB |
+| **0** | **Supabase 이주** — ~~백업 분석~~ ✅, ~~스키마 작성·검증~~ ✅, 새 프로젝트 생성·적용·OAuth·keep-alive는 대기 | 살아있는 DB |
 | **1** | Next.js + TypeScript 이관 — 화면·기능 동등, 토대만 교체. `@supabase/ssr` 도입, auth-ui 제거, 에셋/SCSS 이식 | 동작하는 Next 앱 |
-| **2** | 데이터 레이어 — 새 스키마 마이그레이션 + RLS, 타입 생성, fetch 7종을 `getTomb()` 하나로, 저장 경로 단일화, `deleteAccount` 서버 라우트 이전 | 왕복 7회 → 1회 |
+| **2** | 데이터 레이어 — 타입 생성, fetch 7종을 `getTomb()` 하나로, 저장 경로 단일화, `deleteAccount` 서버 라우트 이전 | 왕복 7회 → 1회 |
 | **3** | GOAT 폐기 + 온보딩 3단계 축소 | 코드·컬럼·SCSS 제거 |
 | **4** | ★ `/me/compose` — 프롬프트 복사, 붙여넣기, 문장 선택 각인, 미리보기, 게시 | 새 온보딩 루프 |
 | **5** | 공유 — slug URL, `generateMetadata`, 동적 OG 이미지, 구 링크 리다이렉트 | 카톡/트위터에 묘비 카드 |
 | **6** | ★ 헌화 영속화 — `flowers` 테이블, `/api/flowers`, 결정론적 배치, 카운터 | 찾아와 꽃을 두는 루프 완성 |
-| **7** | 레거시 클레임 (사용자 수가 값어치를 하면), README 재작성, 정리 | |
+| **7** | README 재작성, 미사용 코드·에셋 정리 | |
 
-**Phase 0이 나머지 전부를 막고 있습니다.** DB 없이는 1단계 이후를 검증할 방법이 없습니다.
+**Phase 0의 코드 몫은 끝났습니다.** 남은 건 새 Supabase 프로젝트 생성과 설정 — 콘솔 작업입니다. 그동안 Phase 1(Next.js + TS 이관)은 DB 접속 없이 진행할 수 있습니다.
 
 ## 8. 남은 결정
 
-- **레거시 클레임 플로우를 구현할지** — 백업을 로컬 복원해 실제 사용자 수를 본 뒤에 판단. 20명대면 CSV 보관만 하고 넘어가는 게 맞습니다.
 - **`tombstone.vercel.app` 도메인 유지 여부.**
 - **데스마스크 50종 유지** — 유지 쪽으로 기울어 있음. 온보딩 3단계 중 하나로 남습니다.
 
 ### 이번에 확정된 것
-TypeScript 채택 / GOAT 폐기 / 온보딩 3단계 / Next.js App Router / 익명 헌화 / 링크 공유만 (공동묘지 후속) / Supabase 새 프로젝트 이주
+TypeScript 채택 / GOAT 폐기 / 온보딩 3단계 / Next.js App Router / 익명 헌화 / 링크 공유만 (공동묘지 후속) / Supabase 새 프로젝트 + **레거시 데이터 이관 없음**

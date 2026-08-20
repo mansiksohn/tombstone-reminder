@@ -27,3 +27,9 @@ yarn-error.log*
 
 # Backend environment variables
 /backend/.env
+# DB 백업·덤프 (개인정보 포함)
+*.backup
+*.backup.gz
+*.dump
+*.sql.gz
+legacy_tombs*.csv
