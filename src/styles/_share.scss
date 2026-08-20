@@ -1,0 +1,23 @@
+.share-section {
+  @apply p-4 rounded-lg my-8 decoration-solid;
+}
+
+.share-section .button {
+  @apply p-4 rounded-lg w-full my-8 bg-soul-green-500 cursor-pointer;
+}
+.share-url {
+  @apply bg-grey-111 text-grey-999 text-sm p-3 rounded-lg break-all;
+}
+
+.share-visit {
+  @apply bg-soul-green-500 text-white py-2 px-4 rounded-lg text-center flex-1;
+}
+
+.unpublish-button {
+  @apply bg-transparent text-grey-999 text-sm underline;
+  background-color: transparent !important;
+}
+
+.compose-cta {
+  @apply bg-soul-green-500 text-white py-2 px-4 rounded-lg;
+}

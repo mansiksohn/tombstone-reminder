@@ -1,0 +1,40 @@
+.compose-container {
+  @apply flex flex-col gap-6 p-4 pb-24;
+}
+
+.compose-lead {
+  @apply text-lg break-keep leading-relaxed;
+}
+
+.prompt-card {
+  @apply bg-soul-green-950 border border-soul-green-800 rounded-lg p-4;
+  @apply text-soul-green-300 break-keep leading-relaxed whitespace-pre-wrap;
+}
+
+.compose-textarea {
+  @apply w-full min-h-56 p-3 rounded-lg break-keep leading-relaxed;
+  @apply border-2 border-soul-green-700 bg-soul-green-950 text-real-white;
+  resize: vertical;
+
+  &:focus {
+    @apply bg-real-black border-soul-green-500;
+    outline: none;
+  }
+}
+
+.sentence-card {
+  @apply w-full text-left p-3 rounded-lg break-keep leading-relaxed;
+  @apply bg-grey-111 text-grey-999 border-2 border-transparent;
+
+  &[aria-pressed='true'] {
+    @apply bg-soul-green-950 text-soul-green-300 border-soul-green-500;
+  }
+}
+
+.publish-warning {
+  @apply text-sm text-grey-999 break-keep leading-relaxed;
+}
+
+.eulogy-body {
+  @apply break-keep leading-relaxed whitespace-pre-wrap text-real-white;
+}

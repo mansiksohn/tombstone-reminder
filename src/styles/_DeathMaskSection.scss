@@ -1,0 +1,29 @@
+.death-mask-section {
+  position: relative;
+}
+
+.coffin {
+  @apply bg-soul-green-900 p-4 rounded-lg;
+}
+
+.selected-image {
+  @apply block mx-auto p-4 cursor-pointer;
+}
+
+.image-selector {
+  @apply absolute top-0 left-0 right-0 mx-auto p-4 bg-grey-111 border rounded-lg;
+  width: 95%;
+  top: -60%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.option-image {
+  @apply cursor-pointer;
+}
+
+.option-image-selected {
+  @apply rounded ring-2 ring-soul-green-500;
+}
