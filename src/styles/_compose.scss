@@ -38,3 +38,20 @@
 .eulogy-body {
   @apply break-keep leading-relaxed whitespace-pre-wrap text-real-white;
 }
+
+.source-chip {
+  @apply py-1 px-3 rounded-full text-sm;
+  @apply bg-grey-111 text-grey-999;
+
+  &[aria-pressed='true'] {
+    @apply bg-soul-green-500 text-real-white;
+  }
+}
+
+.secondary-button {
+  @apply bg-grey-111 text-grey-999;
+
+  &:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+}
