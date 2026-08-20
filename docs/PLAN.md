@@ -17,6 +17,10 @@
 | 묘비명 | LLM 답변 전문 = 추도문. 사용자가 그중 **한 문장을 골라** 묘비에 각인 |
 | 헌화 | 비로그인 익명 방문자도 가능 (서버 라우트 경유 + 레이트리밋) |
 | 발견 경로 | 이번엔 링크 공유만. 공동묘지 인덱스는 후속 |
+| 언어 | **TypeScript** |
+| GOAT 섹션 | **폐기** |
+| 온보딩 챗 | **3단계로 축소** 후 곧장 compose로 |
+| Supabase | 일시정지 1년 초과 → **새 프로젝트로 이주.** [`SUPABASE-RECOVERY.md`](./SUPABASE-RECOVERY.md) |
 
 ---
 
@@ -68,49 +72,75 @@ app/
 - **Tailwind 3 유지.** SCSS 파일이 스타일의 본체이고 Tailwind 4는 Sass와 궁합이 나쁘다. CRA→Next 이관과 Tailwind 3→4를 동시에 하는 건 위험을 두 배로 지는 일 — 후속으로 미룬다.
 - **`@supabase/ssr`** 도입. `@supabase/auth-helpers`는 deprecated이고, 서버 컴포넌트에서 쿠키 기반 세션을 읽으려면 이게 필요하다.
 - **`@supabase/auth-ui-react` 제거** → `signInWithOAuth` 직접 호출하는 구글 버튼 하나로 대체.
-- **TypeScript 권장.** src/ 전체를 어차피 다시 쓰는 시점이고, Supabase가 스키마에서 타입을 생성해주므로 `Tombs` 컬럼 오타 같은 실수를 컴파일 타임에 잡는다. (원치 않으면 JS로 진행 가능 — 이 결정만 아직 열려 있음)
+- **TypeScript 확정.** `supabase gen types typescript`로 스키마에서 타입을 생성해 쓴다. 컬럼명 오타나 nullable 누락을 컴파일 타임에 잡는다 — 스키마를 새로 짜는 이번 이주와 특히 궁합이 좋다.
 
-### 스키마 변경
+### 스키마
 
-`Tombs` (기존 컬럼 유지, 추가만):
+Supabase를 새 프로젝트로 이주하므로 **기존 테이블에 ALTER를 거는 게 아니라 처음부터 새로 짓는다.** `supabase/migrations/`에 마이그레이션으로 관리.
+
 ```sql
-alter table "Tombs"
-  add column slug              text unique,        -- 공개 URL용 짧은 랜덤 식별자
-  add column status            text not null default 'draft',  -- draft | published
-  add column eulogy            text,               -- LLM 답변 전문 (추도문)
-  add column eulogy_source     text,               -- 'chatgpt' | 'claude' | 'gemini' | 'other'
-  add column eulogy_captured_at timestamptz,
-  add column published_at      timestamptz;
-```
-- `tomb_name`(기존 묘비명 컬럼)의 **의미만 바뀐다**: "직접 쓴 한 줄" → "추도문에서 골라 각인한 한 문장". 컬럼명은 그대로 두는 편이 기존 데이터 보존에 안전하다.
-- `obituary`(160자)는 `eulogy`와 역할이 겹친다. 기존 데이터를 `eulogy`로 옮기고 `obituary`는 남겨둔 채 읽기만(레거시) — 마이그레이션 후 제거 판단.
+create table tombs (                          -- 대문자 "Tombs" → 소문자. 따옴표 지옥 탈출
+  user_id             uuid primary key references auth.users(id) on delete cascade,
+  slug                text unique not null,   -- 공개 URL용. auth UUID 노출 안 함
+  status              text not null default 'draft',   -- draft | published
+  user_name           text,
+  tomb_name           text,                   -- 추도문에서 골라 각인한 한 문장
+  eulogy              text,                   -- LLM 답변 전문
+  eulogy_source       text,                   -- 'chatgpt' | 'claude' | 'gemini' | 'other'
+  eulogy_captured_at  timestamptz,
+  deathmask           text,
+  birth_date          date,
+  death_date          date,
+  is_onboarded        boolean not null default false,
+  published_at        timestamptz,
+  created_at          timestamptz not null default now(),
+  updated_at          timestamptz not null default now()
+);
 
-`flowers` (신규):
-```sql
 create table flowers (
   id           uuid primary key default gen_random_uuid(),
-  tomb_id      uuid not null references "Tombs"(user_id) on delete cascade,
+  tomb_id      uuid not null references tombs(user_id) on delete cascade,
   flower_type  text not null,          -- Rose | Tulip | Blossom | Bouquet | Hibiscus | Sunflower
-  visitor_hash text,                   -- IP+UA 해시. 레이트리밋/중복 억제용 (원문 미저장)
+  visitor_hash text,                   -- IP+UA 해시. 레이트리밋용 (원문 미저장)
   created_at   timestamptz not null default now()
 );
 create index flowers_tomb_created_idx on flowers (tomb_id, created_at desc);
 ```
 
+구 스키마 대비 달라지는 것:
+- **`goat` 컬럼 없음** — 폐기 확정. 단 레거시 추출 CSV에는 남겨둔다 (버리는 건 나중에도 되지만 되살리는 건 못 한다).
+- **`obituary`(160자) 없음** — `eulogy`가 역할을 대체한다. 레거시 `obituary` 값은 이주 시 `eulogy`로 옮긴다.
+- `tomb_name`은 이름을 유지하되 의미가 바뀐다: "직접 쓴 한 줄" → "추도문에서 골라 각인한 한 문장".
+
 ### RLS 정책
-현재 `Tombs`는 익명 클라이언트가 share 페이지에서 읽고 있으므로 사실상 열려 있을 가능성이 높다. **라이브 스키마에서 실제 정책을 먼저 확인해야 한다.**
+새 프로젝트에 처음부터 제대로 건다. (구 프로젝트의 정책은 로컬 복원본에서 확인만 하고 참고하지 않는다 — 익명 share 페이지가 읽고 있었으므로 사실상 열려 있었을 가능성이 높다.)
 
 목표 상태:
-- `Tombs` SELECT: 익명은 `status = 'published'` 행만. 본인은 `auth.uid() = user_id`로 전체.
-- `Tombs` INSERT/UPDATE: `auth.uid() = user_id`만.
+- `tombs` SELECT: 익명은 `status = 'published'` 행만. 본인은 `auth.uid() = user_id`로 전체.
+- `tombs` INSERT/UPDATE: `auth.uid() = user_id`만.
 - `flowers` SELECT: 게시된 묘비의 것만 익명 허용.
 - `flowers` INSERT: **RLS로 전부 차단.** 삽입은 `/api/flowers` 서버 라우트에서 service_role로만. 익명 INSERT를 클라이언트에 열어주면 스팸 방어 지점이 사라진다.
+- `legacy_tombs`(이주용): **SELECT/INSERT/UPDATE 전부 차단.** 이메일이 든 테이블이므로 anon 키로는 한 줄도 읽히면 안 된다. 서버에서 service_role로만.
 
 레이트리밋은 Upstash 같은 외부 의존성 없이 — 삽입 직전 같은 `visitor_hash`의 최근 1분 건수를 세는 쿼리 하나로 충분하다.
 
 ---
 
-## 3. 핵심 신규 화면: `/me/compose`
+## 3. 온보딩 축소 (5단계 → 3단계)
+
+첫 경험의 클라이맥스가 챗이 아니라 compose로 옮겨간다. 챗에서는 묘비를 세우는 데 꼭 필요한 것만 묻고 빠진다.
+
+| 단계 | 현재 | 개편 후 |
+|---|---|---|
+| 0 | 이름 (12자) | **유지** |
+| 1 | 묘비명 (72자) | **제거** — compose에서 LLM 답변 중 한 문장을 골라 각인 |
+| 2 | 생년월일 | **유지** |
+| 3 | 데스마스크 (묻어둘 것) | **유지** — 50종 자산이 아깝고, 고르는 행위 자체가 좋다 |
+| 4 | "다 만들었습니다" → 홈 | **compose로 직행** |
+
+마지막 단계의 문구도 바뀐다. 지금은 "이제 다 만들었습니다"인데, 개편 후에는 여기가 끝이 아니라 **시작**이다. 묘비는 비어 있고, 이제 그걸 채우러 자기 AI에게 물으러 간다.
+
+## 4. 핵심 신규 화면: `/me/compose`
 
 이 제품의 새 심장. 흐름:
 
@@ -131,7 +161,7 @@ LLM 답변에는 **실명·직장·지역·인간관계 같은 식별 정보가 
 
 ---
 
-## 4. 헌화 인터랙션 개편
+## 5. 헌화 인터랙션 개편
 
 | | 현재 | 개편 후 |
 |---|---|---|
@@ -146,38 +176,45 @@ LLM 답변에는 **실명·직장·지역·인간관계 같은 식별 정보가 
 
 ---
 
-## 5. 서버 되살리기 — 확인이 필요한 항목
+## 6. 서버 되살리기
 
-코드로 해결할 수 없고 콘솔 확인이 필요합니다. **Phase 1 착수 전에 알려주세요.**
+**Supabase 프로젝트가 일시정지 상태이고 1년이 넘어 대시보드 복원이 막혔습니다.** 이것이 사이트가 죽어 있는 원인입니다. 코드 문제가 아닙니다.
 
-1. **Supabase 프로젝트가 일시정지 상태인지.** 무료 티어는 비활성 7일 후 자동 일시정지된다. 오래된 프로젝트라면 이게 "서버가 죽은" 가장 유력한 원인이다. → 대시보드에서 Restore.
-2. **환경변수 이름이 전부 바뀐다.** `REACT_APP_SUPABASE_URL` → `NEXT_PUBLIC_SUPABASE_URL`, `REACT_APP_SUPABASE_ANON_KEY` → `NEXT_PUBLIC_SUPABASE_ANON_KEY`. 추가로 서버 전용 `SUPABASE_SERVICE_ROLE_KEY` 필요 (헌화 삽입·계정 삭제용). Vercel 프로젝트 설정에서 갱신.
-3. **Google OAuth 리다이렉트 URL.** Supabase Auth 설정과 Google Cloud Console OAuth 클라이언트 양쪽에 `https://tombstone.vercel.app/auth/callback` 추가 필요. 오래된 프로젝트면 OAuth 동의 화면이 만료됐을 수도 있다.
-4. **Vercel 프로젝트·도메인이 아직 살아있는지**, `tombstone.vercel.app`을 계속 쓸지.
-5. **`Tombs`의 현재 RLS 정책과 실제 컬럼 목록.** 마이그레이션 SQL을 확정하려면 필요하다.
-6. **기존 사용자 데이터를 보존할지, 초기화할지.**
+→ 전체 절차는 **[`SUPABASE-RECOVERY.md`](./SUPABASE-RECOVERY.md)** 참조.
 
----
+가장 급한 두 가지만 여기 옮기면:
 
-## 6. 단계별 실행
+1. **백업을 오늘 다운로드하세요.** 1년 넘게 정지된 프로젝트이고, 이 파일이 사라지면 복구 불가능합니다.
+2. **백업에 `auth` 스키마가 들어있는지 확인하세요.** `tombs`에는 이메일 컬럼이 없어서, 묘비와 사람을 잇는 유일한 끈이 `user_id` → `auth.users`입니다. 이게 없으면 남는 건 주인을 알 수 없는 묘비 더미입니다.
+
+그 외 나머지 확인 항목:
+- Vercel 프로젝트·도메인이 아직 살아있는지, `tombstone.vercel.app`을 계속 쓸지
+- 환경변수 전면 교체 — `REACT_APP_*` → `NEXT_PUBLIC_*`, 신규 `SUPABASE_SERVICE_ROLE_KEY`
+- Google OAuth 리디렉션 URI를 새 프로젝트 ref로 추가
+- **keep-alive 워크플로 활성화** — 아무것도 안 하면 7일 비활성으로 똑같이 반복됩니다
+
+## 7. 단계별 실행
 
 각 단계는 독립 커밋. 앞 단계가 초록불이어야 다음으로 간다.
 
 | Phase | 내용 | 산출물 |
 |---|---|---|
-| **0** | 되살리기 진단 — 위 6개 항목 확인, 로컬 `.env.local`로 실제 DB 접속 검증 | 확인 결과 |
-| **1** | Next.js 이관 — 화면·기능은 그대로, 토대만 교체. `@supabase/ssr` 도입, auth-ui 제거, 에셋/SCSS 이식, `process.env.PUBLIC_URL` 제거 | 기존과 동등하게 동작하는 Next 앱 |
-| **2** | 데이터 레이어 정리 — fetch 7종을 `getTomb()` 하나로, 저장 경로 단일화, `deleteAccount` 서버 라우트 이전, 스키마 마이그레이션 + RLS | 왕복 7회 → 1회, admin 호출 제거 |
-| **3** | ★ `/me/compose` — 프롬프트 복사, 붙여넣기, 문장 선택 각인, 미리보기, 게시 | 새 온보딩 루프 |
-| **4** | 공유 — slug URL, `generateMetadata`, 동적 OG 이미지, 구 링크 리다이렉트 | 카톡/트위터에 묘비 카드가 뜸 |
-| **5** | ★ 헌화 영속화 — `flowers` 테이블, `/api/flowers`, 결정론적 배치, 카운터 | 찾아와 꽃을 두는 루프 완성 |
-| **6** | 정리 — 미사용 코드 제거, README 재작성, 빌드 경고 해소 | |
+| **0** | **Supabase 이주** — 백업 확보, 로컬 복원·실태 파악, 새 프로젝트, OAuth 재연결, keep-alive | 살아있는 DB |
+| **1** | Next.js + TypeScript 이관 — 화면·기능 동등, 토대만 교체. `@supabase/ssr` 도입, auth-ui 제거, 에셋/SCSS 이식 | 동작하는 Next 앱 |
+| **2** | 데이터 레이어 — 새 스키마 마이그레이션 + RLS, 타입 생성, fetch 7종을 `getTomb()` 하나로, 저장 경로 단일화, `deleteAccount` 서버 라우트 이전 | 왕복 7회 → 1회 |
+| **3** | GOAT 폐기 + 온보딩 3단계 축소 | 코드·컬럼·SCSS 제거 |
+| **4** | ★ `/me/compose` — 프롬프트 복사, 붙여넣기, 문장 선택 각인, 미리보기, 게시 | 새 온보딩 루프 |
+| **5** | 공유 — slug URL, `generateMetadata`, 동적 OG 이미지, 구 링크 리다이렉트 | 카톡/트위터에 묘비 카드 |
+| **6** | ★ 헌화 영속화 — `flowers` 테이블, `/api/flowers`, 결정론적 배치, 카운터 | 찾아와 꽃을 두는 루프 완성 |
+| **7** | 레거시 클레임 (사용자 수가 값어치를 하면), README 재작성, 정리 | |
 
----
+**Phase 0이 나머지 전부를 막고 있습니다.** DB 없이는 1단계 이후를 검증할 방법이 없습니다.
 
-## 7. 아직 열린 결정
+## 8. 남은 결정
 
-- **TypeScript 채택 여부** — 권장하나 확정 아님.
-- **GOAT 섹션("최고의 순간" 링크 목록)의 운명.** LLM 추도문이 서사의 중심이 되면 GOAT는 역할이 겹친다. 유지 / 폐기 / 추도문 아래 부록으로 축소 중 선택 필요.
-- **온보딩 챗(5단계 대화)을 남길지.** 이름·생일·데스마스크는 여전히 필요하지만, 이제 첫 경험의 클라이맥스는 챗이 아니라 compose다. 챗을 3단계로 줄이고 곧장 compose로 보내는 안을 제안한다.
-- **데스마스크 50종 선택 UI 유지 여부** — 비주얼 자산이 아까우므로 유지 쪽에 무게.
+- **레거시 클레임 플로우를 구현할지** — 백업을 로컬 복원해 실제 사용자 수를 본 뒤에 판단. 20명대면 CSV 보관만 하고 넘어가는 게 맞습니다.
+- **`tombstone.vercel.app` 도메인 유지 여부.**
+- **데스마스크 50종 유지** — 유지 쪽으로 기울어 있음. 온보딩 3단계 중 하나로 남습니다.
+
+### 이번에 확정된 것
+TypeScript 채택 / GOAT 폐기 / 온보딩 3단계 / Next.js App Router / 익명 헌화 / 링크 공유만 (공동묘지 후속) / Supabase 새 프로젝트 이주
