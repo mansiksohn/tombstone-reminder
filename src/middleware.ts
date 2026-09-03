@@ -1,6 +1,7 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import type { CookieToSet } from '@/lib/supabase/cookies';
+import { requireEnv } from '@/lib/env';
 
 /**
  * 만료된 auth 토큰을 갱신하고 갱신된 쿠키를 요청·응답 양쪽에 반영한다.
@@ -10,8 +11,8 @@ export async function middleware(request: NextRequest) {
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    requireEnv('NEXT_PUBLIC_SUPABASE_URL', process.env.NEXT_PUBLIC_SUPABASE_URL),
+    requireEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
     {
       cookies: {
         getAll() {

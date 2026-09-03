@@ -1,6 +1,7 @@
 import 'server-only';
 import { createClient } from '@/lib/supabase/server';
 import type { FlowerRow, TombRow } from '@/lib/database.types';
+import { resolveSiteUrl } from '@/lib/env';
 
 /**
  * 현재 로그인 사용자의 묘비를 한 번의 쿼리로 가져온다.
@@ -91,10 +92,7 @@ export async function getFlowers(tombId: string): Promise<FlowerSummary> {
 }
 
 export function siteUrl() {
-  return (
-    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') ??
-    'http://localhost:3000'
-  );
+  return resolveSiteUrl();
 }
 
 export function shareUrl(slug: string) {
