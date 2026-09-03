@@ -124,16 +124,25 @@ export default function CreateFlow({
 
     saveDraft({ eulogy, source, sentence });
 
-    const supabase = createClient();
-    const { error: authError } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=/new`,
-      },
-    });
+    // createClient()는 설정이 없으면 예외를 던진다. 잡지 않으면 uncaught
+    // promise로 새어나가 버튼을 눌러도 화면에 아무 일도 일어나지 않는다.
+    // 사용자에게는 앱이 그냥 죽은 것처럼 보이므로 반드시 표면화한다.
+    try {
+      const supabase = createClient();
+      const { error: authError } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=/new`,
+        },
+      });
 
-    if (authError) {
-      setError('로그인에 실패했습니다. 잠시 후 다시 시도해주세요.');
+      if (authError) throw authError;
+    } catch (cause) {
+      console.error('로그인 시작 실패:', cause);
+      setError(
+        '로그인을 시작하지 못했습니다. 잠시 후 다시 시도해주세요. ' +
+          '문제가 계속되면 관리자에게 알려주세요.',
+      );
     }
   };
 
