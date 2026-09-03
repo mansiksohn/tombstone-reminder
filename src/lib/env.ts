@@ -22,6 +22,21 @@ export function requireEnv(name: string, value: string | undefined): string {
 }
 
 /**
+ * Supabase를 쓸 수 있는 상태인가.
+ *
+ * DB 없이도 의미가 있는 화면(랜딩, /new의 붙여넣기 단계)이 설정 하나
+ * 때문에 통째로 죽지 않도록, 그런 곳에서만 미리 확인하는 용도다.
+ * 정말로 데이터가 있어야 하는 화면은 확인하지 말고 그대로 실패시켜서
+ * requireEnv가 무엇이 없는지 말하게 두는 편이 낫다.
+ */
+export function isSupabaseConfigured(): boolean {
+  return Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+  );
+}
+
+/**
  * 이 배포가 자기 자신을 가리키는 절대 URL.
  *
  * 공유 링크와 OG 태그에 쓰이므로 틀리면 눈에 바로 띈다 — 예전에는

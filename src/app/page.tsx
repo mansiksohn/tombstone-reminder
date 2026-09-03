@@ -3,7 +3,7 @@ import Header from '@/components/Header';
 import PromptCard from '@/components/PromptCard';
 import LandingAnimation from '@/components/LandingAnimation';
 import { EULOGY_PROMPT } from '@/lib/prompt';
-import { createClient } from '@/lib/supabase/server';
+import { hasSession } from '@/lib/tomb';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,14 +15,13 @@ export const dynamic = 'force-dynamic';
  * 요구하지 않는 것이 이 화면의 목적이다.
  */
 export default async function LandingPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // 이 화면은 DB가 필요 없다. 세션은 '내 묘비' 링크를 보일지 정하는
+  // 데만 쓰이므로, 설정이 없으면 비로그인으로 그리고 넘어간다.
+  const loggedIn = await hasSession();
 
   return (
     <div className="home-container">
-      <Header loggedIn={Boolean(user)} />
+      <Header loggedIn={loggedIn} />
 
       <main className="landing">
         <section className="landing-copy">
@@ -48,7 +47,7 @@ export default async function LandingPage() {
           답변 붙여넣기
         </Link>
 
-        {user && (
+        {loggedIn && (
           <Link href="/me" className="landing-secondary">
             내 묘비 보러가기
           </Link>
