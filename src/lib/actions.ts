@@ -62,32 +62,6 @@ export async function saveField(
   return { ok: true };
 }
 
-/** 온보딩 진행도를 앞으로만 옮긴다. 뒤로 가도 진행도가 깎이지 않는다. */
-export async function advanceOnboarding(step: number): Promise<ActionResult> {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { ok: false, error: '로그인이 필요합니다.' };
-
-  const { data: current } = await supabase
-    .from('tombs')
-    .select('onboarding_step')
-    .eq('user_id', user.id)
-    .maybeSingle();
-
-  const next = Math.max(current?.onboarding_step ?? 0, step);
-
-  const { error } = await supabase
-    .from('tombs')
-    .update({ onboarding_step: next })
-    .eq('user_id', user.id);
-
-  if (error) return { ok: false, error: error.message };
-  return { ok: true };
-}
-
 const EULOGY_LIMIT = 4000;
 
 /**
@@ -95,7 +69,7 @@ const EULOGY_LIMIT = 4000;
  *
  * 두 값을 한 트랜잭션성 update로 묶는 이유는, 문장만 저장되고 전문
  * 저장에 실패하는 것 같은 반쪽 상태를 피하기 위해서다. 전문이 없는데
- * 각인 문장만 있는 상태는 /me/compose 흐름상 나올 수 없다.
+ * 각인 문장만 있는 상태는 /new 흐름상 나올 수 없다.
  */
 export async function saveEulogy(
   eulogy: string,
@@ -136,7 +110,7 @@ export async function saveEulogy(
   if (error) return { ok: false, error: error.message };
 
   revalidatePath('/me');
-  revalidatePath('/me/compose');
+  revalidatePath('/new');
   return { ok: true };
 }
 

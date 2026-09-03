@@ -6,17 +6,22 @@ import { createClient } from '@/lib/supabase/client';
 
 interface Props {
   userName?: string | null;
-  /** 공개 묘비 페이지에서는 내 계정 관련 항목을 숨긴다. */
-  variant?: 'private' | 'public';
+  /** 로그인 전에는 계정 관련 항목을 숨긴다. */
+  loggedIn?: boolean;
+  /** 공개 묘비 페이지에서는 남의 묘비를 보고 있으므로 이름을 쓰지 않는다. */
+  variant?: 'own' | 'public';
 }
 
-export default function Header({ userName, variant = 'private' }: Props) {
+export default function Header({
+  userName,
+  loggedIn = false,
+  variant = 'own',
+}: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
   const signOut = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
+    await createClient().auth.signOut();
     window.location.href = '/';
   };
 
@@ -44,7 +49,9 @@ export default function Header({ userName, variant = 'private' }: Props) {
 
   return (
     <header className="header">
-      <h1 className="header-title">묘비log</h1>
+      <Link href="/" className="header-title">
+        묘비log
+      </Link>
       <button
         onClick={() => setMenuOpen(true)}
         className="menu-button"
@@ -67,16 +74,22 @@ export default function Header({ userName, variant = 'private' }: Props) {
         </button>
 
         <div className="menu-content">
-          {variant === 'private' ? (
+          {loggedIn && variant === 'own' && userName && (
             <div className="user-name-container">
               <div className="user-name text-xl font-bold text-soul-green-500">
-                {userName || '신원미상'}
+                {userName}
                 <span className="text-white">님</span>
               </div>
             </div>
-          ) : (
-            <Link href="/" className="mb-4">
-              내 묘비 보러가기
+          )}
+
+          <Link href="/" className="mb-4">
+            묘비 만들기
+          </Link>
+
+          {loggedIn && (
+            <Link href="/me" className="mb-4">
+              내 묘비
             </Link>
           )}
 
@@ -89,7 +102,7 @@ export default function Header({ userName, variant = 'private' }: Props) {
             문의 및 신고
           </a>
 
-          {variant === 'private' && (
+          {loggedIn && (
             <>
               <button onClick={signOut}>로그아웃</button>
               <button

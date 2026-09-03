@@ -2,9 +2,6 @@ import 'server-only';
 import { createClient } from '@/lib/supabase/server';
 import type { FlowerRow, TombRow } from '@/lib/database.types';
 
-/** 온보딩 3단계(이름 → 생일 → 데스마스크)를 모두 마친 상태. */
-export const ONBOARDING_STEPS = 3;
-
 /**
  * 현재 로그인 사용자의 묘비를 한 번의 쿼리로 가져온다.
  *
