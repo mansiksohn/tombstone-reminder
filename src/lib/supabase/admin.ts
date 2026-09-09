@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '@/lib/database.types';
+import { requireEnv } from '@/lib/env';
 
 /**
  * RLS를 우회하는 service_role 클라이언트.
@@ -9,12 +10,14 @@ import type { Database } from '@/lib/database.types';
  * 서버 라우트에서만 import할 것.
  */
 export function createAdminClient() {
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!key) {
-    throw new Error('SUPABASE_SERVICE_ROLE_KEY가 설정되지 않았습니다.');
-  }
+  const key = requireEnv(
+    'SUPABASE_SERVICE_ROLE_KEY',
+    process.env.SUPABASE_SERVICE_ROLE_KEY,
+  );
 
-  return createClient<Database>(process.env.NEXT_PUBLIC_SUPABASE_URL!, key, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
+  return createClient<Database>(
+    requireEnv('NEXT_PUBLIC_SUPABASE_URL', process.env.NEXT_PUBLIC_SUPABASE_URL),
+    key,
+    { auth: { persistSession: false, autoRefreshToken: false } },
+  );
 }

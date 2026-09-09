@@ -8,23 +8,32 @@ import FlowerSection from '@/components/FlowerSection';
 import GroundSection from '@/components/GroundSection';
 import DeathMaskSection from '@/components/DeathMaskSection';
 import PublishPanel from '@/components/PublishPanel';
-import { getFlowers, getMyTomb, ONBOARDING_STEPS, shareUrl } from '@/lib/tomb';
+import { getFlowers, getMyTomb, shareUrl } from '@/lib/tomb';
 
 export const dynamic = 'force-dynamic';
 
+/**
+ * 내 묘비 = 꾸미기 화면.
+ *
+ * 이름·생일·데스마스크는 예전에 온보딩 챗에서 묘비를 만들기 전에
+ * 물었지만, 지금은 전부 선택 사항이다. 묘비는 이미 서 있고 여기서
+ * 다듬을 뿐이다.
+ */
 export default async function MyTombPage() {
   const result = await getMyTomb();
   if (!result) redirect('/');
 
   const { tomb } = result;
-  if (tomb.onboarding_step < ONBOARDING_STEPS) redirect('/me/onboarding');
+
+  // 추도문이 없으면 아직 묘비를 만들지 않은 것이다. 만들기로 보낸다.
+  if (!tomb.eulogy) redirect('/new');
 
   const flowers = await getFlowers(tomb.user_id);
   const published = tomb.status === 'published';
 
   return (
     <div className="home-container">
-      <Header userName={tomb.user_name} />
+      <Header userName={tomb.user_name} loggedIn />
       <main className="main-content">
         <UserNameSection userName={tomb.user_name} />
         <DatesSection birthDate={tomb.birth_date} deathDate={tomb.death_date} />
@@ -38,26 +47,17 @@ export default async function MyTombPage() {
         <GroundSection />
         <DeathMaskSection deathmask={tomb.deathmask} />
 
-        {tomb.eulogy ? (
-          <section className="obituary-section">
-            <div className="obituary-container">
-              <p className="eulogy-body">{tomb.eulogy}</p>
-            </div>
-          </section>
-        ) : (
-          <section className="obituary-section">
-            <div className="obituary-container flex flex-col items-center justify-center gap-4 text-center">
-              <p className="break-keep text-grey-999">
-                묘비가 비어 있습니다.
-                <br />
-                당신을 아는 존재에게 물어보세요.
-              </p>
-              <Link href="/me/compose" className="compose-cta">
-                추도문 받아오기
-              </Link>
-            </div>
-          </section>
-        )}
+        <section className="obituary-section">
+          <div className="obituary-container">
+            <p className="eulogy-body">{tomb.eulogy}</p>
+          </div>
+        </section>
+
+        <div className="px-4">
+          <Link href="/new" className="unpublish-button block text-center">
+            추도문 다시 받아오기
+          </Link>
+        </div>
 
         <PublishPanel
           published={published}

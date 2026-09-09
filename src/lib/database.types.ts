@@ -36,7 +36,6 @@ export type Database = {
           eulogy: string | null;
           eulogy_source: EulogySource | null;
           eulogy_captured_at: string | null;
-          onboarding_step: number;
           published_at: string | null;
           created_at: string;
           updated_at: string;
@@ -53,7 +52,6 @@ export type Database = {
           eulogy?: string | null;
           eulogy_source?: EulogySource | null;
           eulogy_captured_at?: string | null;
-          onboarding_step?: number;
           published_at?: string | null;
           created_at?: string;
           updated_at?: string;
@@ -70,7 +68,6 @@ export type Database = {
           eulogy?: string | null;
           eulogy_source?: EulogySource | null;
           eulogy_captured_at?: string | null;
-          onboarding_step?: number;
           published_at?: string | null;
           created_at?: string;
           updated_at?: string;

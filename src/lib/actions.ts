@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
-import type { Database, TombRow } from '@/lib/database.types';
+import type { Database, EulogySource, TombRow } from '@/lib/database.types';
 
 type TombUpdate = Database['public']['Tables']['tombs']['Update'];
 
@@ -62,8 +62,20 @@ export async function saveField(
   return { ok: true };
 }
 
-/** 온보딩 진행도를 앞으로만 옮긴다. 뒤로 가도 진행도가 깎이지 않는다. */
-export async function advanceOnboarding(step: number): Promise<ActionResult> {
+const EULOGY_LIMIT = 4000;
+
+/**
+ * 추도문 전문과 그중 각인할 한 문장을 함께 저장한다.
+ *
+ * 두 값을 한 트랜잭션성 update로 묶는 이유는, 문장만 저장되고 전문
+ * 저장에 실패하는 것 같은 반쪽 상태를 피하기 위해서다. 전문이 없는데
+ * 각인 문장만 있는 상태는 /new 흐름상 나올 수 없다.
+ */
+export async function saveEulogy(
+  eulogy: string,
+  source: EulogySource | null,
+  sentence: string,
+): Promise<ActionResult> {
   const supabase = await createClient();
 
   const {
@@ -71,20 +83,34 @@ export async function advanceOnboarding(step: number): Promise<ActionResult> {
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: '로그인이 필요합니다.' };
 
-  const { data: current } = await supabase
-    .from('tombs')
-    .select('onboarding_step')
-    .eq('user_id', user.id)
-    .maybeSingle();
+  const trimmedEulogy = eulogy.trim();
+  const trimmedSentence = sentence.trim();
 
-  const next = Math.max(current?.onboarding_step ?? 0, step);
+  if (!trimmedEulogy) return { ok: false, error: '추도문이 비어 있습니다.' };
+  if (trimmedEulogy.length > EULOGY_LIMIT) {
+    return { ok: false, error: `추도문은 ${EULOGY_LIMIT}자를 넘을 수 없습니다.` };
+  }
+  if (!trimmedSentence) {
+    return { ok: false, error: '묘비에 새길 문장을 골라주세요.' };
+  }
+  if (trimmedSentence.length > 200) {
+    return { ok: false, error: '각인 문장은 200자를 넘을 수 없습니다.' };
+  }
 
   const { error } = await supabase
     .from('tombs')
-    .update({ onboarding_step: next })
+    .update({
+      eulogy: trimmedEulogy,
+      eulogy_source: source,
+      eulogy_captured_at: new Date().toISOString(),
+      tomb_name: trimmedSentence,
+    })
     .eq('user_id', user.id);
 
   if (error) return { ok: false, error: error.message };
+
+  revalidatePath('/me');
+  revalidatePath('/new');
   return { ok: true };
 }
 

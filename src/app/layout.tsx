@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Noto_Sans_KR } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
 import { siteUrl } from '@/lib/tomb';
@@ -10,6 +10,16 @@ const notoSansKr = Noto_Sans_KR({
   variable: '--font-noto-sans-kr',
   display: 'swap',
 });
+
+/**
+ * CRA의 public/index.html에 있던 viewport 메타를 Next 이관 때 빠뜨렸다.
+ * 없으면 모바일이 980px 폭으로 그린 뒤 축소해서, 모든 화면이 잘리고
+ * 작게 보인다. 이 앱은 사실상 모바일 전용이라 치명적이다.
+ */
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl()),

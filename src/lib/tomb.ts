@@ -1,9 +1,21 @@
 import 'server-only';
 import { createClient } from '@/lib/supabase/server';
 import type { FlowerRow, TombRow } from '@/lib/database.types';
+import { isSupabaseConfigured, resolveSiteUrl } from '@/lib/env';
 
-/** 온보딩 3단계(이름 → 생일 → 데스마스크)를 모두 마친 상태. */
-export const ONBOARDING_STEPS = 3;
+/**
+ * 로그인 여부만 필요한 곳을 위한 가벼운 확인.
+ * 설정이 없으면 비로그인으로 답한다 (랜딩은 DB 없이도 떠야 한다).
+ */
+export async function hasSession(): Promise<boolean> {
+  if (!isSupabaseConfigured()) return false;
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return Boolean(user);
+}
 
 /**
  * 현재 로그인 사용자의 묘비를 한 번의 쿼리로 가져온다.
@@ -15,6 +27,10 @@ export async function getMyTomb(): Promise<{
   userId: string;
   tomb: TombRow;
 } | null> {
+  // 설정이 없으면 비로그인과 똑같이 다룬다. /new의 붙여넣기 단계는
+  // DB 없이도 굴러가야 하고, /me는 이 null을 받아 랜딩으로 보낸다.
+  if (!isSupabaseConfigured()) return null;
+
   const supabase = await createClient();
 
   const {
@@ -94,10 +110,7 @@ export async function getFlowers(tombId: string): Promise<FlowerSummary> {
 }
 
 export function siteUrl() {
-  return (
-    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') ??
-    'http://localhost:3000'
-  );
+  return resolveSiteUrl();
 }
 
 export function shareUrl(slug: string) {

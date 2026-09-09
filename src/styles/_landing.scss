@@ -1,0 +1,42 @@
+.landing {
+  @apply flex flex-col gap-6 px-4 pb-8;
+}
+
+.landing-animation {
+  // 애니메이션은 분위기용이다. 지연 로딩이라 늦게 뜨고, WASM이 막힌
+  // 환경에서는 아예 안 뜬다. 그만큼의 빈 공간이 첫 화면을 잡아먹지
+  // 않도록 낮게 잡는다.
+  @apply w-full;
+  height: 16vh;
+  min-height: 96px;
+  max-height: 160px;
+  position: relative;
+}
+
+.landing-copy {
+  @apply flex flex-col gap-3 text-center;
+}
+
+.landing-title {
+  @apply text-2xl font-bold break-keep leading-relaxed text-real-white;
+}
+
+.landing-lead {
+  @apply break-keep leading-relaxed text-grey-999;
+}
+
+.landing-cta {
+  @apply bg-soul-green-500 text-real-white text-center py-3 rounded-lg font-bold;
+}
+
+.landing-secondary {
+  @apply text-center text-sm text-grey-999 underline;
+}
+
+.prompt-details {
+  @apply text-sm text-grey-999;
+
+  summary {
+    @apply cursor-pointer underline;
+  }
+}
