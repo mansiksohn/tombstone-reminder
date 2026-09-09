@@ -60,7 +60,13 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // 정적 자산과 이미지 파일을 제외한 모든 경로
-    '/((?!_next/static|_next/image|favicon.ico|assets|.*\\.(?:svg|png|jpg|jpeg|gif|webp|riv)$).*)',
+    // 정적 자산과 이미지 파일을 제외한 모든 경로.
+    //
+    // /auth/* 도 제외한다. 이 미들웨어가 하는 일은 "이미 있는 세션의
+    // 갱신"인데, OAuth 콜백은 세션이 아직 없는 것이 정상인 지점이다.
+    // 거기서 getUser()를 부르는 것은 얻는 것 없이, 코드 교환이 읽어야 할
+    // PKCE code verifier 쿠키(sb-<ref>-auth-token-...-code-verifier)를
+    // 건드릴 위험만 진다. 세션 쓰기는 콜백 라우트가 직접 한다.
+    '/((?!_next/static|_next/image|favicon.ico|assets|auth|.*\\.(?:svg|png|jpg|jpeg|gif|webp|riv)$).*)',
   ],
 };
