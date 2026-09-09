@@ -132,7 +132,10 @@ export default function CreateFlow({
       const { error: authError } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=/new`,
+          // 쿼리스트링을 붙이지 않는다. redirect_to에 쿼리가 있으면
+          // Supabase 허용목록 매칭이 까다로워져 400을 맞기 쉽다.
+          // 도착지(/new)는 콜백 라우트의 기본값으로 정해져 있다.
+          redirectTo: `${window.location.origin}/auth/callback`,
         },
       });
 
