@@ -17,16 +17,23 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get('code');
   const next = searchParams.get('next') ?? '/new';
 
+  // 실패해도 랜딩이 아니라 /new로 돌려보낸다. 초안은 sessionStorage에
+  // 살아있고 /new만이 그것을 복원해 다시 게시할 수 있다. 랜딩으로 보내면
+  // 사용자 눈에는 쓰던 글이 통째로 사라진 것처럼 보인다.
   if (!code) {
-    return NextResponse.redirect(`${origin}/?error=missing_code`);
+    return NextResponse.redirect(`${origin}/new?error=missing_code`);
   }
 
   const supabase = await createClient();
   const { error } = await supabase.auth.exchangeCodeForSession(code);
 
   if (error) {
-    console.error('세션 교환 실패:', error.message);
-    return NextResponse.redirect(`${origin}/?error=auth_failed`);
+    // 이 메시지가 원인을 특정하는 유일한 단서다 (Vercel Runtime Logs).
+    // 예: anon key가 URL과 다른 프로젝트 것이면 여기서 걸린다.
+    console.error(
+      `세션 교환 실패: ${error.message} (status=${error.status ?? 'n/a'})`,
+    );
+    return NextResponse.redirect(`${origin}/new?error=auth_failed`);
   }
 
   // 프록시 뒤에서는 origin이 내부 호스트일 수 있으므로 전달 헤더를 우선한다.

@@ -11,8 +11,15 @@ export const dynamic = 'force-dynamic';
  * 로그인한 사람이면 기존 묘비를 실어 보내 이어서 고칠 수 있게 하고,
  * 아니면 빈 손으로 시작한다. 로그인은 게시 버튼을 누른 뒤에 요구한다.
  */
-export default async function NewTombPage() {
-  const result = await getMyTomb();
+export default async function NewTombPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>;
+}) {
+  const [result, { error: authError }] = await Promise.all([
+    getMyTomb(),
+    searchParams,
+  ]);
   const tomb = result?.tomb ?? null;
 
   return (
@@ -21,6 +28,7 @@ export default async function NewTombPage() {
       <CreateFlow
         prompt={EULOGY_PROMPT}
         loggedIn={Boolean(result)}
+        authError={authError ?? null}
         slug={tomb?.slug ?? null}
         shareUrl={tomb ? shareUrl(tomb.slug) : null}
         initialEulogy={tomb?.eulogy ?? null}

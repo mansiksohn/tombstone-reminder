@@ -22,6 +22,8 @@ type Step = 'paste' | 'select' | 'preview' | 'done';
 interface Props {
   prompt: string;
   loggedIn: boolean;
+  /** 로그인 콜백이 실패해 되돌아온 경우의 사유. */
+  authError?: string | null;
   slug: string | null;
   shareUrl: string | null;
   initialEulogy: string | null;
@@ -30,9 +32,16 @@ interface Props {
   alreadyPublished: boolean;
 }
 
+const AUTH_ERROR_MESSAGES: Record<string, string> = {
+  auth_failed:
+    '로그인을 마치지 못했습니다. 쓰시던 내용은 그대로 있으니 다시 게시해보세요.',
+  missing_code: '로그인이 취소된 것 같습니다. 다시 게시해보세요.',
+};
+
 export default function CreateFlow({
   prompt,
   loggedIn,
+  authError,
   slug,
   shareUrl,
   initialEulogy,
@@ -46,7 +55,9 @@ export default function CreateFlow({
   const [sentence, setSentence] = useState(initialSentence ?? '');
   const [customizing, setCustomizing] = useState(false);
   const [published, setPublishedState] = useState(alreadyPublished);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(
+    authError ? (AUTH_ERROR_MESSAGES[authError] ?? '로그인에 실패했습니다.') : null,
+  );
   const [resuming, setResuming] = useState(false);
   const [pending, startTransition] = useTransition();
 
@@ -79,11 +90,17 @@ export default function CreateFlow({
     [],
   );
 
-  // 로그인하고 돌아왔을 때, 로그인 전에 누른 게시를 이어서 마친다.
-  // 초안이 있다는 것은 이미 게시를 눌렀다는 뜻이므로 다시 묻지 않는다.
+  // 로그인하고 돌아왔을 때의 처리.
+  //
+  // 성공했다면 로그인 전에 누른 게시를 이어서 마친다 (초안이 있다는 것은
+  // 이미 게시를 눌렀다는 뜻이므로 다시 묻지 않는다).
+  //
+  // 실패했다면 최소한 쓰던 내용은 되살려야 한다. 예전에는 비로그인일 때
+  // 초안을 아예 읽지 않아서, 로그인이 깨지면 붙여넣은 글이 통째로
+  // 사라진 것처럼 보였다. 실제로는 sessionStorage에 멀쩡히 있었는데도.
   const resumed = useRef(false);
   useEffect(() => {
-    if (!loggedIn || resumed.current) return;
+    if (resumed.current) return;
 
     const draft = readDraft();
     if (!draft) return;
@@ -93,6 +110,9 @@ export default function CreateFlow({
     setSource(draft.source);
     setSentence(draft.sentence);
     setStep('preview');
+
+    if (!loggedIn) return;
+
     setResuming(true);
     publish(draft.eulogy, draft.source, draft.sentence);
   }, [loggedIn, publish]);
