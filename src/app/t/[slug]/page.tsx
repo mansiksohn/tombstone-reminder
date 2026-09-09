@@ -6,8 +6,7 @@ import TombstoneSection from '@/components/TombstoneSection';
 import FlowerSection from '@/components/FlowerSection';
 import GroundSection from '@/components/GroundSection';
 import DeathMaskSection from '@/components/DeathMaskSection';
-import { getFlowers, getPublishedTomb, shareUrl } from '@/lib/tomb';
-import { createClient } from '@/lib/supabase/server';
+import { getFlowers, getPublishedTomb, hasSession, shareUrl } from '@/lib/tomb';
 
 export const dynamic = 'force-dynamic';
 
@@ -50,14 +49,11 @@ export default async function PublicTombPage({ params }: Props) {
   const flowers = await getFlowers(tomb.user_id);
 
   // 로그인한 방문자에게는 헤더에서 자기 묘비로 갈 길을 열어둔다.
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const loggedIn = await hasSession();
 
   return (
     <div className="home-container bg-real-black">
-      <Header variant="public" loggedIn={Boolean(user)} />
+      <Header variant="public" loggedIn={loggedIn} />
       <main className="main-content text-center">
         <div className="username-container text-center text-xl">
           <span className="block">
