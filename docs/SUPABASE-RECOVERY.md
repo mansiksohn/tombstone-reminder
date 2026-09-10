@@ -107,29 +107,23 @@ supabase db push
 | Supabase Pro | $25/월 | 실사용자가 붙으면 그때 |
 | 방치 | 0원 | 1년 뒤 이 문서를 다시 읽게 된다 |
 
-**새 프로젝트를 만들고 GitHub 시크릿(`SUPABASE_URL`, `SUPABASE_ANON_KEY`)을 등록한 뒤에** `.github/workflows/keepalive.yml`로 추가할 것. 시크릿 없이 먼저 커밋하면 실패 알림만 쌓인다.
+→ **`.github/workflows/keepalive.yml`에 반영됨.**
 
-```yaml
-name: Supabase keep-alive
+동작하려면 레포 시크릿 두 개가 필요하다. GitHub 레포 →
+**Settings → Secrets and variables → Actions → New repository secret**:
 
-on:
-  schedule:
-    - cron: '0 3 * * 1,4'   # 매주 월·목 03:00 UTC
-  workflow_dispatch:
+| 이름 | 값 |
+|---|---|
+| `SUPABASE_URL` | `https://<ref>.supabase.co` (끝에 `/` 없이) |
+| `SUPABASE_ANON_KEY` | anon / publishable 키 |
 
-jobs:
-  ping:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Ping Supabase REST
-        run: |
-          code=$(curl -s -o /dev/null -w '%{http_code}' \
-            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
-            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
-            "${{ secrets.SUPABASE_URL }}/rest/v1/tombs?select=slug&limit=1")
-          echo "HTTP $code"
-          [ "$code" -ge 200 ] && [ "$code" -lt 300 ]
-```
+둘 다 이미 브라우저 번들에 실려 나가는 공개 값이다. 시크릿에 넣는 건
+비밀 유지가 아니라 키를 갈아끼울 때 한 곳만 고치기 위해서다.
+`SUPABASE_SERVICE_ROLE_KEY`는 **넣지 않는다** — 핑에 필요 없고,
+없는 편이 안전하다.
+
+등록한 뒤 Actions 탭에서 **Run workflow**로 한 번 수동 실행해 초록인지
+확인할 것. 스케줄 첫 실행까지 기다릴 이유가 없다.
 
 주 2회면 7일 창을 확실히 덮는다. 실패하면 GitHub이 알림을 보내므로 **다음엔 1년 뒤가 아니라 며칠 안에 알게 된다.** 그게 이 워크플로의 진짜 값어치다.
 
@@ -144,11 +138,11 @@ jobs:
 - [x] 실사용자 수 파악 — 19계정/15묘비, 6일치 전시 데이터
 - [x] 이관 여부 판단 — **이관하지 않음**
 - [x] 새 스키마 마이그레이션 작성·검증
-- [ ] 새 Supabase 프로젝트 생성 (동일 리전)
-- [ ] 마이그레이션 적용
-- [ ] Google OAuth 리디렉션 URI 추가
-- [ ] Supabase Auth Redirect Allowlist 설정
-- [ ] Vercel 환경변수 3개 갱신
-- [ ] keep-alive 워크플로 활성화
-- [ ] 로그인 → 게시 → 헌화 전 구간 검증
+- [x] 새 Supabase 프로젝트 생성 (`ap-southeast-1` 싱가포르)
+- [x] 마이그레이션 적용
+- [x] Google OAuth 리디렉션 URI 추가
+- [x] Supabase Auth Redirect Allowlist 설정
+- [x] Vercel 환경변수 3개 갱신
+- [x] keep-alive 워크플로 커밋 — **레포 시크릿 2개 등록이 남았다**
+- [x] 로그인 → 게시 → 헌화 전 구간 검증
 - [ ] 구 프로젝트 삭제 (맨 마지막에)
