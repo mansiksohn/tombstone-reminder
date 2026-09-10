@@ -172,8 +172,14 @@ function start(port) {
     res.end(JSON.stringify({ message: 'no session' }));
   });
 
-  return new Promise((resolve) => {
-    server.listen(port, () => resolve(server));
+  return new Promise((resolve, reject) => {
+    // listen 실패는 이벤트로 온다. 잡지 않으면 부르는 쪽이 받지 못하고
+    // 프로세스가 통째로 죽는다.
+    server.once('error', reject);
+    server.listen(port, () => {
+      server.removeListener('error', reject);
+      resolve(server);
+    });
   });
 }
 
