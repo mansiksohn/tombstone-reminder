@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import type { Database, EulogySource, TombRow } from '@/lib/database.types';
+import { EPITAPH_MAX, EULOGY_MAX, USER_NAME_MAX } from '@/lib/limits';
 
 type TombUpdate = Database['public']['Tables']['tombs']['Update'];
 
@@ -14,8 +15,8 @@ type EditableField =
   | 'death_date';
 
 const LIMITS: Partial<Record<EditableField, number>> = {
-  user_name: 24,
-  tomb_name: 200,
+  user_name: USER_NAME_MAX,
+  tomb_name: EPITAPH_MAX,
 };
 
 export interface ActionResult {
@@ -62,7 +63,6 @@ export async function saveField(
   return { ok: true };
 }
 
-const EULOGY_LIMIT = 4000;
 
 /**
  * 추도문 전문과 그중 각인할 한 문장을 함께 저장한다.
@@ -87,14 +87,17 @@ export async function saveEulogy(
   const trimmedSentence = sentence.trim();
 
   if (!trimmedEulogy) return { ok: false, error: '추도문이 비어 있습니다.' };
-  if (trimmedEulogy.length > EULOGY_LIMIT) {
-    return { ok: false, error: `추도문은 ${EULOGY_LIMIT}자를 넘을 수 없습니다.` };
+  if (trimmedEulogy.length > EULOGY_MAX) {
+    return { ok: false, error: `추도문은 ${EULOGY_MAX}자를 넘을 수 없습니다.` };
   }
   if (!trimmedSentence) {
     return { ok: false, error: '묘비에 새길 문장을 골라주세요.' };
   }
-  if (trimmedSentence.length > 200) {
-    return { ok: false, error: '각인 문장은 200자를 넘을 수 없습니다.' };
+  if (trimmedSentence.length > EPITAPH_MAX) {
+    return {
+      ok: false,
+      error: `각인 문장은 ${EPITAPH_MAX}자를 넘을 수 없습니다.`,
+    };
   }
 
   const { error } = await supabase

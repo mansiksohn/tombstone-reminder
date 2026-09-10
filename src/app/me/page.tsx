@@ -37,7 +37,7 @@ export default async function MyTombPage() {
       <main className="main-content">
         <UserNameSection userName={tomb.user_name} />
         <DatesSection birthDate={tomb.birth_date} deathDate={tomb.death_date} />
-        <TombstoneSection tombName={tomb.tomb_name} />
+        <TombstoneSection tombName={tomb.tomb_name} editable />
         <FlowerSection
           tombSlug={tomb.slug}
           initialFlowers={flowers.recent}

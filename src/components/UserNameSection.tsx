@@ -1,6 +1,7 @@
 'use client';
 
 import { saveField } from '@/lib/actions';
+import { USER_NAME_MAX } from '@/lib/limits';
 import EditableText from './EditableText';
 
 export default function UserNameSection({
@@ -12,8 +13,8 @@ export default function UserNameSection({
     <div className="username-container text-center">
       <EditableText
         value={userName}
-        placeholder="이름 12자 이하"
-        maxLength={12}
+        placeholder={`이름 ${USER_NAME_MAX}자 이하`}
+        maxLength={USER_NAME_MAX}
         inputClassName="username-input"
         showCount
         countClassName="name-char-count"

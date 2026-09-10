@@ -1,7 +1,11 @@
+import EpitaphEditor from './EpitaphEditor';
+
 interface Props {
   tombName: string | null;
   /** 각인 전에는 빈 묘비 이미지를 쓴다. */
   placeholder?: string;
+  /** 내 묘비에서는 눌러서 바로 고칠 수 있다. 공개 묘비에서는 읽기 전용. */
+  editable?: boolean;
 }
 
 const DEFAULT_PLACEHOLDER =
@@ -18,6 +22,7 @@ const DEFAULT_PLACEHOLDER =
 export default function TombstoneSection({
   tombName,
   placeholder = DEFAULT_PLACEHOLDER,
+  editable = false,
 }: Props) {
   const engraved = Boolean(tombName?.trim());
 
@@ -36,13 +41,17 @@ export default function TombstoneSection({
         height={560}
       />
       <div className="tombstone-name-overlay">
-        <h2
-          className={`text-2xl tombstone-name ${
-            engraved ? 'filled-text' : 'placeholder-text'
-          }`}
-        >
-          {engraved ? tombName : placeholder}
-        </h2>
+        {editable ? (
+          <EpitaphEditor tombName={tombName} />
+        ) : (
+          <h2
+            className={`text-2xl tombstone-name ${
+              engraved ? 'filled-text' : 'placeholder-text'
+            }`}
+          >
+            {engraved ? tombName : placeholder}
+          </h2>
+        )}
       </div>
     </div>
   );
