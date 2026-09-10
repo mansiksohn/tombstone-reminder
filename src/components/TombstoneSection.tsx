@@ -32,6 +32,8 @@ export default function TombstoneSection({
         }
         alt="묘비"
         className="tombstone-image"
+        width={366}
+        height={560}
       />
       <div className="tombstone-name-overlay">
         <h2

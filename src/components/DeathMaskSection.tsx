@@ -56,6 +56,8 @@ export default function DeathMaskSection({
           src={maskPath(selected, editable ? PLACEHOLDER_MASK : undefined)}
           alt={selected ?? '묻어둔 것'}
           className="selected-image"
+          width={160}
+          height={160}
           onClick={editable ? () => setOpen((v) => !v) : undefined}
         />
       </div>
@@ -71,6 +73,8 @@ export default function DeathMaskSection({
                 alt={mask.name}
                 onClick={() => pick(mask.name)}
                 className="option-image cursor-pointer"
+                width={160}
+                height={160}
               />
             ))}
           </div>
