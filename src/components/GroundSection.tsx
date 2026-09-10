@@ -6,6 +6,8 @@ export default function GroundSection() {
         src="/assets/images/ground.jpg"
         alt="땅"
         className="ground-image"
+        width={390}
+        height={224}
       />
     </div>
   );

@@ -8,6 +8,12 @@
 
 .selected-image {
   @apply block mx-auto p-4 cursor-pointer;
+
+  // <img>에 width/height를 적어 로드 전에도 자리를 잡게 했는데(CLS),
+  // 그 값은 CSS width로 들어가고 Tailwind는 box-sizing: border-box를
+  // 전역으로 깔아둔다. 그대로 두면 160px 안으로 p-4가 파고들어 마스크가
+  // 128px로 줄어든다. 여기만 content-box로 돌려 지금 크기를 유지한다.
+  box-sizing: content-box;
 }
 
 .image-selector {

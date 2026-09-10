@@ -121,6 +121,8 @@ export default function Header({
               src="/assets/images/wsis-logo-dark.svg"
               alt="WSIS 로고"
               className="menu-wsis-logo"
+              width={16}
+              height={16}
             />
           </div>
         </div>
