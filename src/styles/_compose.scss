@@ -29,9 +29,18 @@
   @apply text-lg break-keep leading-relaxed;
 }
 
+// 질문은 주문 형태다. 가운데로 모으고 행간을 좁혀야 도형이 도형으로
+// 읽힌다. leading-relaxed로는 획이 흩어진다.
 .prompt-card {
   @apply bg-soul-green-950 border border-soul-green-800 rounded-lg p-4;
-  @apply text-soul-green-300 break-keep leading-relaxed whitespace-pre-wrap;
+  @apply text-soul-green-300 break-keep whitespace-pre-wrap;
+  text-align: center;
+  line-height: 1.1;
+}
+
+.prompt-block {
+  @apply flex flex-col gap-3;
+  min-height: 0;
 }
 
 .compose-textarea {

@@ -36,7 +36,7 @@ export default function LoginButton() {
         type="button"
         onClick={signIn}
         disabled={pending}
-        className="landing-secondary-button"
+        className="landing-secondary-link"
       >
         {pending ? '로그인 중…' : '이미 묘비가 있다면 로그인'}
       </button>

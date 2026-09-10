@@ -17,7 +17,7 @@ export default function PromptCard({ prompt }: { prompt: string }) {
   };
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="prompt-block">
       <blockquote className="prompt-card">{prompt}</blockquote>
 
       <button onClick={copy} className="rounded-lg">
