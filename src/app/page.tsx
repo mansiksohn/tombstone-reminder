@@ -1,23 +1,34 @@
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import Header from '@/components/Header';
 import PromptCard from '@/components/PromptCard';
 import LandingAnimation from '@/components/LandingAnimation';
 import { EULOGY_PROMPT } from '@/lib/prompt';
-import { hasSession } from '@/lib/tomb';
+import { getMyTomb } from '@/lib/tomb';
 
 export const dynamic = 'force-dynamic';
 
 /**
- * 랜딩 = 안내 + 프롬프트 복사.
+ * 랜딩 = 안내 + 프롬프트 복사. 아직 묘비가 없는 사람을 위한 화면이다.
  *
  * 로그인은 여기 없다. 게시 직전까지 미뤄뒀다 (/new 참조).
  * 처음 온 사람이 제품을 이해하고 질문을 복사해 가기까지, 아무것도
  * 요구하지 않는 것이 이 화면의 목적이다.
+ *
+ * 이미 묘비가 있는 사람에게 이 화면은 남의 집 문패다. 자기 묘비를
+ * 보려고 '내 묘비 보러가기'를 한 번 더 눌러야 했다. 홈은 자기
+ * 묘비여야 한다.
  */
 export default async function LandingPage() {
-  // 이 화면은 DB가 필요 없다. 세션은 '내 묘비' 링크를 보일지 정하는
-  // 데만 쓰이므로, 설정이 없으면 비로그인으로 그리고 넘어간다.
-  const loggedIn = await hasSession();
+  // 비로그인 방문자는 여기서 왕복을 치르지 않는다. 로그인 쿠키가 없으면
+  // auth-js가 네트워크를 타지 않고 즉시 null을 돌려준다.
+  const result = await getMyTomb();
+
+  // /me가 '추도문이 없으면 /new로'를 맡고 있으므로 조건을 맞춰둔다.
+  // 가입만 하고 아직 만들지 않은 사람은 이 화면에 남아야 한다.
+  if (result?.tomb.eulogy) redirect('/me');
+
+  const loggedIn = Boolean(result);
 
   return (
     <div className="home-container">
@@ -46,12 +57,6 @@ export default async function LandingPage() {
         <Link href="/new" className="landing-cta">
           답변 붙여넣기
         </Link>
-
-        {loggedIn && (
-          <Link href="/me" className="landing-secondary">
-            내 묘비 보러가기
-          </Link>
-        )}
       </main>
 
       <div className="footer">

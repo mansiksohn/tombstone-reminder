@@ -83,7 +83,11 @@ export default function Header({
             </div>
           )}
 
-          <Link href="/" className="mb-4">
+          {/*
+            /를 가리키면 안 된다. 묘비가 있는 사람은 거기서 /me로 튕겨
+            나가므로, 만들기로 가려던 사람이 제자리로 되돌아온다.
+          */}
+          <Link href="/new" className="mb-4">
             묘비 만들기
           </Link>
 

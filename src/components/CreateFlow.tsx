@@ -50,7 +50,16 @@ export default function CreateFlow({
   initialSentence,
   alreadyPublished,
 }: Props) {
-  const [step, setStep] = useState<Step>(initialEulogy ? 'select' : 'paste');
+  // 언제나 붙여넣기부터 시작한다.
+  //
+  // 예전에는 저장된 추도문이 있으면 문장 고르기로 건너뛰었다. 그런데 홈이
+  // 자기 묘비가 된 지금, /new에 오는 경로는 '추도문 다시 받아오기'거나
+  // 메뉴의 '묘비 만들기'다. 둘 다 새로 붙여넣으려는 사람이다. 건너뛰면
+  // 질문(프롬프트)을 볼 기회도 함께 사라진다 — 이 화면에서만 볼 수 있는데.
+  //
+  // 저장돼 있던 추도문은 그대로 실려 있으니, 고칠 사람은 고치고 새로
+  // 받아온 사람은 덮어쓰면 된다.
+  const [step, setStep] = useState<Step>('paste');
   const [eulogy, setEulogy] = useState(initialEulogy ?? '');
   const [source, setSource] = useState<EulogySource | null>(initialSource);
   const [sentence, setSentence] = useState(initialSentence ?? '');
@@ -305,6 +314,8 @@ export default function CreateFlow({
         actions={
           <>
             <p className="publish-warning">
+              {alreadyPublished &&
+                '이미 세워둔 묘비의 추도문과 각인을 이 내용으로 바꿉니다. '}
               게시하면 링크를 가진 누구나 이 묘비를 볼 수 있습니다. 언제든
               비공개로 되돌릴 수 있습니다.
               {!loggedIn && ' 묘비를 간직하려면 구글 로그인이 필요합니다.'}
