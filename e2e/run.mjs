@@ -176,7 +176,20 @@ async function main() {
     throw new Error('--fast를 쓰려면 먼저 한 번 빌드해야 합니다.');
   }
 
-  stubServer = await stub.start(STUB_PORT);
+  // 앞선 실행이 덜 끝났거나 다른 것이 포트를 잡고 있으면, 여기서
+  // 날것의 EADDRINUSE 스택이 뜨는 대신 무엇을 하면 되는지 말한다.
+  try {
+    stubServer = await stub.start(STUB_PORT);
+  } catch (error) {
+    if (error.code === 'EADDRINUSE') {
+      throw new Error(
+        `${STUB_PORT} 포트를 이미 무언가 쓰고 있습니다.\n` +
+          '  앞선 실행이 덜 끝났을 수 있습니다. 정리하거나 다른 포트를 쓰세요:\n' +
+          `    E2E_STUB_PORT=4995 npm run e2e`,
+      );
+    }
+    throw error;
+  }
   console.log(`\n스텁 Supabase  http://127.0.0.1:${STUB_PORT}`);
 
   children.push(
@@ -307,8 +320,16 @@ async function main() {
   await page.send('Network.clearBrowserCookies');
   await page.goto(app(`/t/${saved.slug}`));
   check('공개 묘비가 열린다', (await page.evaluate('location.pathname')) === `/t/${saved.slug}`);
-  check('추도문이 보인다',
-    (await page.evaluate(`document.querySelector('.eulogy-body')?.textContent ?? ''`)).length > 0);
+  const shownEulogy = await page.evaluate(
+    `document.querySelector('.eulogy-body')?.textContent ?? ''`);
+  check('추도문이 보인다', shownEulogy.length > 0, `${shownEulogy.length}자`);
+
+  // 저장은 원문 그대로, 보여줄 때만 장식을 벗긴다. 붙여넣은 추도문에는
+  // 일부러 마크다운을 섞어뒀으므로 여기서 회귀가 잡힌다.
+  const leftover = /(^|\n)\s*(#{1,6}\s|[-*+]\s|>\s|\d+[.)]\s)|\*\*|__|~~/;
+  check('추도문에 마크다운이 보이지 않는다', !leftover.test(shownEulogy),
+    shownEulogy.slice(0, 40).replace(/\n/g, '⏎'));
+  check('저장된 원문은 그대로다', (await state()).tomb.eulogy.includes('## 그 사람에 대하여'));
   const before = (await state()).flowers.length;
   await page.evaluate(`document.querySelector('.add-flower-button')?.click(), true`);
   await wait(2000);
