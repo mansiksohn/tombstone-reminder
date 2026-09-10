@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from
 import { saveEulogy, setPublished } from '@/lib/actions';
 import { splitSentences } from '@/lib/sentences';
 import { clearDraft, readDraft, saveDraft } from '@/lib/draft';
+import { EPITAPH_MAX } from '@/lib/limits';
 import { createClient } from '@/lib/supabase/client';
 import type { EulogySource } from '@/lib/database.types';
 import PromptCard from './PromptCard';
@@ -241,7 +242,7 @@ export default function CreateFlow({
           <textarea
             value={sentence}
             onChange={(e) => setSentence(e.target.value)}
-            maxLength={200}
+            maxLength={EPITAPH_MAX}
             className="compose-textarea"
             autoFocus
           />
@@ -260,7 +261,8 @@ export default function CreateFlow({
             ))}
             {sentences.length === 0 && (
               <p className="publish-warning">
-                문장으로 나눌 수 없었습니다. 직접 입력해주세요.
+                {EPITAPH_MAX}자 안에 들어오는 문장을 찾지 못했습니다. &lsquo;직접
+                다듬기&rsquo;로 새길 문장을 적어주세요.
               </p>
             )}
           </div>

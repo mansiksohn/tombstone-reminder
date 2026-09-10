@@ -1,9 +1,18 @@
 @use 'colors' as *;
 
+// 헤더·드로어 규칙은 전부 여기 하나에만 둔다.
+//
+// 예전에는 _global.scss가 .header/.menu-overlay/.menu-background를 다른
+// 값으로 한 번 더 정의하고 있었다. 둘이 합쳐지면서 드로어가 left:0 +
+// width:80%가 됐고, translateX(100%)가 제 폭(80%)만큼만 밀어내는 바람에
+// 닫힌 드로어가 화면 오른쪽 20%를 계속 덮었다. 하필 거기가 햄버거
+// 버튼 자리라 메뉴를 여는 클릭을 드로어가 먹었다 — 로그아웃이 아예
+// 불가능했던 이유다.
 .header {
-    @apply flex justify-between items-center p-4 bg-black text-white;
-  }
-  
+  @apply fixed top-0 left-0 w-full z-[1000];
+  @apply flex justify-between items-center p-4 bg-black text-white;
+}
+
 .header-title {
   @apply text-2xl font-bold;
 }
@@ -14,13 +23,25 @@
 }
 
 .menu-overlay {
-  @apply fixed top-0 right-0 h-full bg-black bg-opacity-90 z-50 transition-transform duration-300;
+  @apply fixed top-0 right-0 h-full bg-black bg-opacity-90 z-50;
   width: 80%;
   transform: translateX(100%);
+
+  // 닫혔을 때는 클릭을 받지 않는다. 위치 계산이 또 어긋나더라도
+  // 화면 위의 다른 것을 가로채지 못하게 하는 안전장치다.
+  visibility: hidden;
+  pointer-events: none;
+
+  // visibility는 중간값이 없으므로, 밀려나는 동안에는 보이게 두고
+  // 애니메이션이 끝나는 순간 감춘다.
+  transition: transform 0.3s ease-in-out, visibility 0s linear 0.3s;
 }
 
 .menu-overlay.open {
   transform: translateX(0);
+  visibility: visible;
+  pointer-events: auto;
+  transition: transform 0.3s ease-in-out, visibility 0s;
 }
 
 .menu-background {
