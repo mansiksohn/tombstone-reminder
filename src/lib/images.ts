@@ -61,7 +61,7 @@ export const deathMasks: DeathMask[] = NAMES.map((name) => ({
 }));
 
 export const PLACEHOLDER_MASK = '/assets/images/deathmask/Place Skull.png';
-export const FALLBACK_MASK = '/assets/images/deathmask/Coffin.png';
+const FALLBACK_MASK = '/assets/images/deathmask/Coffin.png';
 
 /** 저장된 데스마스크 이름을 이미지 경로로. 이름이 없거나 모르면 fallback. */
 export function maskPath(name: string | null | undefined, fallback = FALLBACK_MASK) {
