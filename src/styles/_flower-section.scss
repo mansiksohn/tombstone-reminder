@@ -21,23 +21,32 @@
 // 메뉴를 열면 드로어를 뚫고 헌화 문구가 비쳤다.
 .add-flower-button {
   @apply relative z-10 text-2xl m-0 font-bold cursor-pointer w-40;
-  color:#222222;
+  @apply bg-grey-333 text-grey-999;
   border-radius: 8px 8px 96px 96px;
-  @apply bg-grey-333;
   pointer-events: auto;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:disabled {
+    @apply opacity-60 cursor-not-allowed;
+  }
 }
 
+// 포인터가 있는 기기에서만 호버가 뜻이 있다.
 @media (hover: hover) {
   .add-flower-button:hover {
-    @apply bg-soul-green-500 text-white; // 데스크탑에서 호버 시 스타일 변경
+    @apply bg-soul-green-500 text-real-white;
   }
 }
 
-@media (hover: none) {
-  .add-flower-button {
-    // 모바일 장치에서의 스타일 설정 (호버 없는 기본 스타일 유지)
-    @apply bg-grey-333 text-grey-333;
-  }
+// 터치에서는 :active가 호버 몫을 한다. 누르는 동안 초록으로 차오른다.
+//
+// 예전에는 @media (hover: none)에서 글자를 bg와 같은 grey-333으로 두고
+// 있었다. '모바일에서는 기본 스타일 유지'라는 주석이 붙어 있었지만,
+// 실제로는 배경과 글자가 정확히 같은 색이라 '+'가 통째로 사라졌다.
+// 헌화는 이 제품에서 방문자가 할 수 있는 유일한 행동인데, 그 버튼이
+// 모바일에서 빈 그릇으로만 보였다.
+.add-flower-button:active {
+  @apply bg-soul-green-500 text-real-white;
 }
 
 .flower {
