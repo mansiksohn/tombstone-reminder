@@ -1,12 +1,13 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import { saveEulogy, setPublished } from '@/lib/actions';
 import { splitSentences } from '@/lib/sentences';
 import { clearDraft, readDraft, saveDraft } from '@/lib/draft';
+import { signInWithGoogle, takeAfterLogin } from '@/lib/auth';
 import { EPITAPH_MAX } from '@/lib/limits';
-import { createClient } from '@/lib/supabase/client';
 import type { EulogySource } from '@/lib/database.types';
 import PromptCard from './PromptCard';
 import TombstoneSection from './TombstoneSection';
@@ -50,7 +51,16 @@ export default function CreateFlow({
   initialSentence,
   alreadyPublished,
 }: Props) {
-  const [step, setStep] = useState<Step>(initialEulogy ? 'select' : 'paste');
+  // 언제나 붙여넣기부터 시작한다.
+  //
+  // 예전에는 저장된 추도문이 있으면 문장 고르기로 건너뛰었다. 그런데 홈이
+  // 자기 묘비가 된 지금, /new에 오는 경로는 '추도문 다시 받아오기'거나
+  // 메뉴의 '묘비 만들기'다. 둘 다 새로 붙여넣으려는 사람이다. 건너뛰면
+  // 질문(프롬프트)을 볼 기회도 함께 사라진다 — 이 화면에서만 볼 수 있는데.
+  //
+  // 저장돼 있던 추도문은 그대로 실려 있으니, 고칠 사람은 고치고 새로
+  // 받아온 사람은 덮어쓰면 된다.
+  const [step, setStep] = useState<Step>('paste');
   const [eulogy, setEulogy] = useState(initialEulogy ?? '');
   const [source, setSource] = useState<EulogySource | null>(initialSource);
   const [sentence, setSentence] = useState(initialSentence ?? '');
@@ -61,6 +71,7 @@ export default function CreateFlow({
   );
   const [resuming, setResuming] = useState(false);
   const [pending, startTransition] = useTransition();
+  const router = useRouter();
 
   const sentences = useMemo(() => splitSentences(eulogy), [eulogy]);
 
@@ -102,11 +113,18 @@ export default function CreateFlow({
   const resumed = useRef(false);
   useEffect(() => {
     if (resumed.current) return;
+    resumed.current = true;
 
     const draft = readDraft();
-    if (!draft) return;
 
-    resumed.current = true;
+    // 초안 없이 돌아왔다면 게시하러 간 것이 아니라 로그인만 하러 간
+    // 것이다. 콜백은 언제나 여기로 돌아오므로 원래 가려던 곳으로 넘긴다.
+    if (!draft) {
+      const destination = takeAfterLogin();
+      if (destination && loggedIn) router.replace(destination);
+      return;
+    }
+
     setEulogy(draft.eulogy);
     setSource(draft.source);
     setSentence(draft.sentence);
@@ -116,7 +134,7 @@ export default function CreateFlow({
 
     setResuming(true);
     publish(draft.eulogy, draft.source, draft.sentence);
-  }, [loggedIn, publish]);
+  }, [loggedIn, publish, router]);
 
   const toSelect = () => {
     if (!eulogy.trim()) {
@@ -145,29 +163,10 @@ export default function CreateFlow({
 
     saveDraft({ eulogy, source, sentence });
 
-    // createClient()는 설정이 없으면 예외를 던진다. 잡지 않으면 uncaught
-    // promise로 새어나가 버튼을 눌러도 화면에 아무 일도 일어나지 않는다.
-    // 사용자에게는 앱이 그냥 죽은 것처럼 보이므로 반드시 표면화한다.
-    try {
-      const supabase = createClient();
-      const { error: authError } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          // 쿼리스트링을 붙이지 않는다. redirect_to에 쿼리가 있으면
-          // Supabase 허용목록 매칭이 까다로워져 400을 맞기 쉽다.
-          // 도착지(/new)는 콜백 라우트의 기본값으로 정해져 있다.
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
-      });
-
-      if (authError) throw authError;
-    } catch (cause) {
-      console.error('로그인 시작 실패:', cause);
-      setError(
-        '로그인을 시작하지 못했습니다. 잠시 후 다시 시도해주세요. ' +
-          '문제가 계속되면 관리자에게 알려주세요.',
-      );
-    }
+    // 도착지를 적어두지 않는다. 초안이 있으니 /new로 돌아와 이어서
+    // 게시해야 한다 — 그게 콜백의 기본 도착지인 이유다.
+    const result = await signInWithGoogle();
+    if (!result.ok) setError(result.error ?? '로그인에 실패했습니다.');
   };
 
   if (resuming) {
@@ -305,6 +304,8 @@ export default function CreateFlow({
         actions={
           <>
             <p className="publish-warning">
+              {alreadyPublished &&
+                '이미 세워둔 묘비의 추도문과 각인을 이 내용으로 바꿉니다. '}
               게시하면 링크를 가진 누구나 이 묘비를 볼 수 있습니다. 언제든
               비공개로 되돌릴 수 있습니다.
               {!loggedIn && ' 묘비를 간직하려면 구글 로그인이 필요합니다.'}
