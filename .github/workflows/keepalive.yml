@@ -1,0 +1,62 @@
+# Supabase 무료 티어는 7일간 아무 요청이 없으면 프로젝트를 정지시킨다.
+# 이 레포가 1년 가까이 죽어 있었던 이유가 정확히 그것이고, 정지가 1년을
+# 넘기면 대시보드의 복원 경로마저 닫힌다 (docs/SUPABASE-RECOVERY.md).
+#
+# 주 2회면 7일 창을 확실히 덮는다. 그리고 이 워크플로의 진짜 값어치는
+# 핑 자체가 아니라 실패 알림이다 — 뭔가 잘못되면 1년 뒤가 아니라 며칠
+# 안에 알게 된다.
+name: Supabase keep-alive
+
+on:
+  schedule:
+    - cron: '0 3 * * 1,4' # 매주 월·목 03:00 UTC (12:00 KST)
+  workflow_dispatch: # 수동 실행. 시크릿 설정 직후 확인용.
+
+# 동시에 여러 개가 돌 이유가 없다.
+concurrency:
+  group: supabase-keepalive
+  cancel-in-progress: false
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 시크릿 확인
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          # 시크릿이 없으면 curl이 알 수 없는 에러로 죽는다.
+          # 무엇이 없는지 먼저 분명히 말하고 멈춘다.
+          missing=
+          [ -n "$SUPABASE_URL" ] || missing="$missing SUPABASE_URL"
+          [ -n "$SUPABASE_ANON_KEY" ] || missing="$missing SUPABASE_ANON_KEY"
+          if [ -n "$missing" ]; then
+            echo "::error::레포 시크릿이 없습니다:$missing"
+            echo "Settings → Secrets and variables → Actions → New repository secret"
+            exit 1
+          fi
+
+      - name: Supabase REST 핑
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          set -o pipefail
+          # 실제 테이블을 읽어야 DB까지 깨어난다. 헬스체크 엔드포인트만
+          # 두드리면 Postgres는 잠든 채로 남을 수 있다.
+          # 공개된 묘비가 0건이어도 200 + 빈 배열이므로 결과는 보지 않는다.
+          code=$(curl -sS -o /tmp/ping.txt -w '%{http_code}' \
+            --max-time 30 --retry 3 --retry-delay 5 --retry-connrefused \
+            -H "apikey: $SUPABASE_ANON_KEY" \
+            -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            "$SUPABASE_URL/rest/v1/tombs?select=slug&limit=1")
+
+          echo "HTTP $code"
+          head -c 500 /tmp/ping.txt
+
+          if [ "$code" -lt 200 ] || [ "$code" -ge 300 ]; then
+            echo "::error::Supabase 핑 실패 (HTTP $code). 프로젝트가 정지됐거나 anon 키가 바뀌었을 수 있습니다."
+            exit 1
+          fi
