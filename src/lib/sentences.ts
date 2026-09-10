@@ -1,4 +1,5 @@
 import { EPITAPH_MAX } from '@/lib/limits';
+import { isDecorationOnly, stripMarkdown } from '@/lib/markdown';
 
 /**
  * LLM이 돌려준 추도문 전문을, 탭해서 고를 수 있는 문장 후보로 쪼갠다.
@@ -11,37 +12,6 @@ import { EPITAPH_MAX } from '@/lib/limits';
  * 남지 않으면 화면이 '직접 다듬기'로 안내한다.
  */
 const MIN_SENTENCE_LENGTH = 2;
-
-/**
- * 후보에서 마크다운 장식을 걷어낸다.
- *
- * 실제 LLM은 평문만 주지 않는다. 제목(##), 목록(-, 1.), 인용(>), 강조(**)를
- * 섞어 내놓는 편이 오히려 흔하다. 그대로 두면 '> "잘 살았다"' 같은 후보가
- * 목록에 뜨고, 고르면 묘비에 꺾쇠와 별표가 새겨진다.
- *
- * 원문(추도문 전문)은 건드리지 않는다. 여기서 다듬는 것은 '한 문장을 고르는'
- * 목록에 보여줄 후보뿐이다.
- */
-function stripMarkdown(line: string): string {
-  return line
-    // 줄 앞의 인용·제목·목록 표시. 중첩될 수 있어 반복해서 벗긴다.
-    .replace(/^(\s*(?:>+\s*|#{1,6}\s+|[-*+]\s+|\d+[.)]\s+))+/, '')
-    // 굵게·기울임·취소선·인라인 코드
-    .replace(/\*\*(.+?)\*\*/g, '$1')
-    .replace(/__(.+?)__/g, '$1')
-    .replace(/~~(.+?)~~/g, '$1')
-    .replace(/`([^`]+)`/g, '$1')
-    // [보이는 글자](주소) → 보이는 글자
-    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
-    // 남은 홑별표 강조. 앞뒤에 공백을 요구하면 안 된다 — 한국어는 닫는
-    // 별표 뒤에 조사가 바로 붙는다("*그것*이었습니다"). 대신 별표 안쪽이
-    // 공백으로 시작·끝나지 않게 해서 곱셈 기호(3 * 4)는 건드리지 않는다.
-    .replace(/\*(?!\s)([^*\n]+?)(?<!\s)\*/g, '$1')
-    .trim();
-}
-
-/** 구분선 같은, 글이 아닌 줄. */
-const RULE_ONLY = /^\s*([-*_])\s*(\1\s*){2,}$/;
 
 export function splitSentences(text: string): string[] {
   const lines = text
@@ -59,7 +29,7 @@ export function splitSentences(text: string): string[] {
   const result: string[] = [];
 
   for (const raw of candidates) {
-    if (RULE_ONLY.test(raw)) continue;
+    if (isDecorationOnly(raw)) continue;
 
     const sentence = stripMarkdown(raw);
     if (
