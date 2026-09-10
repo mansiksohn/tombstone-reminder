@@ -9,6 +9,7 @@ import GroundSection from '@/components/GroundSection';
 import DeathMaskSection from '@/components/DeathMaskSection';
 import PublishPanel from '@/components/PublishPanel';
 import { getFlowers, getMyTomb, shareUrl } from '@/lib/tomb';
+import { toPlainText } from '@/lib/markdown';
 
 export const dynamic = 'force-dynamic';
 
@@ -49,7 +50,7 @@ export default async function MyTombPage() {
 
         <section className="obituary-section">
           <div className="obituary-container">
-            <p className="eulogy-body">{tomb.eulogy}</p>
+            <p className="eulogy-body">{toPlainText(tomb.eulogy)}</p>
           </div>
         </section>
 

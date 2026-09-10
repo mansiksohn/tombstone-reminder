@@ -7,6 +7,7 @@ import FlowerSection from '@/components/FlowerSection';
 import GroundSection from '@/components/GroundSection';
 import DeathMaskSection from '@/components/DeathMaskSection';
 import { getFlowers, getPublishedTomb, hasSession, shareUrl } from '@/lib/tomb';
+import { toPlainText } from '@/lib/markdown';
 
 export const dynamic = 'force-dynamic';
 
@@ -82,7 +83,7 @@ export default async function PublicTombPage({ params }: Props) {
         {tomb.eulogy && (
           <section className="obituary-section">
             <div className="obituary-container">
-              <p className="eulogy-body text-left">{tomb.eulogy}</p>
+              <p className="eulogy-body text-left">{toPlainText(tomb.eulogy)}</p>
             </div>
             {tomb.eulogy_source && (
               <p className="eulogy-source">

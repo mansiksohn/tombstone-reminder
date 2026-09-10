@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import { saveEulogy, setPublished } from '@/lib/actions';
 import { splitSentences } from '@/lib/sentences';
+import { toPlainText } from '@/lib/markdown';
 import { clearDraft, readDraft, saveDraft } from '@/lib/draft';
 import { signInWithGoogle, takeAfterLogin } from '@/lib/auth';
 import { EPITAPH_MAX } from '@/lib/limits';
@@ -331,7 +332,7 @@ export default function CreateFlow({
         </div>
 
         <div className="obituary-container shrink-0">
-          <p className="eulogy-body">{eulogy}</p>
+          <p className="eulogy-body">{toPlainText(eulogy)}</p>
         </div>
       </StepShell>
     );
