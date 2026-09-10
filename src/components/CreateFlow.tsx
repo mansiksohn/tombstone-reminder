@@ -8,16 +8,10 @@ import { splitSentences } from '@/lib/sentences';
 import { clearDraft, readDraft, saveDraft } from '@/lib/draft';
 import { signInWithGoogle, takeAfterLogin } from '@/lib/auth';
 import { EPITAPH_MAX } from '@/lib/limits';
+import { AI_MODELS } from '@/lib/models';
 import type { EulogySource } from '@/lib/database.types';
 import PromptCard from './PromptCard';
 import TombstoneSection from './TombstoneSection';
-
-const SOURCES: { value: EulogySource; label: string }[] = [
-  { value: 'chatgpt', label: 'ChatGPT' },
-  { value: 'claude', label: 'Claude' },
-  { value: 'gemini', label: 'Gemini' },
-  { value: 'other', label: '그 외' },
-];
 
 type Step = 'paste' | 'select' | 'preview' | 'done';
 
@@ -214,7 +208,7 @@ export default function CreateFlow({
         />
 
         <div className="flex flex-wrap gap-2 shrink-0">
-          {SOURCES.map((s) => (
+          {AI_MODELS.map((s) => (
             <button
               key={s.value}
               type="button"

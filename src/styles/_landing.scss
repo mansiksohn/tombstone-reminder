@@ -38,7 +38,10 @@
 // 문이라, 검정 위에서 사라지지 않을 만큼의 대비는 있어야 한다.
 .landing-secondary-button {
   @apply w-full text-center py-3 rounded-lg;
-  @apply bg-transparent border border-grey-666 text-grey-999;
+  // border-solid를 빼먹으면 안 된다. _buttons.scss의 button 규칙이
+  // border-none(=border-style: none)을 걸어두는데, style이 none이면
+  // 두께를 아무리 선언해도 계산값이 0이 된다. 색만 먹고 선은 사라진다.
+  @apply bg-transparent border border-solid border-grey-666 text-grey-999;
 
   &:disabled {
     @apply opacity-50 cursor-not-allowed;
@@ -50,5 +53,21 @@
 
   summary {
     @apply cursor-pointer underline;
+  }
+}
+
+// '복사하면서 바로 열기' — 질문을 들고 AI로 건너가는 줄
+.model-links-lead {
+  @apply text-sm text-grey-999 text-center;
+}
+
+.model-link {
+  @apply flex-1 text-center py-2 rounded-lg text-sm;
+  @apply border border-soul-green-700 text-soul-green-500;
+
+  @media (hover: hover) {
+    &:hover {
+      @apply bg-soul-green-950;
+    }
   }
 }
