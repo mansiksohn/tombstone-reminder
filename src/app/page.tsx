@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import Header from '@/components/Header';
 import PromptCard from '@/components/PromptCard';
 import LandingAnimation from '@/components/LandingAnimation';
+import LoginButton from '@/components/LoginButton';
 import { EULOGY_PROMPT } from '@/lib/prompt';
 import { getMyTomb } from '@/lib/tomb';
 
@@ -57,6 +58,13 @@ export default async function LandingPage() {
         <Link href="/new" className="landing-cta">
           답변 붙여넣기
         </Link>
+
+        {/*
+          처음 온 사람에게는 여전히 아무것도 요구하지 않는다. 다만 이미
+          묘비를 세워둔 사람은 로그아웃 상태에서 이 화면만 보게 되므로,
+          들어올 문이 하나는 있어야 한다.
+        */}
+        {!loggedIn && <LoginButton />}
       </main>
 
       <div className="footer">
