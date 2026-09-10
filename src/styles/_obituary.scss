@@ -1,9 +1,13 @@
+// 높이를 고정하지 않는다. h-56으로 묶어두면 추도문이 길 때 글자가 상자
+// 밖으로 흘러넘쳐 아래 내용과 겹쳤다. 길이는 사람마다 다르고, 이 상자는
+// 그 글을 담는 것이 일인 만큼 내용에 맞춰 자라는 편이 맞다.
+// (content-center도 함께 뗐다. 남는 세로 공간이 있어야 의미가 있는 값이다.)
 .obituary-section {
-  @apply px-4 h-56;
+  @apply px-4;
 }
 
 .obituary-container {
-  @apply bg-soul-green-900 p-4 rounded-lg h-56 content-center relative;
+  @apply bg-soul-green-900 p-4 rounded-lg relative;
 }
 
 .eulogy-source {

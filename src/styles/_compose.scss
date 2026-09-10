@@ -1,5 +1,28 @@
+// 한 단계는 화면을 꽉 채우는 세로 3단이다 — 안내문 / 본문 / 컨트롤.
+//
+// 예전에는 그냥 쌓기만 해서, 문장 후보가 많거나 추도문이 길면 '이전·다음'이
+// 화면 밖으로 밀려났다. 다음 단계로 가려고 스크롤을 한참 내려야 했다.
+// 이제 넘치는 것은 .compose-body 안에서만 스크롤되고 컨트롤은 제자리다.
 .compose-container {
-  @apply flex flex-col gap-6 p-4 pb-24;
+  @apply flex flex-col gap-4 p-4;
+
+  // 헤더는 고정이고 .home-container가 그만큼 위를 비워둔다.
+  // dvh는 모바일 브라우저 툴바가 접혔다 펴질 때 따라 움직인다.
+  height: calc(100vh - 80px);
+  height: calc(100dvh - 80px);
+}
+
+.compose-body {
+  @apply flex flex-col gap-3 flex-1 overflow-y-auto;
+
+  // min-height:auto인 flex 아이템은 내용보다 작아지지 않아서, 이게 없으면
+  // 넘쳐도 줄어들지 않고 overflow가 아예 일어나지 않는다.
+  min-height: 0;
+}
+
+.compose-actions {
+  @apply flex flex-col gap-2 shrink-0 pt-3;
+  @apply border-t border-grey-333;
 }
 
 .compose-lead {
@@ -12,7 +35,7 @@
 }
 
 .compose-textarea {
-  @apply w-full min-h-56 p-3 rounded-lg break-keep leading-relaxed;
+  @apply w-full min-h-40 p-3 rounded-lg break-keep leading-relaxed;
   @apply border-2 border-soul-green-700 bg-soul-green-950 text-real-white;
   resize: vertical;
 
@@ -54,4 +77,8 @@
   &:disabled {
     @apply opacity-50 cursor-not-allowed;
   }
+}
+
+.compose-count {
+  @apply text-sm text-grey-999 text-right;
 }

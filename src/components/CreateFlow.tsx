@@ -188,12 +188,18 @@ export default function CreateFlow({
 
   if (step === 'paste') {
     return (
-      <main className="compose-container">
-        <p className="compose-lead">
-          AI가 돌려준 답을 그대로 붙여넣으세요.
-        </p>
-
-        <details className="prompt-details">
+      <StepShell
+        lead="AI가 돌려준 답을 그대로 붙여넣으세요."
+        actions={
+          <>
+            {error && <p className="text-soul-red text-sm">{error}</p>}
+            <button onClick={toSelect} className="rounded-lg">
+              다음
+            </button>
+          </>
+        }
+      >
+        <details className="prompt-details shrink-0">
           <summary>질문을 다시 보기</summary>
           <div className="pt-3">
             <PromptCard prompt={prompt} />
@@ -204,11 +210,11 @@ export default function CreateFlow({
           value={eulogy}
           onChange={(e) => setEulogy(e.target.value)}
           placeholder="여기에 답변을 붙여넣으세요."
-          className="compose-textarea"
+          className="compose-textarea flex-1"
           autoFocus
         />
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 shrink-0">
           {SOURCES.map((s) => (
             <button
               key={s.value}
@@ -221,40 +227,61 @@ export default function CreateFlow({
             </button>
           ))}
         </div>
-
-        {error && <p className="text-soul-red text-sm">{error}</p>}
-
-        <button onClick={toSelect} className="rounded-lg">
-          다음
-        </button>
-      </main>
+      </StepShell>
     );
   }
 
   if (step === 'select') {
     return (
-      <main className="compose-container">
-        <p className="compose-lead">
-          이 중에서, 묘비에 새길 한 문장을 골라주세요.
-        </p>
-
+      <StepShell
+        lead="이 중에서, 묘비에 새길 한 문장을 골라주세요."
+        actions={
+          <>
+            {error && <p className="text-soul-red text-sm">{error}</p>}
+            <button
+              type="button"
+              onClick={() => setCustomizing((v) => !v)}
+              className="unpublish-button"
+            >
+              {customizing ? '목록에서 고르기' : '직접 다듬기'}
+            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setStep('paste')}
+                className="secondary-button"
+              >
+                이전
+              </button>
+              <button onClick={toPreview} className="flex-1">
+                다음
+              </button>
+            </div>
+          </>
+        }
+      >
         {customizing ? (
-          <textarea
-            value={sentence}
-            onChange={(e) => setSentence(e.target.value)}
-            maxLength={EPITAPH_MAX}
-            className="compose-textarea"
-            autoFocus
-          />
+          <>
+            <textarea
+              value={sentence}
+              onChange={(e) => setSentence(e.target.value)}
+              maxLength={EPITAPH_MAX}
+              className="compose-textarea flex-1"
+              autoFocus
+            />
+            {/* 상한에 닿으면 입력이 그냥 멈춘다. 왜 안 써지는지 보이게 한다. */}
+            <p className="compose-count shrink-0">
+              {sentence.length}/{EPITAPH_MAX}
+            </p>
+          </>
         ) : (
-          <div className="flex flex-col gap-2">
+          <>
             {sentences.map((s) => (
               <button
                 key={s}
                 type="button"
                 onClick={() => setSentence(s)}
                 aria-pressed={sentence === s}
-                className="sentence-card"
+                className="sentence-card shrink-0"
               >
                 {s}
               </button>
@@ -265,84 +292,104 @@ export default function CreateFlow({
                 다듬기&rsquo;로 새길 문장을 적어주세요.
               </p>
             )}
-          </div>
+          </>
         )}
-
-        <button
-          type="button"
-          onClick={() => setCustomizing((v) => !v)}
-          className="unpublish-button"
-        >
-          {customizing ? '목록에서 고르기' : '직접 다듬기'}
-        </button>
-
-        {error && <p className="text-soul-red text-sm">{error}</p>}
-
-        <div className="flex gap-2">
-          <button onClick={() => setStep('paste')} className="secondary-button">
-            이전
-          </button>
-          <button onClick={toPreview} className="flex-1">
-            다음
-          </button>
-        </div>
-      </main>
+      </StepShell>
     );
   }
 
   if (step === 'preview') {
     return (
-      <main className="compose-container">
-        <p className="compose-lead">이렇게 새겨집니다.</p>
+      <StepShell
+        lead="이렇게 새겨집니다."
+        actions={
+          <>
+            <p className="publish-warning">
+              게시하면 링크를 가진 누구나 이 묘비를 볼 수 있습니다. 언제든
+              비공개로 되돌릴 수 있습니다.
+              {!loggedIn && ' 묘비를 간직하려면 구글 로그인이 필요합니다.'}
+            </p>
 
-        <TombstoneSection tombName={sentence} />
+            {error && <p className="text-soul-red text-sm">{error}</p>}
 
-        <div className="obituary-container">
+            <div className="flex gap-2">
+              <button
+                onClick={() => setStep('select')}
+                className="secondary-button"
+                disabled={pending}
+              >
+                이전
+              </button>
+              <button onClick={onPublish} className="flex-1" disabled={pending}>
+                {pending
+                  ? '게시 중…'
+                  : loggedIn
+                    ? '게시하기'
+                    : '로그인하고 게시하기'}
+              </button>
+            </div>
+          </>
+        }
+      >
+        <div className="shrink-0">
+          <TombstoneSection tombName={sentence} />
+        </div>
+
+        <div className="obituary-container shrink-0">
           <p className="eulogy-body">{eulogy}</p>
         </div>
-
-        <p className="publish-warning">
-          게시하면 링크를 가진 누구나 이 묘비를 볼 수 있습니다. 언제든
-          비공개로 되돌릴 수 있습니다.
-          {!loggedIn && ' 묘비를 간직하려면 구글 로그인이 필요합니다.'}
-        </p>
-
-        {error && <p className="text-soul-red text-sm">{error}</p>}
-
-        <div className="flex gap-2">
-          <button
-            onClick={() => setStep('select')}
-            className="secondary-button"
-            disabled={pending}
-          >
-            이전
-          </button>
-          <button onClick={onPublish} className="flex-1" disabled={pending}>
-            {pending ? '게시 중…' : loggedIn ? '게시하기' : '로그인하고 게시하기'}
-          </button>
-        </div>
-      </main>
+      </StepShell>
     );
   }
 
   return (
-    <main className="compose-container">
-      <p className="compose-lead">
-        {published ? '묘비가 세워졌습니다.' : '저장됐습니다.'}
-      </p>
-
-      {published && shareUrl && <ShareBox url={shareUrl} />}
-
-      <div className="flex gap-2">
-        <Link href="/me" className="secondary-button text-center flex-1">
-          꾸미러 가기
-        </Link>
-        {published && slug && (
-          <Link href={`/t/${slug}`} className="flex-1 text-center rounded-lg landing-cta">
-            묘비 보기
+    <StepShell
+      lead={published ? '묘비가 세워졌습니다.' : '저장됐습니다.'}
+      actions={
+        <div className="flex gap-2">
+          <Link href="/me" className="secondary-button text-center flex-1">
+            꾸미러 가기
           </Link>
-        )}
-      </div>
+          {published && slug && (
+            <Link
+              href={`/t/${slug}`}
+              className="flex-1 text-center rounded-lg landing-cta"
+            >
+              묘비 보기
+            </Link>
+          )}
+        </div>
+      }
+    >
+      {published && shareUrl && <ShareBox url={shareUrl} />}
+    </StepShell>
+  );
+}
+
+/**
+ * 한 단계의 틀: 안내문 · 스크롤되는 본문 · 바닥에 붙은 컨트롤.
+ *
+ * 예전에는 모든 것이 한 흐름에 쌓여 있어서, 문장 후보가 많거나 붙여넣은
+ * 추도문이 길면 '이전·다음'과 '직접 다듬기'가 화면 아래로 밀려났다.
+ * 다음으로 가려고 스크롤을 한참 내려야 했다.
+ *
+ * 이제 넘치는 것은 본문 안에서 스크롤되고, 단계를 넘기는 버튼은 언제나
+ * 같은 자리에 있다.
+ */
+function StepShell({
+  lead,
+  children,
+  actions,
+}: {
+  lead: React.ReactNode;
+  children: React.ReactNode;
+  actions: React.ReactNode;
+}) {
+  return (
+    <main className="compose-container">
+      <p className="compose-lead">{lead}</p>
+      <div className="compose-body">{children}</div>
+      <div className="compose-actions">{actions}</div>
     </main>
   );
 }
