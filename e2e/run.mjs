@@ -246,7 +246,14 @@ async function main() {
   check('랜딩이 뜬다', (await page.evaluate('location.pathname')) === '/');
   check('질문 카드가 있다', await page.evaluate(`!!document.querySelector('.prompt-card')`));
   check('AI 링크 3개', (await page.evaluate(`document.querySelectorAll('.model-link').length`)) === 3);
-  check('로그인 버튼이 있다', await page.evaluate(`!!document.querySelector('.landing-secondary-button')`));
+  check('로그인 링크가 있다', await page.evaluate(`!!document.querySelector('.landing-secondary-link')`));
+  // 추도문은 공개 URL에 걸린다. 이 단락이 빠지면 모델이 실명·소속을 끌어올 수 있다.
+  check('질문에 개인정보 제약이 있다',
+    (await page.evaluate(`document.querySelector('.prompt-card').textContent`))
+      .includes('개인정보는 절대 언급하지 마세요'));
+  // 랜딩은 한 화면이다. CTA가 접히면 붙여넣기로 넘어가는 길이 안 보인다.
+  check('CTA가 화면 안에 있다', await page.evaluate(
+    `document.querySelector('.landing-cta').getBoundingClientRect().bottom <= innerHeight + 1`));
 
   console.log('\n[2] 붙여넣기 (마크다운 섞인 실제 LLM 답변 형태)');
   await page.goto(app('/new'));
