@@ -1,15 +1,19 @@
+// 랜딩은 한 화면에 담는다. 질문이 네 단락이라 그대로 쌓으면 페이지가
+// 두 배 넘게 늘어나고, '답변 붙여넣기'가 화면 밖으로 밀려난다.
+// 남는 높이는 질문 카드가 먹고, 넘치는 것은 그 안에서만 스크롤한다.
 .landing {
-  @apply flex flex-col gap-6 px-4 pb-8;
+  @apply flex flex-col gap-4 px-4 pb-4;
+  height: calc(100vh - 80px);
+  height: calc(100dvh - 80px);
 }
 
 .landing-animation {
   // 애니메이션은 분위기용이다. 지연 로딩이라 늦게 뜨고, WASM이 막힌
-  // 환경에서는 아예 안 뜬다. 그만큼의 빈 공간이 첫 화면을 잡아먹지
-  // 않도록 낮게 잡는다.
-  @apply w-full;
-  height: 16vh;
-  min-height: 96px;
-  max-height: 160px;
+  // 환경에서는 아예 안 뜬다. 질문 카드에 높이를 내주도록 더 낮췄다.
+  @apply w-full shrink-0;
+  height: 8vh;
+  min-height: 48px;
+  max-height: 88px;
   position: relative;
 }
 
@@ -27,21 +31,20 @@
 
 .landing-cta {
   @apply bg-soul-green-500 text-real-white text-center py-3 rounded-lg font-bold;
+  @apply shrink-0;
 }
 
-.landing-secondary {
-  @apply text-center text-sm text-grey-999 underline;
-}
+// 로그인은 부차적인 길이다. 세로를 아끼려고 버튼이 아니라 밑줄 링크로
+// 둔다. <button>이라 _buttons.scss의 초록 배경을 걷어내야 한다 —
+// 호버 규칙까지 함께 눌러야 링크처럼 보인다.
+.landing-secondary-link {
+  @apply bg-transparent text-center text-sm text-grey-999 underline p-0 m-0 shrink-0;
 
-// 주된 행동인 '답변 붙여넣기'와 겨루지 않도록 외곽선만 두른다. 다만
-// 로그아웃한 복귀 사용자에게는 이것이 자기 묘비로 들어오는 유일한
-// 문이라, 검정 위에서 사라지지 않을 만큼의 대비는 있어야 한다.
-.landing-secondary-button {
-  @apply w-full text-center py-3 rounded-lg;
-  // border-solid를 빼먹으면 안 된다. _buttons.scss의 button 규칙이
-  // border-none(=border-style: none)을 걸어두는데, style이 none이면
-  // 두께를 아무리 선언해도 계산값이 0이 된다. 색만 먹고 선은 사라진다.
-  @apply bg-transparent border border-solid border-grey-666 text-grey-999;
+  @media (hover: hover) {
+    &:hover {
+      @apply bg-transparent text-real-white;
+    }
+  }
 
   &:disabled {
     @apply opacity-50 cursor-not-allowed;
@@ -70,4 +73,24 @@
       @apply bg-soul-green-950;
     }
   }
+}
+
+// 랜딩에서만 질문 카드가 남는 높이를 먹는다. /new의 '질문을 다시 보기'
+// 안에서는 접힌 내용이라 제 높이대로 두는 편이 맞다.
+// 남는 높이를 먹되 이 아래로는 안 눌린다 — 카드 바닥 7.5rem에 복사 버튼과
+// AI 링크 줄, 사이 간격을 더한 값이다. 0으로 열어두면 화면이 짧을 때 블록만
+// 눌리고 안쪽 버튼은 그대로라 밖으로 새어나와 CTA 밑에 깔린다. auto로 두면
+// 반대로 카드가 전체 내용 높이까지 부풀어 압축이 아예 안 걸린다.
+// 정 모자라면 페이지가 대신 조금 스크롤된다.
+.landing .prompt-block {
+  @apply flex-1;
+  min-height: 15.5rem;
+}
+
+// 화면이 짧으면 카드가 세 줄까지 눌려 글자가 가로로 잘린다. 바닥을 둬서
+// 그 아래로는 안 내려가게 한다 — 이때 페이지가 조금 스크롤되는 대신
+// 질문이 읽히는 높이를 지킨다.
+.landing .prompt-card {
+  @apply flex-1 overflow-y-auto;
+  min-height: 7.5rem;
 }

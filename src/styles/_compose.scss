@@ -29,9 +29,16 @@
   @apply text-lg break-keep leading-relaxed;
 }
 
+// 질문은 네 단락짜리 산문이다. 한때 기호로 짠 주문이라 가운데 정렬에
+// 행간을 좁혔지만, 산문에는 둘 다 해가 된다 — 왼쪽 정렬에 넉넉한 행간.
 .prompt-card {
   @apply bg-soul-green-950 border border-soul-green-800 rounded-lg p-4;
-  @apply text-soul-green-300 break-keep leading-relaxed whitespace-pre-wrap;
+  @apply text-soul-green-300 break-keep whitespace-pre-wrap leading-relaxed;
+}
+
+.prompt-block {
+  @apply flex flex-col gap-3;
+  min-height: 0;
 }
 
 .compose-textarea {

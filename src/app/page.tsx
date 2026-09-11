@@ -66,18 +66,6 @@ export default async function LandingPage() {
         */}
         {!loggedIn && <LoginButton />}
       </main>
-
-      <div className="footer">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/assets/images/wsis-logo-dark.svg"
-          alt="WSIS 로고"
-          className="wsis-logo"
-          width={16}
-          height={16}
-        />
-        <p>WSIS</p>
-      </div>
     </div>
   );
 }
