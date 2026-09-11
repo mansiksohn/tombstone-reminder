@@ -12,7 +12,8 @@
     "lint": "eslint .",
     "e2e": "node e2e/run.mjs",
     "typecheck": "tsc --noEmit",
-    "gen:types": "supabase gen types typescript --linked --schema public > src/lib/database.types.ts"
+    "gen:types": "supabase gen types typescript --linked --schema public > src/lib/database.types.ts",
+    "check-rls": "node scripts/check-rls.mjs"
   },
   "dependencies": {
     "@rive-app/react-canvas": "^4.17.0",
