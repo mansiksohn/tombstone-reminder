@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import { saveEulogy, setPublished } from '@/lib/actions';
@@ -14,15 +13,13 @@ import type { EulogySource } from '@/lib/database.types';
 import PromptCard from './PromptCard';
 import TombstoneSection from './TombstoneSection';
 
-type Step = 'paste' | 'select' | 'preview' | 'done';
+type Step = 'paste' | 'select' | 'preview';
 
 interface Props {
   prompt: string;
   loggedIn: boolean;
   /** 로그인 콜백이 실패해 되돌아온 경우의 사유. */
   authError?: string | null;
-  slug: string | null;
-  shareUrl: string | null;
   initialEulogy: string | null;
   initialSource: EulogySource | null;
   initialSentence: string | null;
@@ -39,8 +36,6 @@ export default function CreateFlow({
   prompt,
   loggedIn,
   authError,
-  slug,
-  shareUrl,
   initialEulogy,
   initialSource,
   initialSentence,
@@ -60,7 +55,6 @@ export default function CreateFlow({
   const [source, setSource] = useState<EulogySource | null>(initialSource);
   const [sentence, setSentence] = useState(initialSentence ?? '');
   const [customizing, setCustomizing] = useState(false);
-  const [published, setPublishedState] = useState(alreadyPublished);
   const [error, setError] = useState<string | null>(
     authError ? (AUTH_ERROR_MESSAGES[authError] ?? '로그인에 실패했습니다.') : null,
   );
@@ -89,12 +83,22 @@ export default function CreateFlow({
         }
 
         clearDraft();
-        setPublishedState(true);
-        setResuming(false);
-        setStep('done');
+
+        // resuming을 끄지 않는다. 로그인하고 돌아와 이어서 게시한
+        // 경우, 끄면 '세우는 중입니다…'가 미리보기로 한 번 돌아갔다가
+        // 넘어간다. 켜둔 채로 두면 그대로 /me로 이어진다.
+
+        // 완료 화면을 따로 두지 않는다. "묘비가 세워졌습니다"라고 해놓고
+        // 링크 한 줄만 보여주면, 정작 세워진 묘비를 못 본 채 끝난다.
+        // 바로 내 묘비로 보낸다 — 공유 링크와 복사는 거기에도 있다.
+        //
+        // replace인 것은 뒤로 가기로 방금 게시한 미리보기에 돌아오지
+        // 않게 하기 위함이다. startTransition 안에서 부르므로 /me가
+        // 그려질 때까지 버튼은 '게시 중…'으로 잠겨 있다.
+        router.replace('/me');
       });
     },
-    [],
+    [router],
   );
 
   // 로그인하고 돌아왔을 때의 처리.
@@ -292,72 +296,49 @@ export default function CreateFlow({
     );
   }
 
-  if (step === 'preview') {
-    return (
-      <StepShell
-        lead="이렇게 새겨집니다."
-        actions={
-          <>
-            <p className="publish-warning">
-              {alreadyPublished &&
-                '이미 세워둔 묘비의 추도문과 각인을 이 내용으로 바꿉니다. '}
-              게시하면 링크를 가진 누구나 이 묘비를 볼 수 있습니다. 언제든
-              비공개로 되돌릴 수 있습니다.
-              {!loggedIn && ' 묘비를 간직하려면 구글 로그인이 필요합니다.'}
-            </p>
-
-            {error && <p className="text-soul-red text-sm">{error}</p>}
-
-            <div className="flex gap-2">
-              <button
-                onClick={() => setStep('select')}
-                className="secondary-button"
-                disabled={pending}
-              >
-                이전
-              </button>
-              <button onClick={onPublish} className="flex-1" disabled={pending}>
-                {pending
-                  ? '게시 중…'
-                  : loggedIn
-                    ? '게시하기'
-                    : '로그인하고 게시하기'}
-              </button>
-            </div>
-          </>
-        }
-      >
-        <div className="shrink-0">
-          <TombstoneSection tombName={sentence} />
-        </div>
-
-        <div className="obituary-container shrink-0">
-          <p className="eulogy-body">{toPlainText(eulogy)}</p>
-        </div>
-      </StepShell>
-    );
-  }
-
+  // 남은 단계는 미리보기뿐이다. 게시가 끝나면 화면을 더 그리지 않고
+  // 곧장 /me로 넘어간다.
   return (
     <StepShell
-      lead={published ? '묘비가 세워졌습니다.' : '저장됐습니다.'}
+      lead="이렇게 새겨집니다."
       actions={
-        <div className="flex gap-2">
-          <Link href="/me" className="secondary-button text-center flex-1">
-            꾸미러 가기
-          </Link>
-          {published && slug && (
-            <Link
-              href={`/t/${slug}`}
-              className="flex-1 text-center rounded-lg landing-cta"
+        <>
+          <p className="publish-warning">
+            {alreadyPublished &&
+              '이미 세워둔 묘비의 추도문과 각인을 이 내용으로 바꿉니다. '}
+            게시하면 링크를 가진 누구나 이 묘비를 볼 수 있습니다. 언제든
+            비공개로 되돌릴 수 있습니다.
+            {!loggedIn && ' 묘비를 간직하려면 구글 로그인이 필요합니다.'}
+          </p>
+
+          {error && <p className="text-soul-red text-sm">{error}</p>}
+
+          <div className="flex gap-2">
+            <button
+              onClick={() => setStep('select')}
+              className="secondary-button"
+              disabled={pending}
             >
-              묘비 보기
-            </Link>
-          )}
-        </div>
+              이전
+            </button>
+            <button onClick={onPublish} className="flex-1" disabled={pending}>
+              {pending
+                ? '게시 중…'
+                : loggedIn
+                  ? '게시하기'
+                  : '로그인하고 게시하기'}
+            </button>
+          </div>
+        </>
       }
     >
-      {published && shareUrl && <ShareBox url={shareUrl} />}
+      <div className="shrink-0">
+        <TombstoneSection tombName={sentence} />
+      </div>
+
+      <div className="obituary-container shrink-0">
+        <p className="eulogy-body">{toPlainText(eulogy)}</p>
+      </div>
     </StepShell>
   );
 }
@@ -387,28 +368,5 @@ function StepShell({
       <div className="compose-body">{children}</div>
       <div className="compose-actions">{actions}</div>
     </main>
-  );
-}
-
-function ShareBox({ url }: { url: string }) {
-  const [copied, setCopied] = useState(false);
-
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
-    } catch {
-      // 클립보드가 막힌 환경에서는 직접 긁어서 복사하면 된다.
-    }
-  };
-
-  return (
-    <div className="flex flex-col gap-2">
-      <div className="share-url">{url}</div>
-      <button onClick={copy} className="rounded-lg">
-        {copied ? '링크 복사됨' : '링크 복사'}
-      </button>
-    </div>
   );
 }
