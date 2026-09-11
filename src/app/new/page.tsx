@@ -1,6 +1,6 @@
 import Header from '@/components/Header';
 import CreateFlow from '@/components/CreateFlow';
-import { getMyTomb, shareUrl } from '@/lib/tomb';
+import { getMyTomb } from '@/lib/tomb';
 import { EULOGY_PROMPT } from '@/lib/prompt';
 
 export const dynamic = 'force-dynamic';
@@ -29,8 +29,6 @@ export default async function NewTombPage({
         prompt={EULOGY_PROMPT}
         loggedIn={Boolean(result)}
         authError={authError ?? null}
-        slug={tomb?.slug ?? null}
-        shareUrl={tomb ? shareUrl(tomb.slug) : null}
         initialEulogy={tomb?.eulogy ?? null}
         initialSource={tomb?.eulogy_source ?? null}
         initialSentence={tomb?.tomb_name ?? null}

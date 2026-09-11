@@ -4,7 +4,7 @@
  *   npm run e2e              빌드부터 다시
  *   npm run e2e -- --fast    이미 빌드돼 있으면 건너뛴다
  *
- * 랜딩 → 붙여넣기 → 문장 고르기 → 미리보기 → 게시 → 공유 링크 →
+ * 랜딩 → 붙여넣기 → 문장 고르기 → 미리보기 → 게시 → 내 묘비 →
  * 쿠키를 비운 다른 방문자로 공개 묘비 방문 → 헌화 → 공유 카드.
  *
  * 왜 빌드부터 하는가: NEXT_PUBLIC_* 는 빌드 시점에 번들에 구워진다.
@@ -313,9 +313,14 @@ async function main() {
   check('각인이 저장된다', Boolean(saved.tomb_name), saved.tomb_name || '');
   check('출처가 저장된다', saved.eulogy_source === 'claude', String(saved.eulogy_source));
   check('게시 상태가 된다', saved.status === 'published', saved.status);
-  check('완료 화면에 닿는다',
-    (await page.evaluate(`document.querySelector('.compose-lead')?.textContent ?? ''`)).includes('세워졌습니다'));
-  check('공유 링크가 보인다', Boolean(await page.evaluate(`document.querySelector('.share-url')?.textContent`)));
+  // 게시가 끝나면 완료 화면이 아니라 내 묘비로 간다. 손으로 옮겨가지
+  // 않고 그대로 확인하는 것이 중요하다 — 자동으로 넘어가는지를 보는 것이다.
+  check('게시하면 내 묘비로 넘어간다', (await page.evaluate('location.pathname')) === '/me');
+  check('넘어간 화면에 방금 새긴 각인이 있다',
+    (await page.evaluate(`document.querySelector('.tombstone-name')?.textContent ?? ''`))
+      .includes(saved.tomb_name));
+  check('넘어간 화면에 공유 링크가 있다',
+    Boolean(await page.evaluate(`document.querySelector('.share-url')?.textContent`)));
 
   console.log('\n[6] 로그인 사용자의 홈');
   await page.goto(app('/'));
