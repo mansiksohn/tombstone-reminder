@@ -18,11 +18,36 @@ export default function PromptCard({ prompt }: { prompt: string }) {
 
   return (
     <div className="prompt-block">
-      <blockquote className="prompt-card">{prompt}</blockquote>
+      {/*
+        복사는 이 카드에서 할 수 있는 유일한 일이다. 그런데 예전에는
+        바로 아래 '질문 복사하기' 버튼이 '답변 붙여넣기'와 나란히
+        굵은 초록 버튼이라, CTA가 둘로 보였다. 카드 자체를 클릭 영역으로
+        삼고 아이콘 하나만 얹어 복사는 보조 동작임을 드러낸다.
+      */}
+      <div className="prompt-card-wrap">
+        <blockquote
+          className="prompt-card"
+          role="button"
+          tabIndex={0}
+          onClick={copy}
+          onKeyDown={(e) => {
+            if (e.key !== 'Enter' && e.key !== ' ') return;
+            e.preventDefault();
+            copy();
+          }}
+          aria-label={copied ? '질문이 복사되었습니다' : '질문 복사하기'}
+        >
+          {prompt}
+        </blockquote>
 
-      <button onClick={copy} className="rounded-lg">
-        {copied ? '복사됐습니다' : '질문 복사하기'}
-      </button>
+        <span className="prompt-copy-icon" aria-hidden="true">
+          {copied ? <CheckIcon /> : <CopyIcon />}
+        </span>
+
+        <span className={`prompt-copy-feedback${copied ? ' is-visible' : ''}`} aria-hidden="true">
+          복사됐습니다
+        </span>
+      </div>
 
       <div className="flex flex-col gap-2">
         <p className="model-links-lead">복사하면서 바로 열기</p>
@@ -47,5 +72,22 @@ export default function PromptCard({ prompt }: { prompt: string }) {
         </div>
       </div>
     </div>
+  );
+}
+
+function CopyIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
+      <rect x="9" y="9" width="12" height="12" rx="2" />
+      <path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1" />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M20 6 9 17l-5-5" />
+    </svg>
   );
 }
