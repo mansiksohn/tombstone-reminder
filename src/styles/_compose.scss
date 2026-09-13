@@ -31,9 +31,50 @@
 
 // 질문은 네 단락짜리 산문이다. 한때 기호로 짠 주문이라 가운데 정렬에
 // 행간을 좁혔지만, 산문에는 둘 다 해가 된다 — 왼쪽 정렬에 넉넉한 행간.
+//
+// 왼쪽 위를 복사 아이콘에 내주려고 그만큼 위·왼쪽 여백을 더 준다.
 .prompt-card {
   @apply bg-soul-green-950 border border-soul-green-800 rounded-lg p-4;
   @apply text-soul-green-300 break-keep whitespace-pre-wrap leading-relaxed;
+  @apply cursor-pointer;
+  padding-top: 2.25rem;
+  padding-left: 2.25rem;
+
+  &:focus-visible {
+    @apply outline outline-2 outline-soul-green-500;
+    outline-offset: 2px;
+  }
+}
+
+// 카드를 통째로 복사 버튼으로 쓴다 — 아이콘과 피드백 문구는 그 위에
+// 얹힌 장식일 뿐, 클릭은 카드 자체(blockquote)가 받는다. 아이콘에
+// pointer-events를 끊어두는 이유도 그래서다: 겹쳐 있어도 클릭이
+// 아래 카드로 그대로 전달된다.
+.prompt-card-wrap {
+  position: relative;
+}
+
+.prompt-copy-icon {
+  @apply text-soul-green-500;
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  pointer-events: none;
+}
+
+.prompt-copy-feedback {
+  @apply text-xs text-soul-green-300 bg-soul-green-900 rounded;
+  position: absolute;
+  top: 0.6rem;
+  left: 2.4rem;
+  padding: 0.15rem 0.5rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease-out;
+
+  &.is-visible {
+    opacity: 1;
+  }
 }
 
 .prompt-block {
