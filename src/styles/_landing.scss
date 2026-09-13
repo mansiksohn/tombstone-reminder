@@ -11,7 +11,7 @@
   // 애니메이션은 분위기용이다. 지연 로딩이라 늦게 뜨고, WASM이 막힌
   // 환경에서는 아예 안 뜬다. 질문 카드에 높이를 내주도록 더 낮췄다.
   @apply w-full shrink-0;
-  height: 8vh;
+  height: 4vh;
   min-height: 48px;
   max-height: 88px;
   position: relative;

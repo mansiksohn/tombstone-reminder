@@ -38,14 +38,14 @@ export default async function LandingPage() {
       <main className="landing">
         <section className="landing-copy">
           <h2 className="landing-title">
-            당신이 떠난 뒤,
+            아직 안죽으셨다고요?
             <br />
-            당신을 아는 존재는 누구입니까
+            그래도 앞으로 필요해지실겁니다.
           </h2>
           <p className="landing-lead">
-            늘 쓰던 AI에게 아래 질문을 그대로 물어보세요.
+            암요 미리미리 준비해야죠.
             <br />
-            돌아온 답이 당신의 묘비명이 됩니다.
+            이걸 들고 평소에 대화하던 친구한테 내용만 받아오면 됩니다.
           </p>
         </section>
 
