@@ -27,7 +27,6 @@ export default function FlowerSection({
 }: Props) {
   const [flowers, setFlowers] = useState<Placed[]>(initialFlowers);
   const [count, setCount] = useState(total);
-  const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   /** 다시 놓을 수 있을 때까지 남은 초. 0이면 쿨다운이 끝난 것이다. */
   const [cooldown, setCooldown] = useState(0);
@@ -40,10 +39,20 @@ export default function FlowerSection({
     return () => clearTimeout(id);
   }, [cooldown]);
 
+  // 실패 알림도 카운트다운처럼 스스로 걷힌다 — 다음 클릭까지 남겨둘
+  // 이유가 없다.
+  useEffect(() => {
+    if (!notice) return;
+    const id = setTimeout(() => setNotice(null), 2000);
+    return () => clearTimeout(id);
+  }, [notice]);
+
+  // 요청이 오가는 동안 버튼을 잠그지 않는다. 분당 한도 안에서는 클릭한
+  // 만큼 바로바로 놓이는 게 맞다 — 응답을 기다리며 한 번씩만 받아주면
+  // 답답하기만 하다. 넘치는 순간은 서버가 429로 알려주고, 그때부터만
+  // 쿨다운으로 막는다.
   const offer = async () => {
-    if (busy || cooldown > 0) return;
-    setBusy(true);
-    setNotice(null);
+    if (cooldown > 0) return;
 
     const type = randomFlower();
 
@@ -68,46 +77,39 @@ export default function FlowerSection({
       setCount((n) => n + 1);
     } catch (error) {
       console.error('헌화 실패:', error);
-      setNotice('꽃을 놓지 못했습니다.');
-    } finally {
-      setBusy(false);
+      setNotice('다시 시도');
     }
   };
+
+  // 쿨다운·실패 알림을 버튼 옆에 따로 두면, flex 칸을 하나 더 차지해
+  // 꽃 더미의 정지 위치(static position)까지 밀어 올린다 — 꽃은
+  // position:absolute라 눈에 보이는 형제가 느는 순간 같이 떠버린다.
+  // 그래서 별도 줄을 만들지 않고 버튼 라벨 자체를 이걸로 바꿔치기한다.
+  const label =
+    cooldown > 0
+      ? `${cooldown}초 후`
+      : (notice ?? (count > 0 ? `🌼${count}` : '🌼헌화하기'));
 
   return (
     <div className="flower-section">
       <div className="flower-bowl-container">
-        {cooldown > 0 ? (
-          <span className="flower-notice" aria-live="polite">
-            {cooldown}초 후 다시
-          </span>
-        ) : (
-          notice && (
-            <span className="flower-notice" aria-live="polite">
-              {notice}
-            </span>
-          )
-        )}
-
-        {/*
-          예전에는 "+"버튼과 "n송이의 꽃이 놓였습니다" 문구가 따로
-          있었는데, 문구가 화면 바닥 전체 폭에 절대 위치라 버튼과 같은
-          자리에 겹쳤다. 수량을 버튼 라벨 자체로 옮겨 겹칠 자리를 없앤다.
-        */}
         {canOffer ? (
           <button
             className="add-flower-button"
             onClick={offer}
-            disabled={busy || cooldown > 0}
+            disabled={cooldown > 0}
+            aria-live="polite"
             aria-label={
               cooldown > 0
                 ? `${cooldown}초 후 다시 놓을 수 있습니다`
-                : count > 0
-                  ? `꽃 놓기 (${count}송이 놓임)`
-                  : '꽃 놓기'
+                : notice
+                  ? notice
+                  : count > 0
+                    ? `꽃 놓기 (${count}송이 놓임)`
+                    : '꽃 놓기'
             }
           >
-            🌼{count > 0 ? count : '헌화하기'}
+            {label}
           </button>
         ) : (
           count > 0 && <span className="flower-count-badge">🌼{count}</span>
