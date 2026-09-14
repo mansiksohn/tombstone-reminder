@@ -64,15 +64,24 @@ export default function FlowerSection({
   return (
     <div className="flower-section">
       <div className="flower-bowl-container">
-        {canOffer && (
+        {notice && <span className="flower-notice">{notice}</span>}
+
+        {/*
+          예전에는 "+"버튼과 "n송이의 꽃이 놓였습니다" 문구가 따로
+          있었는데, 문구가 화면 바닥 전체 폭에 절대 위치라 버튼과 같은
+          자리에 겹쳤다. 수량을 버튼 라벨 자체로 옮겨 겹칠 자리를 없앤다.
+        */}
+        {canOffer ? (
           <button
             className="add-flower-button"
             onClick={offer}
             disabled={busy}
-            aria-label="꽃 놓기"
+            aria-label={count > 0 ? `꽃 놓기 (${count}송이 놓임)` : '꽃 놓기'}
           >
-            +
+            🌼{count > 0 ? count : '헌화하기'}
           </button>
+        ) : (
+          count > 0 && <span className="flower-count-badge">🌼{count}</span>
         )}
 
         {flowers.map((flower) => {
@@ -90,11 +99,6 @@ export default function FlowerSection({
             />
           );
         })}
-      </div>
-
-      <div className="flower-count">
-        {count > 0 && <span>{count}송이의 꽃이 놓였습니다</span>}
-        {notice && <span className="flower-notice">{notice}</span>}
       </div>
     </div>
   );

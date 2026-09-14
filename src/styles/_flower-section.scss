@@ -19,8 +19,11 @@
 // z-index는 이 섹션 안에서만 겨루면 된다 — 놓인 꽃(z-0) 위에 오기만
 // 하면 충분하다. 예전 값 1000·1001은 고정 헤더(z-1000)와 같은 높이라,
 // 메뉴를 열면 드로어를 뚫고 헌화 문구가 비쳤다.
+//
+// 라벨이 "+" 한 글자에서 "🌼헌화하기"·"🌼124"로 길어져 text-2xl은
+// 넘친다. 수량이 버튼 라벨 자체이니 이 안에서만 크기를 맞추면 된다.
 .add-flower-button {
-  @apply relative z-10 text-2xl m-0 font-bold cursor-pointer w-40;
+  @apply relative z-10 text-base m-0 font-bold cursor-pointer w-40;
   @apply bg-grey-333 text-grey-999;
   border-radius: 8px 8px 96px 96px;
   pointer-events: auto;
@@ -71,13 +74,12 @@
   animation: drop-flower 0.5s ease-in forwards;
 }
 
-.flower-count {
-  @apply absolute bottom-0 left-0 right-0 text-center text-sm text-grey-999;
-  @apply flex flex-col gap-1 pb-1;
-  pointer-events: none;
-  z-index: 20;
+// 헌화를 받지 않는 화면(초안 상태의 내 묘비)에서, 이미 놓인 꽃이 있다면
+// 그 수만 조용히 보여준다. 누를 수 없으니 버튼처럼 보이면 안 된다.
+.flower-count-badge {
+  @apply relative z-10 text-sm text-grey-999;
 }
 
 .flower-notice {
-  @apply text-soul-green-500;
+  @apply relative z-10 text-sm text-soul-green-500 text-center;
 }
