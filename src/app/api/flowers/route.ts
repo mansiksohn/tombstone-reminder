@@ -60,9 +60,26 @@ export async function POST(request: NextRequest) {
     .gte('created_at', since);
 
   if ((count ?? 0) >= RATE_LIMIT) {
+    // 창이 꽉 찬 것은 슬라이딩 윈도우라, 언제 풀리는지는 그 안에서 가장
+    // 오래된 한 송이가 창 밖으로 밀려나는 시점이다 — 그게 다시 놓을 수
+    // 있게 되는 때다.
+    const { data: oldest } = await admin
+      .from('flowers')
+      .select('created_at')
+      .eq('visitor_hash', hash)
+      .gte('created_at', since)
+      .order('created_at', { ascending: true })
+      .limit(1)
+      .maybeSingle();
+
+    const retryAfterMs = oldest
+      ? new Date(oldest.created_at).getTime() + RATE_WINDOW_MS - Date.now()
+      : RATE_WINDOW_MS;
+    const retryAfterSeconds = Math.max(1, Math.ceil(retryAfterMs / 1000));
+
     return NextResponse.json(
-      { error: '잠시 후에 다시 놓아주세요.' },
-      { status: 429 },
+      { error: '잠시 후에 다시 놓아주세요.', retryAfterSeconds },
+      { status: 429, headers: { 'Retry-After': String(retryAfterSeconds) } },
     );
   }
 

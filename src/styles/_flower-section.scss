@@ -29,8 +29,12 @@
   pointer-events: auto;
   transition: background-color 0.15s ease, color 0.15s ease;
 
+  // 예전에는 disabled일 때 통째로 반투명해졌다. 클릭하는 그 짧은
+  // 순간(요청이 오가는 동안)마다 버튼이 흐려졌다 돌아와 깜빡이는
+  // 것처럼 보였다. 눌렀다는 건 커서와 쿨다운 문구로 충분히 전해지니
+  // 색은 그대로 둔다.
   &:disabled {
-    @apply opacity-60 cursor-not-allowed;
+    @apply cursor-not-allowed;
   }
 }
 
