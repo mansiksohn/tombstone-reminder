@@ -77,10 +77,10 @@ export async function POST(request: NextRequest) {
       : RATE_WINDOW_MS;
     const retryAfterSeconds = Math.max(1, Math.ceil(retryAfterMs / 1000));
 
-    return NextResponse.json(
-      { error: '잠시 후에 다시 놓아주세요.', retryAfterSeconds },
-      { status: 429, headers: { 'Retry-After': String(retryAfterSeconds) } },
-    );
+    // 한도 도달은 오류가 아니라 정상적인 결과다. 4xx로 돌려주면 브라우저가
+    // 콘솔에 "Failed to load resource"를 자동으로 찍는데, 이건 JS로 막을
+    // 방법이 없다 — 애초에 오류 상태코드를 쓰지 않는 수밖에 없다.
+    return NextResponse.json({ limited: true, retryAfterSeconds });
   }
 
   const { data, error } = await admin
