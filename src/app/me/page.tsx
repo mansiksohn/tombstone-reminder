@@ -36,6 +36,12 @@ export default async function MyTombPage() {
     <div className="home-container">
       <Header userName={tomb.user_name} loggedIn />
       <main className="main-content">
+        <PublishPanel
+          published={published}
+          hasEpitaph={Boolean(tomb.tomb_name?.trim())}
+          url={shareUrl(tomb.slug)}
+        />
+
         <UserNameSection userName={tomb.user_name} />
         <DatesSection birthDate={tomb.birth_date} deathDate={tomb.death_date} />
         <TombstoneSection tombName={tomb.tomb_name} editable />
@@ -59,12 +65,6 @@ export default async function MyTombPage() {
             추도문 다시 받아오기
           </Link>
         </div>
-
-        <PublishPanel
-          published={published}
-          hasEpitaph={Boolean(tomb.tomb_name?.trim())}
-          url={shareUrl(tomb.slug)}
-        />
       </main>
     </div>
   );
