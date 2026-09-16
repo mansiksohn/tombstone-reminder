@@ -50,8 +50,20 @@
 // 얹힌 장식일 뿐, 클릭은 카드 자체(blockquote)가 받는다. 아이콘에
 // pointer-events를 끊어두는 이유도 그래서다: 겹쳐 있어도 클릭이
 // 아래 카드로 그대로 전달된다.
+//
+// flex와 min-height:0을 여기 두는 이유: 안의 .prompt-card가
+// flex-1·overflow-y-auto로 줄어들려면, 이 wrap이 먼저 flex 컨테이너로서
+// .prompt-block이 준 남는 높이를 그대로 넘겨줘야 한다. position:relative만
+// 있던 시절에는(복사 아이콘을 얹기 전) blockquote가 .prompt-block의
+// 직계 flex 자식이라 flex-1이 바로 먹혔지만, 아이콘 때문에 감싸면서
+// 이 wrap이 일반 블록이 되어 사슬이 끊겼다 — 카드가 제 내용 높이만큼
+// 다 부풀고, 랜딩에서는 그 아래 CTA가 화면 밖으로 밀려났다.
 .prompt-card-wrap {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
 }
 
 .prompt-copy-icon {
