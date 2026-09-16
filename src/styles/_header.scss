@@ -27,10 +27,17 @@
   background-color: transparent !important;
 }
 
+// 드로어와 배경은 이제 header 밖의 형제라, z-index도 header(1000)와
+// 직접 겨룬다 — header 안에 있던 예전에는 header가 만든 스태킹
+// 컨텍스트 안에서만 겨루면 됐지만, 지금은 별개 컨텍스트라 각자의
+// z-index "층" 전체로 비교된다. 50으로는 header에 덮여 닫기 버튼이
+// 화면에서 사라졌다. 열렸을 때는 헤더까지 포함해 화면 전체 위에
+// 떠야 하므로 header보다 높인다.
 .menu-overlay {
-  @apply fixed top-0 right-0 h-full bg-black bg-opacity-90 z-50;
+  @apply fixed top-0 right-0 h-full bg-black bg-opacity-90;
   width: 80%;
   transform: translateX(100%);
+  z-index: 1002;
 
   // 닫혔을 때는 클릭을 받지 않는다. 위치 계산이 또 어긋나더라도
   // 화면 위의 다른 것을 가로채지 못하게 하는 안전장치다.
@@ -51,6 +58,7 @@
 
 .menu-background {
   @apply fixed inset-0 bg-black opacity-50;
+  z-index: 1001;
 }
 
 .menu-close-button {
