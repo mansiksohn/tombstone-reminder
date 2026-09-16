@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import type { Database, EulogySource, TombRow } from '@/lib/database.types';
 import { EPITAPH_MAX, EULOGY_MAX, USER_NAME_MAX } from '@/lib/limits';
+import { getServerDictionary } from '@/lib/i18n/server';
 
 type TombUpdate = Database['public']['Tables']['tombs']['Update'];
 
@@ -35,16 +36,16 @@ export async function saveField(
   field: EditableField,
   value: string | null,
 ): Promise<ActionResult> {
-  const supabase = await createClient();
+  const [supabase, t] = await Promise.all([createClient(), getServerDictionary()]);
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { ok: false, error: '로그인이 필요합니다.' };
+  if (!user) return { ok: false, error: t.errors.loginRequired };
 
   const limit = LIMITS[field];
   if (limit && value && value.length > limit) {
-    return { ok: false, error: `${limit}자를 넘을 수 없습니다.` };
+    return { ok: false, error: t.errors.overLimit(limit) };
   }
 
   // 계산된 키로 객체를 만들면 인덱스 시그니처가 넓어져 Update 타입과 어긋난다.
@@ -76,27 +77,27 @@ export async function saveEulogy(
   source: EulogySource | null,
   sentence: string,
 ): Promise<ActionResult> {
-  const supabase = await createClient();
+  const [supabase, t] = await Promise.all([createClient(), getServerDictionary()]);
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { ok: false, error: '로그인이 필요합니다.' };
+  if (!user) return { ok: false, error: t.errors.loginRequired };
 
   const trimmedEulogy = eulogy.trim();
   const trimmedSentence = sentence.trim();
 
-  if (!trimmedEulogy) return { ok: false, error: '추도문이 비어 있습니다.' };
+  if (!trimmedEulogy) return { ok: false, error: t.errors.emptyEulogy };
   if (trimmedEulogy.length > EULOGY_MAX) {
-    return { ok: false, error: `추도문은 ${EULOGY_MAX}자를 넘을 수 없습니다.` };
+    return { ok: false, error: t.errors.eulogyOverLimit(EULOGY_MAX) };
   }
   if (!trimmedSentence) {
-    return { ok: false, error: '묘비에 새길 문장을 골라주세요.' };
+    return { ok: false, error: t.errors.pickSentence };
   }
   if (trimmedSentence.length > EPITAPH_MAX) {
     return {
       ok: false,
-      error: `각인 문장은 ${EPITAPH_MAX}자를 넘을 수 없습니다.`,
+      error: t.errors.epitaphOverLimit(EPITAPH_MAX),
     };
   }
 
@@ -124,12 +125,12 @@ export async function saveEulogy(
  * 메시지를 그대로 보여줄 수는 없으므로 여기서 먼저 걸러 문구를 만든다.
  */
 export async function setPublished(publish: boolean): Promise<ActionResult> {
-  const supabase = await createClient();
+  const [supabase, t] = await Promise.all([createClient(), getServerDictionary()]);
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  if (!user) return { ok: false, error: '로그인이 필요합니다.' };
+  if (!user) return { ok: false, error: t.errors.loginRequired };
 
   if (publish) {
     const { data: tomb } = await supabase
@@ -139,7 +140,7 @@ export async function setPublished(publish: boolean): Promise<ActionResult> {
       .maybeSingle<Pick<TombRow, 'tomb_name'>>();
 
     if (!tomb?.tomb_name?.trim()) {
-      return { ok: false, error: '묘비에 새길 문장을 먼저 정해주세요.' };
+      return { ok: false, error: t.errors.needEpitaphBeforePublish };
     }
   }
 

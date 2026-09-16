@@ -1,4 +1,7 @@
+'use client';
+
 import EpitaphEditor from './EpitaphEditor';
+import { useLocale } from './LocaleProvider';
 
 interface Props {
   tombName: string | null;
@@ -25,6 +28,7 @@ export default function TombstoneSection({
   editable = false,
 }: Props) {
   const engraved = Boolean(tombName?.trim());
+  const { t } = useLocale();
 
   return (
     <div className="tombstone-container relative">
@@ -35,7 +39,7 @@ export default function TombstoneSection({
             ? '/assets/images/headstone.svg'
             : '/assets/images/headstone-placeholder.svg'
         }
-        alt="묘비"
+        alt={t.tomb.tombstoneAlt}
         className="tombstone-image"
         width={366}
         height={560}

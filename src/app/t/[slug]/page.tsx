@@ -8,6 +8,8 @@ import GroundSection from '@/components/GroundSection';
 import DeathMaskSection from '@/components/DeathMaskSection';
 import { getFlowers, getPublishedTomb, hasSession, shareUrl } from '@/lib/tomb';
 import { toPlainText } from '@/lib/markdown';
+import { getServerDictionary } from '@/lib/i18n/server';
+import type { Dictionary } from '@/lib/i18n';
 
 export const dynamic = 'force-dynamic';
 
@@ -47,10 +49,12 @@ export default async function PublicTombPage({ params }: Props) {
   const tomb = await getPublishedTomb(slug);
   if (!tomb) notFound();
 
-  const flowers = await getFlowers(tomb.user_id);
-
-  // 로그인한 방문자에게는 헤더에서 자기 묘비로 갈 길을 열어둔다.
-  const loggedIn = await hasSession();
+  const [flowers, loggedIn, t] = await Promise.all([
+    getFlowers(tomb.user_id),
+    // 로그인한 방문자에게는 헤더에서 자기 묘비로 갈 길을 열어둔다.
+    hasSession(),
+    getServerDictionary(),
+  ]);
 
   return (
     <div className="home-container bg-real-black">
@@ -59,10 +63,10 @@ export default async function PublicTombPage({ params }: Props) {
         <div className="username-container text-center text-xl">
           <span className="block">
             <span className="text-soul-green-500 font-bold underline">
-              {tomb.user_name || '신원미상'}
+              {tomb.user_name || t.tomb.unidentified}
             </span>
-            <span className="text-white">님</span>
-            <span className="block pt-1">여기에 잠들다</span>
+            <span className="text-white">{t.tomb.nameSuffix}</span>
+            <span className="block pt-1">{t.tomb.restsHere}</span>
           </span>
         </div>
 
@@ -87,8 +91,10 @@ export default async function PublicTombPage({ params }: Props) {
             </div>
             {tomb.eulogy_source && (
               <p className="eulogy-source">
-                {sourceLabel(tomb.eulogy_source)}가 기억하는{' '}
-                {tomb.user_name || '이 사람'}
+                {t.tomb.rememberedBy(
+                  sourceLabel(tomb.eulogy_source, t),
+                  tomb.user_name || t.tomb.thisPerson,
+                )}
               </p>
             )}
           </section>
@@ -98,10 +104,15 @@ export default async function PublicTombPage({ params }: Props) {
   );
 }
 
-function sourceLabel(source: string) {
+function sourceLabel(source: string, t: Dictionary) {
   return (
-    { chatgpt: 'ChatGPT', claude: 'Claude', gemini: 'Gemini', other: '어떤 AI' }[
-      source
-    ] ?? '어떤 AI'
+    (
+      {
+        chatgpt: t.tomb.sourceLabels.chatgpt,
+        claude: t.tomb.sourceLabels.claude,
+        gemini: t.tomb.sourceLabels.gemini,
+        other: t.tomb.sourceLabels.other,
+      } as Record<string, string>
+    )[source] ?? t.tomb.sourceLabels.other
   );
 }

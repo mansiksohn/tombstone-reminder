@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 import { LINKABLE_MODELS } from '@/lib/models';
+import { useLocale } from './LocaleProvider';
 
 export default function PromptCard({ prompt }: { prompt: string }) {
   const [copied, setCopied] = useState(false);
+  const { t } = useLocale();
 
   const copy = async () => {
     try {
@@ -35,7 +37,7 @@ export default function PromptCard({ prompt }: { prompt: string }) {
             e.preventDefault();
             copy();
           }}
-          aria-label={copied ? '질문이 복사되었습니다' : '질문 복사하기'}
+          aria-label={copied ? t.prompt.copyAriaCopied : t.prompt.copyAriaDefault}
         >
           {prompt}
         </blockquote>
@@ -45,12 +47,12 @@ export default function PromptCard({ prompt }: { prompt: string }) {
         </span>
 
         <span className={`prompt-copy-feedback${copied ? ' is-visible' : ''}`} aria-hidden="true">
-          복사됐습니다
+          {t.prompt.copiedFeedback}
         </span>
       </div>
 
       <div className="flex flex-col gap-2">
-        <p className="model-links-lead">평소 쓰던 AI에 붙여넣어보세요</p>
+        <p className="model-links-lead">{t.prompt.pasteToYourAi}</p>
         <div className="flex gap-2">
           {LINKABLE_MODELS.map((model) => (
             // <a>를 쓰는 이유: 복사를 await한 뒤 window.open을 부르면

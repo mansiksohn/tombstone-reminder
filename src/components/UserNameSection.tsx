@@ -3,17 +3,20 @@
 import { saveField } from '@/lib/actions';
 import { USER_NAME_MAX } from '@/lib/limits';
 import EditableText from './EditableText';
+import { useLocale } from './LocaleProvider';
 
 export default function UserNameSection({
   userName,
 }: {
   userName: string | null;
 }) {
+  const { t } = useLocale();
+
   return (
     <div className="username-container text-center">
       <EditableText
         value={userName}
-        placeholder={`이름 ${USER_NAME_MAX}자 이하`}
+        placeholder={t.userName.placeholder(USER_NAME_MAX)}
         maxLength={USER_NAME_MAX}
         inputClassName="username-input"
         showCount
@@ -24,10 +27,10 @@ export default function UserNameSection({
           <h2 className="text-xl cursor-pointer">
             <span className="block">
               <span className="text-soul-green-500 font-bold underline">
-                {name || '신원미상'}
+                {name || t.tomb.unidentified}
               </span>
-              <span className="text-white">님</span>
-              <span className="block pt-1">여기에 잠들다</span>
+              <span className="text-white">{t.tomb.nameSuffix}</span>
+              <span className="block pt-1">{t.tomb.restsHere}</span>
             </span>
           </h2>
         )}

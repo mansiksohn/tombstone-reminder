@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, useTransition } from 'react';
 import { saveField } from '@/lib/actions';
 import { deathMasks, maskPath, PLACEHOLDER_MASK } from '@/lib/images';
+import { useLocale } from './LocaleProvider';
 
 interface Props {
   deathmask: string | null;
@@ -21,6 +22,7 @@ export default function DeathMaskSection({
   const [selected, setSelected] = useState(deathmask);
   const [, startTransition] = useTransition();
   const selectorRef = useRef<HTMLDivElement>(null);
+  const { t } = useLocale();
 
   useEffect(() => setSelected(deathmask), [deathmask]);
 
@@ -54,7 +56,7 @@ export default function DeathMaskSection({
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={maskPath(selected, editable ? PLACEHOLDER_MASK : undefined)}
-          alt={selected ?? '묻어둔 것'}
+          alt={selected ?? t.tomb.deathmaskAlt}
           className="selected-image"
           width={160}
           height={160}

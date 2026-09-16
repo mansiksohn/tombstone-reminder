@@ -1,7 +1,7 @@
 import Header from '@/components/Header';
 import CreateFlow from '@/components/CreateFlow';
 import { getMyTomb } from '@/lib/tomb';
-import { EULOGY_PROMPT } from '@/lib/prompt';
+import { getServerDictionary } from '@/lib/i18n/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,9 +16,10 @@ export default async function NewTombPage({
 }: {
   searchParams: Promise<{ error?: string }>;
 }) {
-  const [result, { error: authError }] = await Promise.all([
+  const [result, { error: authError }, t] = await Promise.all([
     getMyTomb(),
     searchParams,
+    getServerDictionary(),
   ]);
   const tomb = result?.tomb ?? null;
 
@@ -26,7 +27,7 @@ export default async function NewTombPage({
     <div className="home-container">
       <Header userName={tomb?.user_name} loggedIn={Boolean(result)} />
       <CreateFlow
-        prompt={EULOGY_PROMPT}
+        prompt={t.eulogyPrompt}
         loggedIn={Boolean(result)}
         authError={authError ?? null}
         initialEulogy={tomb?.eulogy ?? null}

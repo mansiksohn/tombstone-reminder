@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { useLocale } from './LocaleProvider';
 
 interface Props {
   userName?: string | null;
@@ -19,6 +20,7 @@ export default function Header({
 }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const { locale, t, setLocale } = useLocale();
 
   const signOut = async () => {
     await createClient().auth.signOut();
@@ -26,9 +28,7 @@ export default function Header({
   };
 
   const deleteAccount = async () => {
-    if (
-      !window.confirm('🕳️정말로 계정을 삭제할까요? 다시 되돌릴 수 없습니다.')
-    ) {
+    if (!window.confirm(t.header.deleteConfirm)) {
       return;
     }
 
@@ -42,7 +42,7 @@ export default function Header({
       await signOut();
     } catch (error) {
       console.error('계정 삭제 실패:', error);
-      window.alert('계정 삭제 중 문제가 발생했습니다. 다시 시도해주세요.');
+      window.alert(t.header.deleteFailedAlert);
       setDeleting(false);
     }
   };
@@ -55,7 +55,7 @@ export default function Header({
       <button
         onClick={() => setMenuOpen(true)}
         className="menu-button"
-        aria-label="메뉴 열기"
+        aria-label={t.header.menuOpenAria}
       >
         ☰
       </button>
@@ -68,7 +68,7 @@ export default function Header({
         <button
           onClick={() => setMenuOpen(false)}
           className="menu-close-button"
-          aria-label="메뉴 닫기"
+          aria-label={t.header.menuCloseAria}
         >
           ✖
         </button>
@@ -78,7 +78,7 @@ export default function Header({
             <div className="user-name-container">
               <div className="user-name text-xl font-bold text-soul-green-500">
                 {userName}
-                <span className="text-white">님</span>
+                <span className="text-white">{t.header.nameSuffix}</span>
               </div>
             </div>
           )}
@@ -94,12 +94,12 @@ export default function Header({
             닫아, 어느 페이지에서 눌러도 최소한 메뉴는 닫히게 한다.
           */}
           <Link href="/new" className="mb-4" onClick={() => setMenuOpen(false)}>
-            묘비 만들기
+            {t.header.createTomb}
           </Link>
 
           {loggedIn && (
             <Link href="/me" className="mb-4" onClick={() => setMenuOpen(false)}>
-              내 묘비
+              {t.header.myTomb}
             </Link>
           )}
 
@@ -109,18 +109,30 @@ export default function Header({
             rel="noopener noreferrer"
             className="mb-4"
           >
-            문의 및 신고
+            {t.header.contact}
           </a>
+
+          {/* 언어는 두 개뿐이라 드롭다운 없이 토글 하나로 충분하다. */}
+          <button
+            type="button"
+            onClick={() => {
+              setLocale(locale === 'ko' ? 'en' : 'ko');
+              setMenuOpen(false);
+            }}
+            className="mb-4"
+          >
+            {t.header.languageToggle}
+          </button>
 
           {loggedIn && (
             <>
-              <button onClick={signOut}>로그아웃</button>
+              <button onClick={signOut}>{t.header.signOut}</button>
               <button
                 onClick={deleteAccount}
                 className="account-delete-button mt-4"
                 disabled={deleting}
               >
-                {deleting ? '계정 삭제 중…' : '계정 삭제'}
+                {deleting ? t.header.deletingAccount : t.header.deleteAccount}
               </button>
             </>
           )}
@@ -129,7 +141,7 @@ export default function Header({
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/assets/images/wsis-logo-dark.svg"
-              alt="WSIS 로고"
+              alt={t.header.wsisLogoAlt}
               className="menu-wsis-logo"
               width={16}
               height={16}

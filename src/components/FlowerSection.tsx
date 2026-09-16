@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import type { FlowerType } from '@/lib/database.types';
 import { flowerPath, flowerPlacement, randomFlower } from '@/lib/flowers';
+import { useLocale } from './LocaleProvider';
 
 interface Placed {
   id: string;
@@ -25,6 +26,7 @@ export default function FlowerSection({
   total,
   canOffer = true,
 }: Props) {
+  const { t } = useLocale();
   const [flowers, setFlowers] = useState<Placed[]>(initialFlowers);
   const [count, setCount] = useState(total);
   const [notice, setNotice] = useState<string | null>(null);
@@ -108,7 +110,7 @@ export default function FlowerSection({
     } catch (error) {
       console.error('헌화 실패:', error);
       withdraw(id);
-      setNotice('다시 시도');
+      setNotice(t.flower.retryNotice);
     }
   };
 
@@ -118,8 +120,8 @@ export default function FlowerSection({
   // 그래서 별도 줄을 만들지 않고 버튼 라벨 자체를 이걸로 바꿔치기한다.
   const label =
     cooldown > 0 && showCooldown
-      ? `💤${cooldown}`
-      : (notice ?? (count > 0 ? `🌼${count}` : '🌼헌화하기'));
+      ? t.flower.sleepLabel(cooldown)
+      : (notice ?? (count > 0 ? t.flower.countLabel(count) : t.flower.offerLabel));
 
   return (
     <div className="flower-section">
@@ -138,18 +140,20 @@ export default function FlowerSection({
             aria-live="polite"
             aria-label={
               cooldown > 0
-                ? `${cooldown}초 후 다시 놓을 수 있습니다`
+                ? t.flower.ariaCooldown(cooldown)
                 : notice
                   ? notice
                   : count > 0
-                    ? `꽃 놓기 (${count}송이 놓임)`
-                    : '꽃 놓기'
+                    ? t.flower.ariaOfferWithCount(count)
+                    : t.flower.ariaOffer
             }
           >
             {label}
           </button>
         ) : (
-          count > 0 && <span className="flower-count-badge">🌼{count}</span>
+          count > 0 && (
+            <span className="flower-count-badge">{t.flower.countLabel(count)}</span>
+          )
         )}
 
         {/*
@@ -165,7 +169,7 @@ export default function FlowerSection({
             <img
               key={flower.id}
               src={flowerPath(flower.flower_type)}
-              alt="놓인 꽃"
+              alt={t.tomb.flowerAlt}
               className={`flower ${flower.fresh ? 'animate-flower' : ''}`}
               style={{
                 transform: `translate(${x}px, ${y}px) rotate(${rotation}deg) scale(${scale})`,

@@ -4,8 +4,8 @@ import Header from '@/components/Header';
 import PromptCard from '@/components/PromptCard';
 import LandingAnimation from '@/components/LandingAnimation';
 import LoginButton from '@/components/LoginButton';
-import { EULOGY_PROMPT } from '@/lib/prompt';
 import { getMyTomb } from '@/lib/tomb';
+import { getServerDictionary } from '@/lib/i18n/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -23,7 +23,7 @@ export const dynamic = 'force-dynamic';
 export default async function LandingPage() {
   // 비로그인 방문자는 여기서 왕복을 치르지 않는다. 로그인 쿠키가 없으면
   // auth-js가 네트워크를 타지 않고 즉시 null을 돌려준다.
-  const result = await getMyTomb();
+  const [result, t] = await Promise.all([getMyTomb(), getServerDictionary()]);
 
   // /me가 '추도문이 없으면 /new로'를 맡고 있으므로 조건을 맞춰둔다.
   // 가입만 하고 아직 만들지 않은 사람은 이 화면에 남아야 한다.
@@ -38,14 +38,14 @@ export default async function LandingPage() {
       <main className="landing">
         <section className="landing-copy">
           <h2 className="landing-title">
-            아직 안죽으셨다고요?
+            {t.landing.titleLine1}
             <br />
-            그래도 앞으로 필요해지실겁니다.
+            {t.landing.titleLine2}
           </h2>
           <p className="landing-lead">
-            암요 미리미리 준비해야죠.
+            {t.landing.leadLine1}
             <br />
-            이걸 들고 평소에 대화하던 친구한테 내용만 받아오면 됩니다.
+            {t.landing.leadLine2}
           </p>
         </section>
 
@@ -53,10 +53,10 @@ export default async function LandingPage() {
           <LandingAnimation />
         </div>
 
-        <PromptCard prompt={EULOGY_PROMPT} />
+        <PromptCard prompt={t.eulogyPrompt} />
 
         <Link href="/new" className="landing-cta">
-          답변 붙여넣기
+          {t.landing.ctaPasteAnswer}
         </Link>
 
         {/*
