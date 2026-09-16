@@ -48,17 +48,26 @@ export default function Header({
   };
 
   return (
-    <header className="header">
-      <Link href="/" className="header-title">
-        묘비log
-      </Link>
-      <button
-        onClick={() => setMenuOpen(true)}
-        className="menu-button"
-        aria-label={t.header.menuOpenAria}
-      >
-        ☰
-      </button>
+    <>
+      {/*
+        메뉴 오버레이·배경은 header 밖으로 뺐다. header에 backdrop-blur를
+        올린 뒤로, position:fixed인 이 둘이 뷰포트가 아니라 80px짜리
+        header를 기준으로 자리잡아 드로어가 헤더 높이만큼 눌린 띠로
+        찌그러졌다 — backdrop-filter가 있는 조상은 fixed 자손의 containing
+        block이 된다. header 바깥의 형제로 두면 이 문제 자체가 없어진다.
+      */}
+      <header className="header">
+        <Link href="/" className="header-title">
+          묘비log
+        </Link>
+        <button
+          onClick={() => setMenuOpen(true)}
+          className="menu-button"
+          aria-label={t.header.menuOpenAria}
+        >
+          ☰
+        </button>
+      </header>
 
       {menuOpen && (
         <div className="menu-background" onClick={() => setMenuOpen(false)} />
@@ -149,6 +158,6 @@ export default function Header({
           </div>
         </div>
       </div>
-    </header>
+    </>
   );
 }
