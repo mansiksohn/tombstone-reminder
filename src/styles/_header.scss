@@ -8,9 +8,14 @@
 // 닫힌 드로어가 화면 오른쪽 20%를 계속 덮었다. 하필 거기가 햄버거
 // 버튼 자리라 메뉴를 여는 클릭을 드로어가 먹었다 — 로그아웃이 아예
 // 불가능했던 이유다.
+// 마이그레이션 이전에는 반투명 검정(#00000073) + backdrop-blur-md로
+// 아래 콘텐츠가 헤더 뒤로 흐릿하게 비치는 유리 같은 느낌을 냈다.
+// 이관 중 .header 규칙을 한 곳으로 모으면서 불투명한 bg-black으로
+// 바뀌어 그 느낌이 사라졌다 — 되살린다.
 .header {
   @apply fixed top-0 left-0 w-full z-[1000];
-  @apply flex justify-between items-center p-4 bg-black text-white;
+  @apply flex justify-between items-center p-4 bg-real-black/45 text-white;
+  @apply backdrop-blur-md;
 }
 
 .header-title {

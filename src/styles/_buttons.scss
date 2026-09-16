@@ -1,5 +1,11 @@
+// 라운드를 기본값으로 둔다. 그동안 개별 버튼마다 rounded-lg를 붙이고
+// 다녔는데 몇 군데(문장 고르기·미리보기의 '이전'·'다음'·'게시하기',
+// 재시도 버튼 등)에서 빠뜨려 그 버튼만 각지게 남았다. 여기 한 번만
+// 정해두면 그런 누락이 애초에 생기지 않는다. 아이콘 버튼(햄버거 등)은
+// 배경이 투명해 보이지 않고, 자기 모양이 따로 있는 버튼(헌화 버튼,
+// 메뉴 항목)은 자신의 border-radius로 이미 덮어쓴다.
 button {
-    @apply bg-soul-green-500 border-none text-white py-2 px-4 text-center text-base cursor-pointer;
+    @apply bg-soul-green-500 border-none text-white py-2 px-4 text-center text-base cursor-pointer rounded-lg;
   }
   
   @media (hover: hover) {
