@@ -37,7 +37,10 @@
   // 순간(요청이 오가는 동안)마다 버튼이 흐려졌다 돌아와 깜빡이는
   // 것처럼 보였다. 눌렀다는 건 커서와 쿨다운 문구로 충분히 전해지니
   // 색은 그대로 둔다.
-  &:disabled {
+  //
+  // native disabled가 아니라 aria-disabled를 쓴다 — 쿨다운 중에 다시
+  // 눌러도 onClick이 불려야 알림을 다시 띄울 수 있다.
+  &[aria-disabled='true'] {
     @apply cursor-not-allowed;
   }
 }
