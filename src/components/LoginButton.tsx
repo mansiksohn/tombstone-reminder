@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { signInWithGoogle } from '@/lib/auth';
+import { useLocale } from './LocaleProvider';
 
 /**
  * 랜딩에서 돌아온 사람이 자기 묘비로 들어오는 문.
@@ -14,16 +15,17 @@ import { signInWithGoogle } from '@/lib/auth';
 export default function LoginButton() {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const { t } = useLocale();
 
   const signIn = async () => {
     setError(null);
     setPending(true);
 
     // 콜백은 언제나 /new로 돌아온다. 묘비를 보러 온 사람이니 넘겨준다.
-    const result = await signInWithGoogle('/me');
+    const result = await signInWithGoogle('/me', t.errors.loginStartFailed);
 
     if (!result.ok) {
-      setError(result.error ?? '로그인에 실패했습니다.');
+      setError(result.error ?? t.errors.loginFailed);
       setPending(false);
     }
     // 성공했다면 곧 구글로 떠난다. pending을 풀지 않는 편이 낫다 —
@@ -38,7 +40,7 @@ export default function LoginButton() {
         disabled={pending}
         className="landing-secondary-link"
       >
-        {pending ? '로그인 중…' : '이미 묘비가 있다면 로그인'}
+        {pending ? t.landing.loginPending : t.landing.loginPrompt}
       </button>
       {error && <p className="text-soul-red text-sm text-center">{error}</p>}
     </>

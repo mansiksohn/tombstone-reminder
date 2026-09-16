@@ -12,6 +12,7 @@ import { AI_MODELS } from '@/lib/models';
 import type { EulogySource } from '@/lib/database.types';
 import PromptCard from './PromptCard';
 import TombstoneSection from './TombstoneSection';
+import { useLocale } from './LocaleProvider';
 
 type Step = 'paste' | 'select' | 'preview';
 
@@ -25,12 +26,6 @@ interface Props {
   initialSentence: string | null;
   alreadyPublished: boolean;
 }
-
-const AUTH_ERROR_MESSAGES: Record<string, string> = {
-  auth_failed:
-    '로그인을 마치지 못했습니다. 쓰시던 내용은 그대로 있으니 다시 게시해보세요.',
-  missing_code: '로그인이 취소된 것 같습니다. 다시 게시해보세요.',
-};
 
 export default function CreateFlow({
   prompt,
@@ -50,13 +45,18 @@ export default function CreateFlow({
   //
   // 저장돼 있던 추도문은 그대로 실려 있으니, 고칠 사람은 고치고 새로
   // 받아온 사람은 덮어쓰면 된다.
+  const { t } = useLocale();
   const [step, setStep] = useState<Step>('paste');
   const [eulogy, setEulogy] = useState(initialEulogy ?? '');
   const [source, setSource] = useState<EulogySource | null>(initialSource);
   const [sentence, setSentence] = useState(initialSentence ?? '');
   const [customizing, setCustomizing] = useState(false);
   const [error, setError] = useState<string | null>(
-    authError ? (AUTH_ERROR_MESSAGES[authError] ?? '로그인에 실패했습니다.') : null,
+    authError
+      ? (t.compose.authFailedMessages[
+          authError as keyof typeof t.compose.authFailedMessages
+        ] ?? t.errors.loginFailed)
+      : null,
   );
   const [resuming, setResuming] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -70,14 +70,14 @@ export default function CreateFlow({
       startTransition(async () => {
         const saved = await saveEulogy(draftEulogy, draftSource, draftSentence);
         if (!saved.ok) {
-          setError(saved.error ?? '저장하지 못했습니다.');
+          setError(saved.error ?? t.errors.saveFailed);
           setResuming(false);
           return;
         }
 
         const result = await setPublished(true);
         if (!result.ok) {
-          setError(result.error ?? '게시하지 못했습니다.');
+          setError(result.error ?? t.errors.genericPublishFailed);
           setResuming(false);
           return;
         }
@@ -98,7 +98,7 @@ export default function CreateFlow({
         router.replace('/me');
       });
     },
-    [router],
+    [router, t],
   );
 
   // 로그인하고 돌아왔을 때의 처리.
@@ -137,7 +137,7 @@ export default function CreateFlow({
 
   const toSelect = () => {
     if (!eulogy.trim()) {
-      setError('붙여넣은 답변이 비어 있습니다.');
+      setError(t.errors.emptyPastedAnswer);
       return;
     }
     setError(null);
@@ -146,7 +146,7 @@ export default function CreateFlow({
 
   const toPreview = () => {
     if (!sentence.trim()) {
-      setError('묘비에 새길 문장을 골라주세요.');
+      setError(t.errors.pickSentence);
       return;
     }
     setError(null);
@@ -164,19 +164,19 @@ export default function CreateFlow({
 
     // 도착지를 적어두지 않는다. 초안이 있으니 /new로 돌아와 이어서
     // 게시해야 한다 — 그게 콜백의 기본 도착지인 이유다.
-    const result = await signInWithGoogle();
-    if (!result.ok) setError(result.error ?? '로그인에 실패했습니다.');
+    const result = await signInWithGoogle(undefined, t.errors.loginStartFailed);
+    if (!result.ok) setError(result.error ?? t.errors.loginFailed);
   };
 
   if (resuming) {
     return (
       <main className="compose-container">
-        <p className="compose-lead">묘비를 세우는 중입니다…</p>
+        <p className="compose-lead">{t.compose.settingUp}</p>
         {error && (
           <>
             <p className="text-soul-red text-sm">{error}</p>
             <button onClick={() => publish(eulogy, source, sentence)}>
-              다시 시도
+              {t.compose.retry}
             </button>
           </>
         )}
@@ -187,18 +187,18 @@ export default function CreateFlow({
   if (step === 'paste') {
     return (
       <StepShell
-        lead="AI가 돌려준 답을 그대로 붙여넣으세요."
+        lead={t.compose.pasteLead}
         actions={
           <>
             {error && <p className="text-soul-red text-sm">{error}</p>}
             <button onClick={toSelect} className="rounded-lg">
-              다음
+              {t.compose.next}
             </button>
           </>
         }
       >
         <details className="prompt-details shrink-0">
-          <summary>질문을 다시 보기</summary>
+          <summary>{t.compose.promptDetailsSummary}</summary>
           <div className="pt-3">
             <PromptCard prompt={prompt} />
           </div>
@@ -207,7 +207,7 @@ export default function CreateFlow({
         <textarea
           value={eulogy}
           onChange={(e) => setEulogy(e.target.value)}
-          placeholder="여기에 답변을 붙여넣으세요."
+          placeholder={t.compose.pastePlaceholder}
           className="compose-textarea flex-1"
           autoFocus
         />
@@ -221,7 +221,7 @@ export default function CreateFlow({
               aria-pressed={source === s.value}
               className="source-chip"
             >
-              {s.label}
+              {s.value === 'other' ? t.prompt.otherModelLabel : s.label}
             </button>
           ))}
         </div>
@@ -232,7 +232,7 @@ export default function CreateFlow({
   if (step === 'select') {
     return (
       <StepShell
-        lead="이 중에서, 묘비에 새길 한 문장을 골라주세요."
+        lead={t.compose.selectLead}
         actions={
           <>
             {error && <p className="text-soul-red text-sm">{error}</p>}
@@ -241,17 +241,17 @@ export default function CreateFlow({
               onClick={() => setCustomizing((v) => !v)}
               className="unpublish-button"
             >
-              {customizing ? '목록에서 고르기' : '직접 다듬기'}
+              {customizing ? t.compose.backToList : t.compose.customizeSentence}
             </button>
             <div className="flex gap-2">
               <button
                 onClick={() => setStep('paste')}
                 className="secondary-button"
               >
-                이전
+                {t.compose.prev}
               </button>
               <button onClick={toPreview} className="flex-1">
-                다음
+                {t.compose.next}
               </button>
             </div>
           </>
@@ -286,8 +286,7 @@ export default function CreateFlow({
             ))}
             {sentences.length === 0 && (
               <p className="publish-warning">
-                {EPITAPH_MAX}자 안에 들어오는 문장을 찾지 못했습니다. &lsquo;직접
-                다듬기&rsquo;로 새길 문장을 적어주세요.
+                {t.compose.noSentenceFound(EPITAPH_MAX)}
               </p>
             )}
           </>
@@ -300,15 +299,13 @@ export default function CreateFlow({
   // 곧장 /me로 넘어간다.
   return (
     <StepShell
-      lead="이렇게 새겨집니다."
+      lead={t.compose.previewLead}
       actions={
         <>
           <p className="publish-warning">
-            {alreadyPublished &&
-              '이미 세워둔 묘비의 추도문과 각인을 이 내용으로 바꿉니다. '}
-            게시하면 링크를 가진 누구나 이 묘비를 볼 수 있습니다. 언제든
-            비공개로 되돌릴 수 있습니다.
-            {!loggedIn && ' 묘비를 간직하려면 구글 로그인이 필요합니다.'}
+            {alreadyPublished && t.compose.alreadyPublishedWarning}
+            {t.compose.publishNotice}
+            {!loggedIn && t.compose.needGoogleLoginSuffix}
           </p>
 
           {error && <p className="text-soul-red text-sm">{error}</p>}
@@ -319,14 +316,14 @@ export default function CreateFlow({
               className="secondary-button"
               disabled={pending}
             >
-              이전
+              {t.compose.prev}
             </button>
             <button onClick={onPublish} className="flex-1" disabled={pending}>
               {pending
-                ? '게시 중…'
+                ? t.compose.publishing
                 : loggedIn
-                  ? '게시하기'
-                  : '로그인하고 게시하기'}
+                  ? t.compose.publish
+                  : t.compose.loginAndPublish}
             </button>
           </div>
         </>

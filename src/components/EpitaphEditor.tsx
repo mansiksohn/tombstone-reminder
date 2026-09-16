@@ -3,6 +3,7 @@
 import { saveField } from '@/lib/actions';
 import { EPITAPH_MAX } from '@/lib/limits';
 import EditableText from './EditableText';
+import { useLocale } from './LocaleProvider';
 
 /**
  * 묘비에 새긴 문장을 그 자리에서 고친다.
@@ -14,10 +15,12 @@ import EditableText from './EditableText';
  * TombstoneSection에서 함수를 프롭으로 내려보낼 수는 없기 때문이다.
  */
 export default function EpitaphEditor({ tombName }: { tombName: string | null }) {
+  const { t } = useLocale();
+
   return (
     <EditableText
       value={tombName}
-      placeholder={`묘비에 새길 문장 (${EPITAPH_MAX}자 이하)`}
+      placeholder={t.epitaph.placeholder(EPITAPH_MAX)}
       maxLength={EPITAPH_MAX}
       multiline
       inputClassName="epitaph-input"
@@ -34,7 +37,7 @@ export default function EpitaphEditor({ tombName }: { tombName: string | null })
               engraved ? 'filled-text' : 'placeholder-text'
             }`}
           >
-            {engraved ? value : '눌러서 문장을 새기세요'}
+            {engraved ? value : t.epitaph.pressToEngrave}
           </h2>
         );
       }}

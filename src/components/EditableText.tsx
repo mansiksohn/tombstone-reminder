@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useTransition } from 'react';
+import { useLocale } from './LocaleProvider';
 
 interface Props {
   value: string | null;
@@ -39,6 +40,7 @@ export default function EditableText({
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
   const boxRef = useRef<HTMLDivElement>(null);
+  const { t } = useLocale();
 
   useEffect(() => {
     if (!editing) setDraft(value ?? '');
@@ -54,7 +56,7 @@ export default function EditableText({
     startTransition(async () => {
       const result = await onSave(next);
       if (!result.ok) {
-        setError(result.error ?? '저장하지 못했습니다.');
+        setError(result.error ?? t.errors.saveFailed);
         setDraft(value ?? '');
       } else {
         setError(null);
@@ -86,7 +88,7 @@ export default function EditableText({
         onKeyDown={(e) => e.key === 'Enter' && setEditing(true)}
       >
         {children(value)}
-        {pending && <span className="sr-only">저장 중</span>}
+        {pending && <span className="sr-only">{t.editableText.savingSr}</span>}
         {error && <p className="text-soul-red text-sm mt-1">{error}</p>}
       </div>
     );

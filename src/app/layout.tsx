@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from 'next';
 import { Noto_Sans_KR } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/react';
 import { siteUrl } from '@/lib/tomb';
+import { getServerLocale } from '@/lib/i18n/server';
+import { LocaleProvider } from '@/components/LocaleProvider';
 import '@/styles/globals.scss';
 
 const notoSansKr = Noto_Sans_KR({
@@ -40,17 +42,21 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const locale = await getServerLocale();
+
   return (
-    <html lang="ko" className={notoSansKr.variable}>
+    <html lang={locale} className={notoSansKr.variable}>
       <body>
-        <div className="app-container bg-black min-h-screen max-w-3xl mx-auto">
-          {children}
-        </div>
+        <LocaleProvider initialLocale={locale}>
+          <div className="app-container bg-black min-h-screen max-w-3xl mx-auto">
+            {children}
+          </div>
+        </LocaleProvider>
         <Analytics />
       </body>
     </html>

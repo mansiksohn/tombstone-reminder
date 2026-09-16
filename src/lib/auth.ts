@@ -26,6 +26,8 @@ export interface SignInResult {
 
 export async function signInWithGoogle(
   afterLogin?: string,
+  /** 실패 메시지는 호출자가 넘긴다 — 이 파일은 컴포넌트가 아니라 useLocale을 쓸 수 없다. */
+  failureMessage = '로그인을 시작하지 못했습니다. 잠시 후 다시 시도해주세요. 문제가 계속되면 관리자에게 알려주세요.',
 ): Promise<SignInResult> {
   if (afterLogin) {
     try {
@@ -53,12 +55,7 @@ export async function signInWithGoogle(
     return { ok: true };
   } catch (cause) {
     console.error('로그인 시작 실패:', cause);
-    return {
-      ok: false,
-      error:
-        '로그인을 시작하지 못했습니다. 잠시 후 다시 시도해주세요. ' +
-        '문제가 계속되면 관리자에게 알려주세요.',
-    };
+    return { ok: false, error: failureMessage };
   }
 }
 

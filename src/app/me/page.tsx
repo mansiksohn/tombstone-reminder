@@ -10,6 +10,7 @@ import DeathMaskSection from '@/components/DeathMaskSection';
 import PublishPanel from '@/components/PublishPanel';
 import { getFlowers, getMyTomb, shareUrl } from '@/lib/tomb';
 import { toPlainText } from '@/lib/markdown';
+import { getServerDictionary } from '@/lib/i18n/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -29,7 +30,10 @@ export default async function MyTombPage() {
   // 추도문이 없으면 아직 묘비를 만들지 않은 것이다. 만들기로 보낸다.
   if (!tomb.eulogy) redirect('/new');
 
-  const flowers = await getFlowers(tomb.user_id);
+  const [flowers, t] = await Promise.all([
+    getFlowers(tomb.user_id),
+    getServerDictionary(),
+  ]);
   const published = tomb.status === 'published';
 
   return (
@@ -62,7 +66,7 @@ export default async function MyTombPage() {
 
         <div className="px-4">
           <Link href="/new" className="unpublish-button block text-center">
-            추도문 다시 받아오기
+            {t.compose.refetchEulogy}
           </Link>
         </div>
       </main>
