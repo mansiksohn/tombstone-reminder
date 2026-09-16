@@ -50,7 +50,7 @@ export default function PromptCard({ prompt }: { prompt: string }) {
       </div>
 
       <div className="flex flex-col gap-2">
-        <p className="model-links-lead">복사하면서 바로 열기</p>
+        <p className="model-links-lead">평소 쓰던 AI에 붙여넣어보세요</p>
         <div className="flex gap-2">
           {LINKABLE_MODELS.map((model) => (
             // <a>를 쓰는 이유: 복사를 await한 뒤 window.open을 부르면
