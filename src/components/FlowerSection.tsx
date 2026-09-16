@@ -67,7 +67,12 @@ export default function FlowerSection({
   // 요청이 오가는 동안 버튼을 잠그지도 않는다. 분당 한도 안에서는
   // 클릭한 만큼 바로바로 놓이는 게 맞다.
   const offer = async () => {
-    if (cooldown > 0) return;
+    if (cooldown > 0) {
+      // 이미 한도에 걸려 있다는 걸 다시 눌러도 알 수 있어야 한다 —
+      // 처음 걸렸을 때와 같은 3초짜리 알림을 다시 띄운다.
+      setShowCooldown(true);
+      return;
+    }
 
     const type = randomFlower();
     const id =
@@ -119,11 +124,17 @@ export default function FlowerSection({
   return (
     <div className="flower-section">
       <div className="flower-bowl-container">
+        {/*
+          native disabled이면 클릭 자체가 브라우저에서 막혀 onClick이
+          불리지 않는다 — 쿨다운 도중 다시 눌러도 알림을 못 띄운다.
+          그래서 disabled 대신 aria-disabled로 의미만 전달하고, 실제
+          차단은 offer() 안의 cooldown 체크가 맡는다.
+        */}
         {canOffer ? (
           <button
             className="add-flower-button"
             onClick={offer}
-            disabled={cooldown > 0}
+            aria-disabled={cooldown > 0}
             aria-live="polite"
             aria-label={
               cooldown > 0
@@ -141,7 +152,13 @@ export default function FlowerSection({
           count > 0 && <span className="flower-count-badge">🌼{count}</span>
         )}
 
-        {flowers.map((flower) => {
+        {/*
+          flowers는 최신순(index 0이 가장 최근)이다. 같은 z-index에서는
+          나중에 그려진 형제가 위로 오므로, 최신 꽃이 앞에 보이려면
+          그리는 순서는 거꾸로 — 오래된 것부터 그려서 최신이 맨 나중에,
+          즉 맨 위에 오게 한다.
+        */}
+        {[...flowers].reverse().map((flower) => {
           const { x, y, rotation, scale } = flowerPlacement(flower.id);
           return (
             // eslint-disable-next-line @next/next/no-img-element
