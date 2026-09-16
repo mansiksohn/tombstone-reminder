@@ -87,12 +87,18 @@ export default function Header({
             /를 가리키면 안 된다. 묘비가 있는 사람은 거기서 /me로 튕겨
             나가므로, 만들기로 가려던 사람이 제자리로 되돌아온다.
           */}
-          <Link href="/new" className="mb-4">
+          {/*
+            지금 있는 페이지를 가리키는 링크를 누르면 Next는 이동할
+            경로가 없으니 아무 일도 안 한다 — 메뉴만 열린 채로 남아
+            눌러도 반응이 없는 것처럼 보인다. onClick으로 메뉴를 직접
+            닫아, 어느 페이지에서 눌러도 최소한 메뉴는 닫히게 한다.
+          */}
+          <Link href="/new" className="mb-4" onClick={() => setMenuOpen(false)}>
             묘비 만들기
           </Link>
 
           {loggedIn && (
-            <Link href="/me" className="mb-4">
+            <Link href="/me" className="mb-4" onClick={() => setMenuOpen(false)}>
               내 묘비
             </Link>
           )}
