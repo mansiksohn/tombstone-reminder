@@ -12,10 +12,19 @@ import { createClient } from '@/lib/supabase/server';
  * redirect_to에 쿼리스트링이 붙으면 Supabase 허용목록 매칭이 까다로워져
  * 400을 맞기 쉽기 때문이다.
  */
+/**
+ * 우리 앱 안의 상대 경로만 받는다 (열린 리다이렉트 방지).
+ * src/lib/auth.ts의 takeAfterLogin과 같은 기준이다.
+ */
+function safeNext(value: string | null): string {
+  if (!value || !value.startsWith('/') || value.startsWith('//')) return '/new';
+  return value;
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
-  const next = searchParams.get('next') ?? '/new';
+  const next = safeNext(searchParams.get('next'));
 
   // 실패해도 랜딩이 아니라 /new로 돌려보낸다. 초안은 sessionStorage에
   // 살아있고 /new만이 그것을 복원해 다시 게시할 수 있다. 랜딩으로 보내면

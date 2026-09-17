@@ -42,9 +42,10 @@ export default function EditableText({
   const boxRef = useRef<HTMLDivElement>(null);
   const { t } = useLocale();
 
-  useEffect(() => {
-    if (!editing) setDraft(value ?? '');
-  }, [value, editing]);
+  const beginEditing = () => {
+    setDraft(value ?? '');
+    setEditing(true);
+  };
 
   const commit = () => {
     if (!editing) return;
@@ -81,11 +82,11 @@ export default function EditableText({
   if (!editing) {
     return (
       <div
-        onClick={() => setEditing(true)}
+        onClick={beginEditing}
         className={displayClassName}
         role="button"
         tabIndex={0}
-        onKeyDown={(e) => e.key === 'Enter' && setEditing(true)}
+        onKeyDown={(e) => e.key === 'Enter' && beginEditing()}
       >
         {children(value)}
         {pending && <span className="sr-only">{t.editableText.savingSr}</span>}

@@ -34,6 +34,12 @@ export default function FlowerSection({
   const [cooldown, setCooldown] = useState(0);
   /** 한도에 걸린 순간을 잠깐만 알리고, 그 뒤로는 다시 꽃 수를 보여준다. */
   const [showCooldown, setShowCooldown] = useState(false);
+  /**
+   * showCooldown을 true로 "다시" 세팅해도 값이 안 바뀌면 effect가
+   * 재실행되지 않아 이미 돌고 있던 3초 타이머가 그대로 만료된다.
+   * 매번 값이 바뀌는 카운터를 별도로 두어 재클릭 때마다 타이머를 새로 잡는다.
+   */
+  const [cooldownNoticeTick, setCooldownNoticeTick] = useState(0);
 
   // "잠시 후에"만으로는 얼마나 기다려야 하는지 알 수 없다. 서버가 알려준
   // 초를 1초마다 줄여서 보여준다 — 0이 되면 알아서 사라진다.
@@ -47,10 +53,17 @@ export default function FlowerSection({
   // 것이다. 한도에 걸렸다는 건 3초만 알리고, 남은 대기 시간 동안은
   // (버튼은 여전히 눌리지 않지만) 라벨을 원래의 꽃 수로 되돌려둔다.
   useEffect(() => {
-    if (!showCooldown) return;
+    if (cooldownNoticeTick === 0) return;
     const id = setTimeout(() => setShowCooldown(false), 3000);
     return () => clearTimeout(id);
-  }, [showCooldown]);
+  }, [cooldownNoticeTick]);
+
+  // 쿨다운 알림을 (다시) 띄운다. showCooldown은 클릭한 그 순간 바로 켜고,
+  // tick은 위 effect가 3초 타이머를 새로 잡게 하는 용도로만 쓴다.
+  const notifyCooldown = () => {
+    setShowCooldown(true);
+    setCooldownNoticeTick((n) => n + 1);
+  };
 
   // 실패 알림도 스스로 걷힌다 — 다음 클릭까지 남겨둘 이유가 없다.
   useEffect(() => {
@@ -72,7 +85,7 @@ export default function FlowerSection({
     if (cooldown > 0) {
       // 이미 한도에 걸려 있다는 걸 다시 눌러도 알 수 있어야 한다 —
       // 처음 걸렸을 때와 같은 3초짜리 알림을 다시 띄운다.
-      setShowCooldown(true);
+      notifyCooldown();
       return;
     }
 
@@ -96,6 +109,7 @@ export default function FlowerSection({
       const data = (await res.json()) as {
         limited?: boolean;
         retryAfterSeconds?: number;
+        id?: string;
       };
 
       // 한도 도달은 실패가 아니라 정상적인 결과라 200으로 온다 — 그래야
@@ -105,7 +119,15 @@ export default function FlowerSection({
       if (data.limited) {
         withdraw(id);
         setCooldown(data.retryAfterSeconds ?? 30);
-        setShowCooldown(true);
+        notifyCooldown();
+      } else if (data.id) {
+        // 실제 DB id로 바꿔치기한다. flowerPlacement가 id로 위치를
+        // 계산하므로, 임시 id를 그대로 두면 새로고침 후 실제 id로 다시
+        // 계산될 때 이 꽃만 자리가 바뀐 것처럼 보인다.
+        const realId = data.id;
+        setFlowers((prev) =>
+          prev.map((f) => (f.id === id ? { ...f, id: realId } : f)),
+        );
       }
     } catch (error) {
       console.error('헌화 실패:', error);

@@ -124,6 +124,10 @@ export default function CreateFlow({
       return;
     }
 
+    // sessionStorage(외부 저장소)에서 마운트 시 한 번만 복원하는 것이라
+    // "prop이 바뀌면 state를 되돌린다" 안티패턴과는 다르다. resumed ref로
+    // 이미 한 번만 실행되게 막아뒀다.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setEulogy(draft.eulogy);
     setSource(draft.source);
     setSentence(draft.sentence);

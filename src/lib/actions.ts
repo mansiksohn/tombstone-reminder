@@ -58,7 +58,10 @@ export async function saveField(
     .update(patch)
     .eq('user_id', user.id);
 
-  if (error) return { ok: false, error: error.message };
+  if (error) {
+    console.error('saveField 실패:', error.message);
+    return { ok: false, error: t.errors.saveFailed };
+  }
 
   revalidatePath('/me');
   return { ok: true };
@@ -111,7 +114,10 @@ export async function saveEulogy(
     })
     .eq('user_id', user.id);
 
-  if (error) return { ok: false, error: error.message };
+  if (error) {
+    console.error('saveEulogy 실패:', error.message);
+    return { ok: false, error: t.errors.saveFailed };
+  }
 
   revalidatePath('/me');
   revalidatePath('/new');
@@ -152,7 +158,10 @@ export async function setPublished(publish: boolean): Promise<ActionResult> {
     })
     .eq('user_id', user.id);
 
-  if (error) return { ok: false, error: error.message };
+  if (error) {
+    console.error('setPublished 실패:', error.message);
+    return { ok: false, error: t.errors.genericPublishFailed };
+  }
 
   revalidatePath('/me');
   return { ok: true };

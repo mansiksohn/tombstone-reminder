@@ -116,7 +116,22 @@ export type Database = {
       };
     };
     Views: { [_ in never]: never };
-    Functions: { [_ in never]: never };
+    Functions: {
+      insert_flower_rate_limited: {
+        Args: {
+          p_tomb_id: string;
+          p_flower_type: string;
+          p_visitor_hash: string;
+          p_rate_limit: number;
+          p_window_seconds: number;
+        };
+        Returns: {
+          inserted: boolean;
+          flower_id: string | null;
+          retry_after_seconds: number;
+        }[];
+      };
+    };
     Enums: { [_ in never]: never };
     CompositeTypes: { [_ in never]: never };
   };
