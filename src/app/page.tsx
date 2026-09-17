@@ -2,7 +2,6 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import Header from '@/components/Header';
 import PromptCard from '@/components/PromptCard';
-import LandingAnimation from '@/components/LandingAnimation';
 import LoginButton from '@/components/LoginButton';
 import { getMyTomb } from '@/lib/tomb';
 import { getServerDictionary } from '@/lib/i18n/server';
@@ -48,10 +47,6 @@ export default async function LandingPage() {
             {t.landing.leadLine2}
           </p>
         </section>
-
-        <div className="landing-animation">
-          <LandingAnimation />
-        </div>
 
         <PromptCard prompt={t.eulogyPrompt} />
 

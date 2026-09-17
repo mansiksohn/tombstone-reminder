@@ -16,7 +16,6 @@
     "check-rls": "node scripts/check-rls.mjs"
   },
   "dependencies": {
-    "@rive-app/react-canvas": "^4.17.0",
     "@supabase/ssr": "^0.12.4",
     "@supabase/supabase-js": "^2.47.10",
     "@vercel/analytics": "^1.4.1",
