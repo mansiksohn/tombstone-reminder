@@ -13,13 +13,13 @@ import type { CookieToSet } from '@/lib/supabase/cookies';
  * 세션도 없으므로, 크게 로그를 남기고 지나가는 편이 맞다.
  * 실제로 인증이 필요한 페이지는 각자 분명한 에러로 실패한다.
  */
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!url || !anonKey) {
     console.error(
-      '[middleware] Supabase 환경변수가 없어 세션 갱신을 건너뜁니다. ' +
+      '[proxy] Supabase 환경변수가 없어 세션 갱신을 건너뜁니다. ' +
         `없는 값: ${[
           !url && 'NEXT_PUBLIC_SUPABASE_URL',
           !anonKey && 'NEXT_PUBLIC_SUPABASE_ANON_KEY',

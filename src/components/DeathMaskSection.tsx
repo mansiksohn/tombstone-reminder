@@ -20,11 +20,17 @@ export default function DeathMaskSection({
 }: Props) {
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState(deathmask);
+  const [prevDeathmask, setPrevDeathmask] = useState(deathmask);
   const [, startTransition] = useTransition();
   const selectorRef = useRef<HTMLDivElement>(null);
   const { t } = useLocale();
 
-  useEffect(() => setSelected(deathmask), [deathmask]);
+  // deathmask prop이 바뀌면 로컬 선택도 따라간다. 렌더 중에 비교해
+  // 갱신하면 이펙트 없이 한 번의 렌더로 끝난다 (React 공식 권장 패턴).
+  if (deathmask !== prevDeathmask) {
+    setPrevDeathmask(deathmask);
+    setSelected(deathmask);
+  }
 
   useEffect(() => {
     if (!open) return;

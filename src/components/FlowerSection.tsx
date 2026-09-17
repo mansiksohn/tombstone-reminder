@@ -54,10 +54,16 @@ export default function FlowerSection({
   // (버튼은 여전히 눌리지 않지만) 라벨을 원래의 꽃 수로 되돌려둔다.
   useEffect(() => {
     if (cooldownNoticeTick === 0) return;
-    setShowCooldown(true);
     const id = setTimeout(() => setShowCooldown(false), 3000);
     return () => clearTimeout(id);
   }, [cooldownNoticeTick]);
+
+  // 쿨다운 알림을 (다시) 띄운다. showCooldown은 클릭한 그 순간 바로 켜고,
+  // tick은 위 effect가 3초 타이머를 새로 잡게 하는 용도로만 쓴다.
+  const notifyCooldown = () => {
+    setShowCooldown(true);
+    setCooldownNoticeTick((n) => n + 1);
+  };
 
   // 실패 알림도 스스로 걷힌다 — 다음 클릭까지 남겨둘 이유가 없다.
   useEffect(() => {
@@ -79,7 +85,7 @@ export default function FlowerSection({
     if (cooldown > 0) {
       // 이미 한도에 걸려 있다는 걸 다시 눌러도 알 수 있어야 한다 —
       // 처음 걸렸을 때와 같은 3초짜리 알림을 다시 띄운다.
-      setCooldownNoticeTick((n) => n + 1);
+      notifyCooldown();
       return;
     }
 
@@ -113,7 +119,7 @@ export default function FlowerSection({
       if (data.limited) {
         withdraw(id);
         setCooldown(data.retryAfterSeconds ?? 30);
-        setCooldownNoticeTick((n) => n + 1);
+        notifyCooldown();
       } else if (data.id) {
         // 실제 DB id로 바꿔치기한다. flowerPlacement가 id로 위치를
         // 계산하므로, 임시 id를 그대로 두면 새로고침 후 실제 id로 다시
