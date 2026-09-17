@@ -36,6 +36,14 @@ export default async function LandingPage() {
 
       <main className="landing">
         <section className="landing-copy">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/assets/images/headstone.svg"
+            alt={t.tomb.tombstoneAlt}
+            className="landing-tombstone-image"
+            width={366}
+            height={560}
+          />
           <h2 className="landing-title">
             {t.landing.titleLine1}
             <br />
