@@ -187,16 +187,25 @@ export default function FlowerSection({
         {[...flowers].reverse().map((flower) => {
           const { x, y, rotation, scale } = flowerPlacement(flower.id);
           return (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            // 자리 배치(transform)와 낙하 애니메이션(transform)을 같은
+            // 엘리먼트에 같이 걸면 CSS 애니메이션이 인라인 transform을
+            // 통째로 덮어써 x/회전/크기가 다 무시되고 y축으로만 똑바로
+            // 떨어진다. 바깥 div가 자리를, 안쪽 img가 낙하만 맡도록
+            // 나눠 서로 간섭하지 않게 한다.
+            <div
               key={flower.id}
-              src={flowerPath(flower.flower_type)}
-              alt={t.tomb.flowerAlt}
-              className={`flower ${flower.fresh ? 'animate-flower' : ''}`}
+              className="flower"
               style={{
                 transform: `translate(${x}px, ${y}px) rotate(${rotation}deg) scale(${scale})`,
               }}
-            />
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={flowerPath(flower.flower_type)}
+                alt={t.tomb.flowerAlt}
+                className={flower.fresh ? 'animate-flower' : ''}
+              />
+            </div>
           );
         })}
       </div>

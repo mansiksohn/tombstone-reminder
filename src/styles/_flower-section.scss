@@ -63,11 +63,18 @@
   @apply bg-soul-green-500 text-real-white;
 }
 
+// 자리(x/y/회전/크기)는 이 바깥 엘리먼트가 맡는다. 안쪽 img가 낙하
+// 애니메이션에서 쓰는 transform과 서로 다른 엘리먼트라 섞이지 않는다.
 .flower {
   position: absolute;
   z-index: 0;
-  transition: opacity 1s ease-out;
-  opacity: 1;
+  display: block;
+
+  img {
+    display: block;
+    opacity: 1;
+    transition: opacity 1s ease-out;
+  }
 }
 
 @keyframes drop-flower {
@@ -77,7 +84,7 @@
   }
   100% {
     opacity: 1;
-    transform: translateY(-50);
+    transform: translateY(0);
   }
 }
 
